@@ -1,0 +1,29 @@
+{
+  "menu": {
+    "home": "الرئيسية",
+    "tools": "الأدوات",
+    "calculators": "الآلات الحاسبة",
+    "code": "أدوات البرمجة",
+    "design": "أدوات التصميم",
+    "image": "أدوات الصور",
+    "pdf": "أدوات PDF",
+    "security": "أدوات الأمان",
+    "text": "أدوات النص",
+    "educational": "أدوات تعليمية",
+    "all_tools": "جميع الأدوات",
+    "blog": "المدونة",
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "popular": "الأدوات الشائعة",
+    "categories": "الفئات",
+    "imageTools": "أدوات الصور",
+    "pdfTools": "أدوات PDF",
+    "codeTools": "أدوات البرمجة",
+    "textTools": "أدوات النص",
+    "designTools": "أدوات التصميم",
+    "securityTools": "أدوات الأمان",
+    "about_us": "من نحن",
+    "privacy_policy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام"
+  }
+}

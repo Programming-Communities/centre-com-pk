@@ -1,0 +1,23 @@
+{
+  "title": "Image Tools Masterclass",
+  "description": "Learn image editing, compression, conversion, and background removal",
+  "duration": "15 minutes",
+  "author": "Design Expert",
+  "difficulty": "Intermediate",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Upload your image to the selected tool",
+    "Adjust settings based on your needs",
+    "Preview changes before applying",
+    "Download processed image",
+    "Compare before and after results"
+  ],
+  "tips": [
+    "Use high-resolution images for better results",
+    "Experiment with different settings",
+    "Save presets for recurring tasks"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "menu": {
+    "home": "Home",
+    "tools": "Tools",
+    "calculators": "Calculators",
+    "code": "Code Tools",
+    "design": "Design Tools",
+    "image": "Image Tools",
+    "pdf": "PDF Tools",
+    "security": "Security Tools",
+    "text": "Text Tools",
+    "educational": "Educational Tools",
+    "all_tools": "All Tools",
+    "blog": "Blog",
+    "about": "About",
+    "contact": "Contact",
+    "popular": "Popular Tools",
+    "categories": "Categories",
+    "imageTools": "Image Tools",
+    "pdfTools": "PDF Tools",
+    "codeTools": "Code Tools",
+    "textTools": "Text Tools",
+    "designTools": "Design Tools",
+    "securityTools": "Security Tools",
+    "about_us": "About Us",
+    "privacy_policy": "Privacy Policy",
+    "terms": "Terms"
+  }
+}

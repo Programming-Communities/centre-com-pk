@@ -1,0 +1,1196 @@
+/* 
+  centers.pk - Responsive CSS Utilities
+  Location: components/css/responsive.css
+  Import in: app/globals.css
+  Last Updated: 2026 - Complete Device Coverage 0px to 8192px
+*/
+
+/* ==========================================================================
+   CSS Custom Properties (Variables) for Breakpoints
+   ========================================================================== */
+:root {
+  /* Base */
+  --bp-all: 0px;
+  
+  /* Legacy/Old Phones (0-279px) */
+  --bp-mini: 160px;
+  --bp-nano: 200px;
+  --bp-pico: 240px;
+  
+  /* Small Phones (280-359px) */
+  --bp-fold: 280px;
+  --bp-watch: 320px;
+  --bp-moto: 340px;
+  
+  /* Android Small (360-374px) */
+  --bp-android-xs: 360px;
+  
+  /* iPhone SE & Medium (375-389px) */
+  --bp-iphone-se: 375px;
+  --bp-android-sm: 375px;
+  
+  /* iPhone 12-16 Series (390-413px) */
+  --bp-iphone-12: 390px;
+  --bp-pixel: 393px;
+  --bp-android-md: 414px;
+  
+  /* Large Phones (414-479px) */
+  --bp-iphone-plus: 430px;
+  --bp-android-lg: 440px;
+  --bp-phablet: 460px;
+  
+  /* Phone Landscape (480-639px) */
+  --bp-mobile-landscape: 480px;
+  --bp-sm-landscape: 520px;
+  --bp-surface-duo: 540px;
+  --bp-md-landscape: 568px;
+  --bp-lg-landscape: 600px;
+  --bp-kindle: 600px;
+  
+  /* Small Tablets (640-767px) */
+  --bp-tablet-xs: 640px;
+  --bp-nexus: 712px;
+  
+  /* Medium Tablets (768-833px) */
+  --bp-ipad-mini: 768px;
+  --bp-ipad: 768px;
+  --bp-tablet: 768px;
+  --bp-ipad-air: 820px;
+  --bp-ipad-pro-11: 834px;
+  
+  /* Large Tablets & Foldables (896-1023px) */
+  --bp-fold-open: 896px;
+  --bp-tablet-lg: 900px;
+  --bp-surface: 912px;
+  
+  /* iPad Pro & Small Laptops (1024-1279px) */
+  --bp-ipad-pro-129: 1024px;
+  --bp-desktop-sm: 1024px;
+  --bp-laptop-xs: 1080px;
+  --bp-surface-pro: 1152px;
+  --bp-desktop: 1200px;
+  --bp-laptop-sm: 1280px;
+  
+  /* Standard Laptops (1280-1439px) */
+  --bp-laptop: 1366px;
+  --bp-laptop-md: 1400px;
+  
+  /* Large Laptops (1440-1679px) */
+  --bp-laptop-lg: 1440px;
+  --bp-macbook-16: 1536px;
+  --bp-desktop-md: 1600px;
+  
+  /* HD+ Desktops (1680-1919px) */
+  --bp-desktop-hd: 1680px;
+  --bp-desktop-lg: 1800px;
+  
+  /* Full HD Desktops (1920-2047px) */
+  --bp-desktop-fhd: 1920px;
+  
+  /* 2K Displays (2048-2559px) */
+  --bp-desktop-2k: 2048px;
+  --bp-imac-4k: 2160px;
+  
+  /* 4K Displays (2560-3439px) */
+  --bp-desktop-4k: 2560px;
+  --bp-imac-5k: 2880px;
+  --bp-cinema-2k: 3200px;
+  
+  /* Ultrawide (3440-3839px) */
+  --bp-ultrawide: 3440px;
+  
+  /* 4K+ Cinema (3840-7679px) */
+  --bp-cinema: 3840px;
+  --bp-pro-xdr: 4096px;
+  --bp-desktop-5k: 5120px;
+  --bp-desktop-6k: 5760px;
+  
+  /* 8K+ Displays (7680px+) */
+  --bp-desktop-8k: 7680px;
+  --bp-desktop-10k: 8192px;
+}
+
+/* ==========================================================================
+   1. Responsive Container System (Complete 0px to 8192px)
+   ========================================================================== */
+.responsive-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Base (0px - 159px) - Tiny legacy devices */
+@media (max-width: 159px) {
+  .responsive-container {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  html { font-size: 10px; }
+}
+
+/* Mini (160px - 199px) - Old Java phones */
+@media (min-width: 160px) and (max-width: 199px) {
+  .responsive-container {
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+  }
+  html { font-size: 11px; }
+}
+
+/* Nano (200px - 239px) - BlackBerry, Nokia */
+@media (min-width: 200px) and (max-width: 239px) {
+  .responsive-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  html { font-size: 11px; }
+}
+
+/* Pico (240px - 279px) - Old Nokia/Sony */
+@media (min-width: 240px) and (max-width: 279px) {
+  .responsive-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  html { font-size: 12px; }
+}
+
+/* Galaxy Fold & Smallest (280px - 319px) */
+@media (min-width: 280px) and (max-width: 319px) {
+  .responsive-container {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+  }
+  html { font-size: 12px; }
+}
+
+/* Apple Watch & iPhone SE 1st Gen (320px - 339px) */
+@media (min-width: 320px) and (max-width: 339px) {
+  .responsive-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  html { font-size: 13px; }
+}
+
+/* Moto (340px - 359px) */
+@media (min-width: 340px) and (max-width: 359px) {
+  .responsive-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  html { font-size: 13px; }
+}
+
+/* Small Android (360px - 374px) */
+@media (min-width: 360px) and (max-width: 374px) {
+  .responsive-container {
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+  html { font-size: 14px; }
+}
+
+/* iPhone SE & Medium Android (375px - 389px) */
+@media (min-width: 375px) and (max-width: 389px) {
+  .responsive-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  html { font-size: 15px; }
+}
+
+/* iPhone 12/13/14/15/16 & Google Pixel (390px - 413px) */
+@media (min-width: 390px) and (max-width: 413px) {
+  .responsive-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Android MD (414px - 429px) */
+@media (min-width: 414px) and (max-width: 429px) {
+  .responsive-container {
+    padding-left: 1.125rem;
+    padding-right: 1.125rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* iPhone Plus/Pro Max (430px - 439px) */
+@media (min-width: 430px) and (max-width: 439px) {
+  .responsive-container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Android LG (440px - 459px) */
+@media (min-width: 440px) and (max-width: 459px) {
+  .responsive-container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Phablet (460px - 479px) */
+@media (min-width: 460px) and (max-width: 479px) {
+  .responsive-container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Mobile Landscape (480px - 519px) */
+@media (min-width: 480px) and (max-width: 519px) {
+  .responsive-container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Small Landscape (520px - 539px) */
+@media (min-width: 520px) and (max-width: 539px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Surface Duo (540px - 567px) */
+@media (min-width: 540px) and (max-width: 567px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Medium Landscape (568px - 599px) */
+@media (min-width: 568px) and (max-width: 599px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Large Landscape & Kindle (600px - 639px) */
+@media (min-width: 600px) and (max-width: 639px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  html { font-size: 16px; }
+}
+
+/* Tablet XS (640px - 711px) */
+@media (min-width: 640px) and (max-width: 711px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 600px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Nexus (712px - 767px) */
+@media (min-width: 712px) and (max-width: 767px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 680px;
+  }
+  html { font-size: 16px; }
+}
+
+/* iPad Mini & Small Tablets (768px - 819px) */
+@media (min-width: 768px) and (max-width: 819px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 720px;
+  }
+  html { font-size: 16px; }
+}
+
+/* iPad Air (820px - 833px) */
+@media (min-width: 820px) and (max-width: 833px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 800px;
+  }
+  html { font-size: 16px; }
+}
+
+/* iPad Pro 11" (834px - 895px) */
+@media (min-width: 834px) and (max-width: 895px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 800px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Fold Open (896px - 899px) */
+@media (min-width: 896px) and (max-width: 899px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 860px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Tablet LG (900px - 911px) */
+@media (min-width: 900px) and (max-width: 911px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 880px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Surface Pro Portrait (912px - 1023px) */
+@media (min-width: 912px) and (max-width: 1023px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 900px;
+  }
+  html { font-size: 16px; }
+}
+
+/* iPad Pro 12.9" & Small Desktop (1024px - 1079px) */
+@media (min-width: 1024px) and (max-width: 1079px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1000px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Laptop XS (1080px - 1151px) */
+@media (min-width: 1080px) and (max-width: 1151px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1040px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Surface Pro Landscape (1152px - 1199px) */
+@media (min-width: 1152px) and (max-width: 1199px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1120px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Desktop (1200px - 1279px) */
+@media (min-width: 1200px) and (max-width: 1279px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1160px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Laptop SM (1280px - 1365px) */
+@media (min-width: 1280px) and (max-width: 1365px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1240px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Laptop (1366px - 1399px) */
+@media (min-width: 1366px) and (max-width: 1399px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1320px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Laptop MD (1400px - 1439px) */
+@media (min-width: 1400px) and (max-width: 1439px) {
+  .responsive-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    max-width: 1360px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Laptop LG (1440px - 1535px) */
+@media (min-width: 1440px) and (max-width: 1535px) {
+  .responsive-container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    max-width: 1400px;
+  }
+  html { font-size: 16px; }
+}
+
+/* MacBook 16" (1536px - 1599px) */
+@media (min-width: 1536px) and (max-width: 1599px) {
+  .responsive-container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    max-width: 1480px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Desktop MD (1600px - 1679px) */
+@media (min-width: 1600px) and (max-width: 1679px) {
+  .responsive-container {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    max-width: 1540px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Desktop HD (1680px - 1799px) */
+@media (min-width: 1680px) and (max-width: 1799px) {
+  .responsive-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1620px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Desktop LG (1800px - 1919px) */
+@media (min-width: 1800px) and (max-width: 1919px) {
+  .responsive-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1740px;
+  }
+  html { font-size: 16px; }
+}
+
+/* Full HD Desktop (1920px - 2047px) */
+@media (min-width: 1920px) and (max-width: 2047px) {
+  .responsive-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1860px;
+  }
+  html { font-size: 16px; }
+}
+
+/* 2K Desktop (2048px - 2159px) */
+@media (min-width: 2048px) and (max-width: 2159px) {
+  .responsive-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+    max-width: 2000px;
+  }
+  html { font-size: 18px; }
+}
+
+/* iMac 4K (2160px - 2559px) */
+@media (min-width: 2160px) and (max-width: 2559px) {
+  .responsive-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+    max-width: 2100px;
+  }
+  html { font-size: 18px; }
+}
+
+/* 4K Desktop (2560px - 2879px) */
+@media (min-width: 2560px) and (max-width: 2879px) {
+  .responsive-container {
+    padding-left: 5rem;
+    padding-right: 5rem;
+    max-width: 2480px;
+  }
+  html { font-size: 18px; }
+}
+
+/* iMac 5K (2880px - 3199px) */
+@media (min-width: 2880px) and (max-width: 3199px) {
+  .responsive-container {
+    padding-left: 5rem;
+    padding-right: 5rem;
+    max-width: 2800px;
+  }
+  html { font-size: 18px; }
+}
+
+/* Cinema 2K (3200px - 3439px) */
+@media (min-width: 3200px) and (max-width: 3439px) {
+  .responsive-container {
+    padding-left: 6rem;
+    padding-right: 6rem;
+    max-width: 3100px;
+  }
+  html { font-size: 20px; }
+}
+
+/* Ultrawide (3440px - 3839px) */
+@media (min-width: 3440px) and (max-width: 3839px) {
+  .responsive-container {
+    padding-left: 6rem;
+    padding-right: 6rem;
+    max-width: 3340px;
+  }
+  html { font-size: 20px; }
+}
+
+/* Cinema 4K (3840px - 4095px) */
+@media (min-width: 3840px) and (max-width: 4095px) {
+  .responsive-container {
+    padding-left: 8rem;
+    padding-right: 8rem;
+    max-width: 3700px;
+  }
+  html { font-size: 22px; }
+}
+
+/* Pro Display XDR (4096px - 5119px) */
+@media (min-width: 4096px) and (max-width: 5119px) {
+  .responsive-container {
+    padding-left: 8rem;
+    padding-right: 8rem;
+    max-width: 4000px;
+  }
+  html { font-size: 22px; }
+}
+
+/* 5K Desktop (5120px - 5759px) */
+@media (min-width: 5120px) and (max-width: 5759px) {
+  .responsive-container {
+    padding-left: 10rem;
+    padding-right: 10rem;
+    max-width: 5000px;
+  }
+  html { font-size: 24px; }
+}
+
+/* 6K Desktop (5760px - 7679px) */
+@media (min-width: 5760px) and (max-width: 7679px) {
+  .responsive-container {
+    padding-left: 10rem;
+    padding-right: 10rem;
+    max-width: 5600px;
+  }
+  html { font-size: 24px; }
+}
+
+/* 8K Displays (7680px - 8191px) */
+@media (min-width: 7680px) and (max-width: 8191px) {
+  .responsive-container {
+    padding-left: 12rem;
+    padding-right: 12rem;
+    max-width: 90%;
+  }
+  html { font-size: 26px; }
+}
+
+/* 10K+ (8192px+) */
+@media (min-width: 8192px) {
+  .responsive-container {
+    padding-left: 14rem;
+    padding-right: 14rem;
+    max-width: 90%;
+  }
+  html { font-size: 28px; }
+}
+
+/* ==========================================================================
+   2. Responsive Grid System (Complete)
+   ========================================================================== */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+/* 2 columns from 360px */
+@media (min-width: 360px) {
+  .responsive-grid-2-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 2 columns from 480px */
+@media (min-width: 480px) {
+  .responsive-grid-2-xs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3 columns from 640px */
+@media (min-width: 640px) {
+  .responsive-grid-3-sm {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 2 columns from tablet */
+@media (min-width: 768px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .responsive-grid-3-xs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 4 columns from 1024px */
+@media (min-width: 1024px) {
+  .responsive-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .responsive-grid-4-sm {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 4 columns from laptop */
+@media (min-width: 1280px) {
+  .responsive-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .responsive-grid-auto {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* 5 columns from desktop HD */
+@media (min-width: 1680px) {
+  .responsive-grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* 6 columns from Full HD */
+@media (min-width: 1920px) {
+  .responsive-grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* 8 columns from 4K */
+@media (min-width: 2560px) {
+  .responsive-grid-8 {
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+
+/* ==========================================================================
+   3. Responsive Visibility Classes
+   ========================================================================== */
+
+/* Hide on specific breakpoints */
+.hide-on-galaxy-fold { display: none !important; }
+.hide-on-apple-watch { display: none !important; }
+.hide-on-iphone-se { display: none !important; }
+.hide-on-iphone-12 { display: none !important; }
+.hide-on-android { display: none !important; }
+.hide-on-surface-duo { display: none !important; }
+.hide-on-tablet { display: none !important; }
+.hide-on-laptop { display: none !important; }
+.hide-on-desktop { display: none !important; }
+.hide-on-4k { display: none !important; }
+
+/* Show only on specific breakpoints */
+@media (max-width: 279px) {
+  .show-only-on-mini-nano-pico { display: block !important; }
+}
+
+@media (min-width: 280px) and (max-width: 319px) {
+  .show-only-on-galaxy-fold { display: block !important; }
+}
+
+@media (min-width: 320px) and (max-width: 359px) {
+  .show-only-on-apple-watch { display: block !important; }
+}
+
+@media (min-width: 360px) and (max-width: 374px) {
+  .show-only-on-android-small { display: block !important; }
+}
+
+@media (min-width: 375px) and (max-width: 389px) {
+  .show-only-on-iphone-se { display: block !important; }
+}
+
+@media (min-width: 390px) and (max-width: 413px) {
+  .show-only-on-iphone-12 { display: block !important; }
+}
+
+@media (min-width: 414px) and (max-width: 429px) {
+  .show-only-on-android-md { display: block !important; }
+}
+
+@media (min-width: 430px) and (max-width: 439px) {
+  .show-only-on-iphone-plus { display: block !important; }
+}
+
+@media (min-width: 440px) and (max-width: 479px) {
+  .show-only-on-android-lg { display: block !important; }
+}
+
+@media (min-width: 480px) and (max-width: 539px) {
+  .show-only-on-mobile-landscape { display: block !important; }
+}
+
+@media (min-width: 540px) and (max-width: 599px) {
+  .show-only-on-surface-duo { display: block !important; }
+}
+
+@media (min-width: 600px) and (max-width: 639px) {
+  .show-only-on-kindle { display: block !important; }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .show-only-on-tablet-xs { display: block !important; }
+}
+
+@media (min-width: 768px) and (max-width: 819px) {
+  .show-only-on-ipad-mini { display: block !important; }
+}
+
+@media (min-width: 820px) and (max-width: 833px) {
+  .show-only-on-ipad-air { display: block !important; }
+}
+
+@media (min-width: 834px) and (max-width: 895px) {
+  .show-only-on-ipad-pro-11 { display: block !important; }
+}
+
+@media (min-width: 896px) and (max-width: 911px) {
+  .show-only-on-fold-open { display: block !important; }
+}
+
+@media (min-width: 912px) and (max-width: 1023px) {
+  .show-only-on-surface { display: block !important; }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .show-only-on-ipad-pro-129 { display: block !important; }
+}
+
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .show-only-on-laptop { display: block !important; }
+}
+
+@media (min-width: 1440px) and (max-width: 1679px) {
+  .show-only-on-laptop-lg { display: block !important; }
+}
+
+@media (min-width: 1680px) and (max-width: 1919px) {
+  .show-only-on-desktop-hd { display: block !important; }
+}
+
+@media (min-width: 1920px) and (max-width: 2047px) {
+  .show-only-on-desktop-fhd { display: block !important; }
+}
+
+@media (min-width: 2048px) and (max-width: 2559px) {
+  .show-only-on-desktop-2k { display: block !important; }
+}
+
+@media (min-width: 2560px) and (max-width: 3839px) {
+  .show-only-on-desktop-4k { display: block !important; }
+}
+
+@media (min-width: 3840px) and (max-width: 5119px) {
+  .show-only-on-cinema { display: block !important; }
+}
+
+@media (min-width: 5120px) {
+  .show-only-on-5k-plus { display: block !important; }
+}
+
+/* Mobile visibility */
+.mobile-only { display: block !important; }
+.tablet-only { display: none !important; }
+.tablet-up { display: none !important; }
+.desktop-up { display: none !important; }
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .mobile-only { display: none !important; }
+  .mobile-landscape-only { display: block !important; }
+}
+
+@media (min-width: 768px) {
+  .mobile-only { display: none !important; }
+  .tablet-up { display: block !important; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .tablet-only { display: block !important; }
+}
+
+@media (min-width: 1024px) {
+  .tablet-only { display: none !important; }
+}
+
+@media (min-width: 1280px) {
+  .tablet-up { display: none !important; }
+  .desktop-up { display: block !important; }
+}
+
+/* ==========================================================================
+   4. Responsive Spacing Utilities
+   ========================================================================== */
+.p-responsive {
+  padding: 0.5rem;
+}
+
+@media (min-width: 360px) {
+  .p-responsive { padding: 0.75rem; }
+}
+
+@media (min-width: 480px) {
+  .p-responsive { padding: 1rem; }
+}
+
+@media (min-width: 768px) {
+  .p-responsive { padding: 1.5rem; }
+}
+
+@media (min-width: 1280px) {
+  .p-responsive { padding: 2rem; }
+}
+
+@media (min-width: 1920px) {
+  .p-responsive { padding: 2.5rem; }
+}
+
+.m-responsive {
+  margin: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .m-responsive { margin: 0.5rem; }
+}
+
+@media (min-width: 768px) {
+  .m-responsive { margin: 1rem; }
+}
+
+@media (min-width: 1280px) {
+  .m-responsive { margin: 1.5rem; }
+}
+
+/* ==========================================================================
+   5. Responsive Typography
+   ========================================================================== */
+.responsive-text {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 360px) {
+  .responsive-text { font-size: 0.875rem; }
+}
+
+@media (min-width: 375px) {
+  .responsive-text { font-size: 1rem; }
+}
+
+@media (min-width: 768px) {
+  .responsive-text { font-size: 1.125rem; }
+}
+
+@media (min-width: 1280px) {
+  .responsive-text { font-size: 1.25rem; }
+}
+
+.responsive-heading-1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+@media (min-width: 480px) {
+  .responsive-heading-1 { font-size: 1.75rem; }
+}
+
+@media (min-width: 768px) {
+  .responsive-heading-1 { font-size: 2.25rem; }
+}
+
+@media (min-width: 1280px) {
+  .responsive-heading-1 { font-size: 3rem; }
+}
+
+@media (min-width: 1920px) {
+  .responsive-heading-1 { font-size: 3.5rem; }
+}
+
+/* ==========================================================================
+   6. Responsive Flexbox Utilities
+   ========================================================================== */
+.responsive-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .responsive-flex-row-sm {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-flex-row {
+    flex-direction: row;
+  }
+  .responsive-flex-wrap {
+    flex-wrap: wrap;
+  }
+}
+
+.gap-responsive {
+  gap: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .gap-responsive { gap: 0.5rem; }
+}
+
+@media (min-width: 768px) {
+  .gap-responsive { gap: 1rem; }
+}
+
+@media (min-width: 1280px) {
+  .gap-responsive { gap: 1.5rem; }
+}
+
+/* ==========================================================================
+   7. Responsive Image & Media
+   ========================================================================== */
+.responsive-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.responsive-cover-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+@media (min-width: 480px) {
+  .responsive-cover-image { height: 200px; }
+}
+
+@media (min-width: 768px) {
+  .responsive-cover-image { height: 300px; }
+}
+
+@media (min-width: 1280px) {
+  .responsive-cover-image { height: 400px; }
+}
+
+/* ==========================================================================
+   8. Responsive Navigation & Menus
+   ========================================================================== */
+.mobile-menu-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--background);
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.mobile-menu-container.active {
+  transform: translateX(0);
+}
+
+.desktop-menu {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktop-menu {
+    display: flex;
+  }
+  .mobile-menu-container {
+    display: none;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .mobile-menu-container {
+  transform: translateX(100%);
+}
+
+[dir="rtl"] .mobile-menu-container.active {
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   9. Android Device Specific Optimizations
+   ========================================================================== */
+
+/* Small Android (360px - 374px) */
+@media (min-width: 360px) and (max-width: 374px) {
+  .android-sm-optimized {
+    font-size: 14px;
+  }
+  .android-card {
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+  }
+}
+
+/* Medium Android (375px - 389px) */
+@media (min-width: 375px) and (max-width: 389px) {
+  .android-md-optimized {
+    font-size: 15px;
+  }
+}
+
+/* Large Android (390px - 429px) */
+@media (min-width: 390px) and (max-width: 429px) {
+  .android-lg-optimized {
+    font-size: 16px;
+  }
+}
+
+/* Samsung Galaxy S Series */
+@media (min-width: 360px) and (max-width: 440px) {
+  .samsung-optimized {
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Samsung Galaxy Fold (Folded) */
+@media (max-width: 280px) {
+  .galaxy-fold-optimized {
+    font-size: 12px;
+    padding: 0.25rem;
+  }
+}
+
+/* Google Pixel Series */
+@media (min-width: 393px) and (max-width: 412px) {
+  .pixel-optimized {
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ==========================================================================
+   10. iOS Device Specific Optimizations
+   ========================================================================== */
+
+/* iPhone SE (1st & 2nd Gen) */
+@media (min-width: 320px) and (max-width: 375px) {
+  .iphone-se-optimized {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* iPhone 12/13/14/15/16 Series */
+@media (min-width: 390px) and (max-width: 430px) {
+  .iphone-notch-optimized {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* iPhone Plus/Pro Max */
+@media (min-width: 430px) and (max-width: 440px) {
+  .iphone-plus-optimized {
+    max-width: 430px;
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================================================
+   11. Tablet Device Specific Optimizations
+   ========================================================================== */
+
+/* iPad Mini */
+@media (min-width: 768px) and (max-width: 820px) {
+  .ipad-mini-optimized {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+}
+
+/* iPad Air & iPad Pro 11" */
+@media (min-width: 820px) and (max-width: 834px) {
+  .ipad-air-optimized {
+    padding: 1rem 2rem;
+  }
+}
+
+/* iPad Pro 12.9" */
+@media (min-width: 1024px) and (max-width: 1024px) {
+  .ipad-pro-optimized {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+}
+
+/* ==========================================================================
+   12. Print Styles
+   ========================================================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .responsive-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  body {
+    font-size: 12pt;
+    background: white;
+    color: black;
+  }
+}
+
+/* ==========================================================================
+   13. Performance Optimizations
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Hardware acceleration for animations */
+.transform-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform;
+}

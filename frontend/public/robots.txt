@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+User-agent: Yeti
+Allow: /
+
+Sitemap: https://www.centre.com.pk/sitemap.xml
+
+Host: https://www.centre.com.pk

@@ -1,0 +1,18 @@
+# ============================================================
+# Centers.pk Redirect Rules for Cloudflare Pages
+# ============================================================
+
+# Fix /en/en/ duplicate language paths
+/en/en            /en           301
+/en/en/*          /en/:splat    301
+
+# Fix other duplicate language paths
+/ur/ur            /ur           301
+/ur/ur/*          /ur/:splat    301
+/hi/hi            /hi           301
+/hi/hi/*          /hi/:splat    301
+/ar/ar            /ar           301
+/ar/ar/*          /ar/:splat    301
+
+# Root redirect
+/                 /en           301

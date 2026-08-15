@@ -1,0 +1,23 @@
+{
+  "title": "Complete Calculator Tools Guide",
+  "description": "Master all calculator tools: Age, BMI, Loan, Currency converters",
+  "duration": "10 minutes",
+  "author": "Math Expert",
+  "difficulty": "Beginner",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Select the calculator tool you need",
+    "Enter required values in input fields",
+    "Adjust settings if available",
+    "Click calculate button",
+    "View and copy results"
+  ],
+  "tips": [
+    "Use keyboard shortcuts for faster input",
+    "Save common calculations",
+    "Check formulas used in help section"
+  ]
+}

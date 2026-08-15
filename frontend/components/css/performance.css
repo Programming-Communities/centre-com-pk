@@ -1,0 +1,72 @@
+/* Create: components/css/performance.css */
+
+/* Image Optimization */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Use modern formats with picture element in your components */
+.picture-wrapper {
+  position: relative;
+}
+
+/* Lazy loading */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
+}
+
+/* Device-specific optimizations */
+@media (max-width: 767px) {
+  /* Mobile optimizations */
+  .heavy-component {
+    display: none;
+  }
+  
+  .mobile-hidden {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* Tablet optimizations */
+  .tablet-reduced-quality {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* Desktop optimizations */
+  .enable-webgl {
+    /* WebGL styles */
+  }
+  
+  .enable-complex-animations {
+    animation-duration: 1s;
+    animation-timing-function: ease;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .retina-image {
+    /* Retina optimization */
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Centre.com.pk</string>
+    <string name="title_activity_main">Centre.com.pk</string>
+    <string name="package_name">com.centre.pk</string>
+    <string name="custom_url_scheme">com.centre.pk</string>
+</resources>

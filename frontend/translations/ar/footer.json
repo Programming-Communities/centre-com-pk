@@ -1,0 +1,61 @@
+{
+  "popular_tools": "الأدوات الشائعة",
+  "categories_title": "الفئات",
+  "company": "الشركة",
+  "connect": "اتصل",
+  "follow": "تابع للتحديثات",
+  "sitemap": "خريطة الموقع",
+  "robots": "الروبوتات",
+  "operational": "نشط",
+  "footer_note": "أدوات مجانية عبر الإنترنت للمطورين والمصممين والمحترفين.",
+  "tools_count": "أدوات",
+  "free": "مجاني",
+  
+  "status": {
+    "free": "مجاني",
+    "no_login": "بدون تسجيل",
+    "apps": "تطبيقات",
+    "operational": "نشط"
+  },
+  
+  "footer": {
+    "description": "أدوات مجانية عبر الإنترنت للمطورين والمصممين والمحترفين."
+  },
+  
+  "action": {
+    "sitemap": "خريطة الموقع",
+    "robots": "الروبوتات"
+  },
+  
+  "popular": {
+    "image_compressor": "ضاغط الصور",
+    "pdf_merger": "دمج PDF",
+    "qr_generator": "مولد رمز QR",
+    "password_generator": "مولد كلمات المرور",
+    "age_calculator": "حاسبة العمر",
+    "word_counter": "عداد الكلمات"
+  },
+  
+  "quick": {
+    "all_tools": "جميع الأدوات",
+    "image_tools": "أدوات الصور",
+    "pdf_tools": "أدوات PDF",
+    "calculators": "الآلات الحاسبة",
+    "code_tools": "أدوات البرمجة",
+    "security_tools": "أدوات الأمان"
+  },
+  
+  "company_links": {
+    "about": "من نحن",
+    "contact": "اتصل بنا",
+    "blog": "المدونة",
+    "privacy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام"
+  },
+  
+  "credit": {
+    "by": "بواسطة",
+    "made": "صنع بواسطة",
+    "communities": "كميونيتيز دوت باكستان"
+  }
+}

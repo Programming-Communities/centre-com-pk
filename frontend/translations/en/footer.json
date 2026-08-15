@@ -1,0 +1,61 @@
+{
+  "popular_tools": "Popular Tools",
+  "categories_title": "Categories",
+  "company": "Company",
+  "connect": "Connect",
+  "follow": "Follow for updates",
+  "sitemap": "Sitemap",
+  "robots": "Robots",
+  "operational": "Operational",
+  "footer_note": "Free online tools for developers, designers, and professionals.",
+  "tools_count": "Tools",
+  "free": "Free",
+  
+  "status": {
+    "free": "Free",
+    "no_login": "No Login",
+    "apps": "Apps",
+    "operational": "Operational"
+  },
+  
+  "footer": {
+    "description": "Free online tools for developers, designers, and professionals."
+  },
+  
+  "action": {
+    "sitemap": "Sitemap",
+    "robots": "Robots"
+  },
+  
+  "popular": {
+    "image_compressor": "Image Compressor",
+    "pdf_merger": "PDF Merger",
+    "qr_generator": "QR Code Generator",
+    "password_generator": "Password Generator",
+    "age_calculator": "Age Calculator",
+    "word_counter": "Word Counter"
+  },
+  
+  "quick": {
+    "all_tools": "All Tools",
+    "image_tools": "Image Tools",
+    "pdf_tools": "PDF Tools",
+    "calculators": "Calculators",
+    "code_tools": "Code Tools",
+    "security_tools": "Security Tools"
+  },
+  
+  "company_links": {
+    "about": "About Us",
+    "contact": "Contact",
+    "blog": "Blog",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  
+  "credit": {
+    "by": "Credit by",
+    "made": "Made by",
+    "communities": "Communities.pk"
+  }
+}

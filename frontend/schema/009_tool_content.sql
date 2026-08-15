@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS tool_content (
+  id SERIAL PRIMARY KEY,
+  tool_slug TEXT NOT NULL,
+  category TEXT NOT NULL,
+  lang TEXT DEFAULT 'en',
+  title TEXT NOT NULL,
+  subtitle TEXT,
+  introduction TEXT,
+  how_to_use TEXT,
+  features TEXT,
+  use_cases TEXT,
+  faqs TEXT,
+  comparison_text TEXT,
+  seo_keywords TEXT,
+  related_blog_ids TEXT,
+  status TEXT DEFAULT 'draft',
+  author_id INTEGER REFERENCES users(id),
+  view_count INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  UNIQUE(tool_slug, lang)
+);

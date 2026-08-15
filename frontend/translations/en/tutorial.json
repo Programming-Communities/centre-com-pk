@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "title": "Learn How to Use Our Tools",
+    "description": "Step-by-step tutorials, video guides, and documentation to help you master all our free online tools",
+    "browse_button": "Browse Tutorials",
+    "watch_button": "Watch Featured Video"
+  },
+  "featured": {
+    "section_title": "Featured Tutorial",
+    "section_description": "Start with our most popular tutorial",
+    "title": "Getting Started: Your First 10 Minutes",
+    "description": "Quick overview of how to use Centre.com.pk tools effectively",
+    "duration": "10:25",
+    "views": "1.2K views",
+    "upload_date": "2 days ago"
+  },
+  "tutorials": {
+    "section_title": "Browse All Tutorials",
+    "section_description": "Organized by category and difficulty level. Start with beginner tutorials and progress to advanced."
+  },
+  "categories": {
+    "platform": "Platform Guide",
+    "calculators": "Calculators",
+    "image_tools": "Image Tools",
+    "pdf_tools": "PDF Tools",
+    "security_tools": "Security Tools",
+    "code_tools": "Code Tools"
+  },
+  "levels": {
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "steps": "steps",
+  "start_tutorial": "Start Tutorial",
+  "cta": {
+    "title": "Need Help with a Specific Tool?",
+    "description": "Can't find the tutorial you need? Contact our support team or suggest a tutorial topic.",
+    "contact_button": "Contact Support",
+    "suggest_button": "Suggest Tutorial Topic"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Are the tutorials free?",
+    "a1": "Yes, all tutorials are completely free, just like our tools. No registration or payment required.",
+    "q2": "Do I need to install any software?",
+    "a2": "No, all tutorials use our web-based tools. You only need a modern web browser.",
+    "q3": "Can I download the tutorials?",
+    "a3": "Currently, tutorials are available online. We're working on downloadable PDF versions.",
+    "q4": "How often are new tutorials added?",
+    "a4": "We add new tutorials weekly, especially for new tools and feature updates.",
+    "q5": "Can I request a specific tutorial?",
+    "a5": "Yes! Use our 'Suggest Tutorial Topic' button above to request specific tutorials.",
+    "q6": "Are the tutorials available in other languages?",
+    "a6": "Currently available in English. We plan to add Urdu and other languages soon."
+  }
+}

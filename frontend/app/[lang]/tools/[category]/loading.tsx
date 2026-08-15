@@ -1,0 +1,1 @@
+import { CardSkeleton } from '@/components/skeletons'; export default function Loading() { return (<div className='container mx-auto px-4 py-8'><div className='mb-8 animate-pulse'><div className='h-10 bg-border rounded w-80 mb-4'/><div className='h-4 bg-border rounded w-full max-w-2xl'/></div><CardSkeleton count={8} columns={4}/></div>); }

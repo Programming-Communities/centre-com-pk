@@ -1,0 +1,23 @@
+{
+  "title": "Security Tools Best Practices",
+  "description": "Secure password generation, encryption, and data protection",
+  "duration": "8 minutes",
+  "author": "Security Expert",
+  "difficulty": "Advanced",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Select the security tool you need",
+    "Configure security parameters",
+    "Generate or process your data",
+    "Copy or save securely",
+    "Store results in a safe place"
+  ],
+  "tips": [
+    "Use different passwords for different sites",
+    "Enable two-factor authentication when available",
+    "Never share your passwords or encryption keys"
+  ]
+}

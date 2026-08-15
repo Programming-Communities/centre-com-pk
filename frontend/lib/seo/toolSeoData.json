@@ -1,0 +1,206 @@
+{
+  "age-calculator": {
+    "slug": "age-calculator",
+    "category": "calculators",
+    "title": "Age Calculator - Calculate Your Exact Age Online",
+    "description": "Free online age calculator. Calculate exact age in years, months, days, hours, and minutes. Perfect for birthday calculations, age verification, and date difference calculations.",
+    "keywords": ["age calculator", "birthday calculator", "date calculator", "age in days", "age calculator online", "how old am i"],
+    "faqs": [
+      {
+        "question": "How does the age calculator work?",
+        "answer": "Our age calculator uses precise date algorithms to calculate the exact difference between two dates. It considers leap years, month variations, and time zones to give accurate results in years, months, days, hours, and minutes."
+      },
+      {
+        "question": "Is this age calculator free to use?",
+        "answer": "Yes, our age calculator is completely free with no registration required. You can use it unlimited times for personal or professional purposes."
+      },
+      {
+        "question": "Can I calculate age in different formats?",
+        "answer": "Yes, our calculator shows age in multiple formats: total years, months, days, hours, and minutes. You can also see the exact number of days you have lived."
+      }
+    ],
+    "relatedTools": ["date-calculator", "loan-calculator", "bmi-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "bmi-calculator": {
+    "slug": "bmi-calculator",
+    "category": "calculators",
+    "title": "BMI Calculator - Calculate Body Mass Index Online",
+    "description": "Free BMI calculator to check your body mass index. Calculate BMI for adults and children. Get instant results with WHO classification and health recommendations.",
+    "keywords": ["bmi calculator", "body mass index", "bmi calculator online", "healthy weight", "bmi chart", "weight calculator"],
+    "faqs": [
+      {
+        "question": "What is BMI and why is it important?",
+        "answer": "BMI (Body Mass Index) is a measure of body fat based on height and weight. It helps assess health risks associated with underweight, overweight, and obesity."
+      },
+      {
+        "question": "Is this BMI calculator accurate?",
+        "answer": "Yes, our calculator uses the standard BMI formula (weight in kg ÷ height in m²) recommended by WHO. Results are shown with international classification standards."
+      }
+    ],
+    "relatedTools": ["age-calculator", "loan-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "currency-converter": {
+    "slug": "currency-converter",
+    "category": "calculators",
+    "title": "Currency Converter - Live Exchange Rates Calculator",
+    "description": "Free currency converter with live exchange rates. Convert between 150+ currencies with real-time data. Perfect for travelers, investors, and international businesses.",
+    "keywords": ["currency converter", "exchange rates", "forex calculator", "money converter", "live currency rates", "currency calculator"],
+    "faqs": [
+      {
+        "question": "How current are the exchange rates?",
+        "answer": "We update exchange rates every 5 minutes using reliable financial data sources. Rates are as current as possible for accurate conversions."
+      },
+      {
+        "question": "How many currencies are supported?",
+        "answer": "Our converter supports 150+ world currencies including USD, EUR, GBP, JPY, CNY, INR, AED, and more with real-time conversion."
+      }
+    ],
+    "relatedTools": ["unit-converter", "loan-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.9,
+    "changefreq": "daily",
+    "lastModified": "2024-12-07"
+  },
+  "date-calculator": {
+    "slug": "date-calculator",
+    "category": "calculators",
+    "title": "Date Calculator - Calculate Days Between Dates",
+    "description": "Free date calculator to calculate days between dates, add/subtract days, find weekdays, and countdown to events. Perfect for project planning and event management.",
+    "keywords": ["date calculator", "days calculator", "date difference", "add days to date", "working days calculator", "date counter"],
+    "faqs": [
+      {
+        "question": "What can I calculate with this tool?",
+        "answer": "You can calculate: days between dates, add/subtract days/weeks/months/years, find weekdays only, count business days, and calculate age from dates."
+      }
+    ],
+    "relatedTools": ["age-calculator", "loan-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "loan-calculator": {
+    "slug": "loan-calculator",
+    "category": "calculators",
+    "title": "Loan Calculator - EMI, Interest & Payment Calculator",
+    "description": "Free loan calculator to calculate EMI, interest rates, and payment schedules for home loans, car loans, personal loans, and business loans.",
+    "keywords": ["loan calculator", "emi calculator", "interest calculator", "home loan calculator", "car loan calculator", "mortgage calculator"],
+    "faqs": [
+      {
+        "question": "What types of loans can I calculate?",
+        "answer": "You can calculate: home loans, car loans, personal loans, education loans, business loans, and any type of fixed-rate installment loan."
+      },
+      {
+        "question": "How accurate are the calculations?",
+        "answer": "Our calculator uses standard financial formulas for EMI calculation: EMI = [P x R x (1+R)^N]/[(1+R)^N-1]. Results match bank calculations."
+      }
+    ],
+    "relatedTools": ["currency-converter", "percentage-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "percentage-calculator": {
+    "slug": "percentage-calculator",
+    "category": "calculators",
+    "title": "Percentage Calculator - Calculate % Increase/Decrease",
+    "description": "Free percentage calculator for all percentage calculations: increase/decrease, percentage of a number, percentage difference, and grade calculations.",
+    "keywords": ["percentage calculator", "percent calculator", "percentage increase", "percentage decrease", "calculate percentage", "percent difference"],
+    "faqs": [
+      {
+        "question": "What percentage calculations can I do?",
+        "answer": "You can calculate: percentage of a number, percentage increase/decrease, percentage difference, X is what percent of Y, and reverse percentages."
+      }
+    ],
+    "relatedTools": ["loan-calculator", "tip-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "tip-calculator": {
+    "slug": "tip-calculator",
+    "category": "calculators",
+    "title": "Tip Calculator - Calculate Restaurant Tips Easily",
+    "description": "Free tip calculator to calculate restaurant tips, split bills, and determine fair tips based on service quality. Perfect for dining out and service payments.",
+    "keywords": ["tip calculator", "restaurant tip calculator", "bill splitter", "gratuity calculator", "service tip calculator", "how much to tip"],
+    "faqs": [
+      {
+        "question": "How do I calculate a fair tip?",
+        "answer": "Enter your bill amount, select tip percentage (15%, 18%, 20% are standard), choose number of people to split, and get individual amounts instantly."
+      }
+    ],
+    "relatedTools": ["percentage-calculator", "loan-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.7,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "unit-converter": {
+    "slug": "unit-converter",
+    "category": "calculators",
+    "title": "Unit Converter - Convert Length, Weight, Temperature",
+    "description": "Free unit converter for all measurement units: length, weight, temperature, area, volume, speed, time, and data storage. Instant conversions with precision.",
+    "keywords": ["unit converter", "measurement converter", "length converter", "weight converter", "temperature converter", "metric converter"],
+    "faqs": [
+      {
+        "question": "What units can I convert?",
+        "answer": "You can convert: length (meters, feet, inches), weight (kg, lbs), temperature (C, F, K), area, volume, speed, time, data storage, and cooking measurements."
+      }
+    ],
+    "relatedTools": ["currency-converter", "percentage-calculator"],
+    "schemaType": "SoftwareApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "css-formatter": {
+    "slug": "css-formatter",
+    "category": "code-tools",
+    "title": "CSS Formatter - Beautify & Format CSS Code Online",
+    "description": "Free CSS formatter to beautify, minify, and validate CSS code. Fix indentation, remove whitespace, and optimize CSS for better performance and readability.",
+    "keywords": ["css formatter", "css beautifier", "css minifier", "css validator", "format css", "css prettifier", "css code formatter"],
+    "faqs": [
+      {
+        "question": "Why should I format my CSS code?",
+        "answer": "Formatted CSS is easier to read, debug, and maintain. Proper indentation and structure help in team collaboration and code review processes."
+      },
+      {
+        "question": "Can I minify CSS with this tool?",
+        "answer": "Yes, you can both beautify (format) and minify (compress) CSS. Minification removes whitespace and comments to reduce file size for production."
+      }
+    ],
+    "relatedTools": ["html-formatter", "javascript-formatter", "json-formatter"],
+    "schemaType": "WebApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  },
+  "html-formatter": {
+    "slug": "html-formatter",
+    "category": "code-tools",
+    "title": "HTML Formatter - Beautify HTML Code Online",
+    "description": "Free HTML formatter to clean, indent, and beautify HTML code. Fix messy HTML, improve readability, and prepare code for production deployment.",
+    "keywords": ["html formatter", "html beautifier", "html minifier", "format html", "html prettifier", "clean html code", "html validator"],
+    "faqs": [
+      {
+        "question": "What HTML features are supported?",
+        "answer": "Supports HTML5, fixes indentation, formats attributes, handles nested elements, and can minify HTML by removing whitespace and comments."
+      }
+    ],
+    "relatedTools": ["css-formatter", "javascript-formatter"],
+    "schemaType": "WebApplication",
+    "priority": 0.8,
+    "changefreq": "monthly",
+    "lastModified": "2024-12-07"
+  }
+}

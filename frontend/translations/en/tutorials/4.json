@@ -1,0 +1,23 @@
+{
+  "title": "PDF Tools Complete Tutorial",
+  "description": "Merge, split, compress, and convert PDF files like a pro",
+  "duration": "12 minutes",
+  "author": "Document Specialist",
+  "difficulty": "Intermediate",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Upload your PDF files",
+    "Select the operation you need",
+    "Configure options for your task",
+    "Process the files",
+    "Download the results"
+  ],
+  "tips": [
+    "Combine multiple operations for efficiency",
+    "Check file sizes before and after",
+    "Use batch processing for multiple files"
+  ]
+}

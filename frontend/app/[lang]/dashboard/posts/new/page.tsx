@@ -1,0 +1,1 @@
+import { Metadata } from 'next'; export const metadata: Metadata = { title: 'new - Centre.com.pk' }; export default function Page() { return <div style={{padding:40,textAlign:'center'}}><h1>new</h1><p>Coming soon</p></div>; }

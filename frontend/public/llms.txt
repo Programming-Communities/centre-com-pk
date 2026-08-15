@@ -1,0 +1,37 @@
+# Centers.pk - Free Online Tools Platform
+
+Centers.pk is a multi-language platform offering 53+ free online tools across 7 categories. Available in English, Urdu, Hindi, and Arabic.
+
+## Quick Links
+- [Home](https://www.centers.pk/en)
+- [All Tools](https://www.centers.pk/en/tools)
+- [Blog](https://www.centers.pk/en/blog)
+
+## Category Pages
+- [Calculators](https://www.centers.pk/en/tools/calculators)
+- [Code Tools](https://www.centers.pk/en/tools/code-tools)
+- [Image Tools](https://www.centers.pk/en/tools/image-tools)
+- [PDF Tools](https://www.centers.pk/en/tools/pdf-tools)
+- [Security Tools](https://www.centers.pk/en/tools/security-tools)
+- [Text Tools](https://www.centers.pk/en/tools/text-tools)
+- [Design Tools](https://www.centers.pk/en/tools/design-tools)
+
+## Language Versions
+- [English](https://www.centers.pk/en)
+- [Urdu](https://www.centers.pk/ur)
+- [Hindi](https://www.centers.pk/hi)
+- [Arabic](https://www.centers.pk/ar)
+
+## Popular Tools
+- [Age Calculator](https://www.centers.pk/en/tools/calculators/age-calculator)
+- [BMI Calculator](https://www.centers.pk/en/tools/calculators/bmi-calculator)
+- [Password Generator](https://www.centers.pk/en/tools/security-tools/password-generator)
+- [QR Code Generator](https://www.centers.pk/en/tools/code-tools/qr-code-generator)
+- [Image Compressor](https://www.centers.pk/en/tools/image-tools/image-compressor)
+- [PDF Merger](https://www.centers.pk/en/tools/pdf-tools/pdf-merger)
+
+## For AI Agents
+- Crawl: All pages under /en/, /ur/, /hi/, /ar/
+- Training: Allowed for non-commercial use
+- Sitemap: https://www.centers.pk/sitemap.xml
+- Last Updated: 2026-08-11

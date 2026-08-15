@@ -1,0 +1,18 @@
+{
+  "image_resizer": "इमेज रिसाइज़र",
+  "image_resizer_desc": "छवियों को किसी भी आयाम में बदलें",
+  "image_compressor": "इमेज कंप्रेसर",
+  "image_compressor_desc": "गुणवत्ता खोए बिना छवियों को संपीड़ित करें",
+  "image_cropper": "इमेज क्रॉपर",
+  "image_cropper_desc": "छवियों को सही आकार में क्रॉप करें",
+  "background_remover": "बैकग्राउंड हटाएं",
+  "background_remover_desc": "स्वचालित रूप से बैकग्राउंड हटाएं",
+  "pdf_merger": "पीडीएफ मर्जर",
+  "pdf_merger_desc": "कई पीडीएफ को एक में मर्ज करें",
+  "bmi_calculator": "बीएमआई कैलकुलेटर",
+  "bmi_calculator_desc": "बॉडी मास इंडेक्स की गणना करें",
+  "age_calculator": "आयु कैलकुलेटर",
+  "age_calculator_desc": "सटीक आयु की गणना करें",
+  "password_generator": "पासवर्ड जनरेटर",
+  "password_generator_desc": "मजबूत पासवर्ड बनाएं"
+}

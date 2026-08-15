@@ -1,0 +1,180 @@
+/* components/tools/ToolLayout/ToolLayout.css */
+
+.tool-layout-container {
+  min-height: 100vh;
+  padding: 2rem 0;
+  background: #f9fafb;
+}
+
+.tool-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.tool-main-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  min-height: 500px;
+}
+
+/* Ads styling */
+.ad-banner {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 0 1rem;
+  height: 100px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-ad {
+  margin: 2rem auto 0;
+}
+
+.ad-content {
+  text-align: center;
+  color: #6b7280;
+}
+
+.ad-content span {
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.ad-size {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Sidebar */
+.tool-sidebar {
+  display: none;
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.sidebar-ad {
+  margin-top: 1.5rem;
+  height: 250px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Ads */
+.mobile-ads {
+  margin-top: 1.5rem;
+  height: 100px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Classes */
+.desktop-only {
+  display: none;
+}
+
+.mobile-tablet-only {
+  display: block;
+}
+
+/* ========== MEDIA QUERIES ========== */
+
+/* Tablet (≥ 768px) */
+@media (min-width: 768px) {
+  .tool-layout-grid {
+    padding: 0 1.5rem;
+  }
+  
+  .ad-banner {
+    height: 120px;
+    padding: 0 1.5rem;
+  }
+}
+
+/* Desktop (≥ 1200px) */
+@media (min-width: 1200px) {
+  .tool-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 2rem;
+  }
+  
+  .ad-banner {
+    padding: 0 2rem;
+  }
+  
+  .desktop-only {
+    display: block;
+  }
+  
+  .mobile-tablet-only {
+    display: none;
+  }
+}
+
+/* Desktop with Sidebar (≥ 1400px) */
+@media (min-width: 1400px) {
+  .tool-layout-grid {
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+  }
+  
+  .tool-sidebar {
+    display: block;
+  }
+  
+  .tool-main-content {
+    grid-column: 1;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .tool-layout-container {
+    background: #111827;
+  }
+  
+  .tool-main-content,
+  .tool-sidebar {
+    background: #1f2937;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+  
+  .ad-banner,
+  .sidebar-ad,
+  .mobile-ads {
+    background: linear-gradient(135deg, #374151, #1f2937);
+    border-color: #4b5563;
+  }
+  
+  .ad-content {
+    color: #9ca3af;
+  }
+  
+  .ad-size {
+    color: #6b7280;
+  }
+}

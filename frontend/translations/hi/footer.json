@@ -1,0 +1,61 @@
+{
+  "popular_tools": "लोकप्रिय टूल्स",
+  "categories_title": "श्रेणियाँ",
+  "company": "कंपनी",
+  "connect": "जुड़ें",
+  "follow": "अपडेट के लिए फॉलो करें",
+  "sitemap": "साइटमैप",
+  "robots": "रोबोट्स",
+  "operational": "सक्रिय",
+  "footer_note": "डेवलपर्स, डिज़ाइनर्स और प्रोफेशनल्स के लिए मुफ्त ऑनलाइन टूल्स।",
+  "tools_count": "टूल्स",
+  "free": "मुफ्त",
+  
+  "status": {
+    "free": "मुफ्त",
+    "no_login": "कोई लॉगिन नहीं",
+    "apps": "ऐप्स",
+    "operational": "सक्रिय"
+  },
+  
+  "footer": {
+    "description": "डेवलपर्स, डिज़ाइनर्स और प्रोफेशनल्स के लिए मुफ्त ऑनलाइन टूल्स।"
+  },
+  
+  "action": {
+    "sitemap": "साइटमैप",
+    "robots": "रोबोट्स"
+  },
+  
+  "popular": {
+    "image_compressor": "इमेज कंप्रेसर",
+    "pdf_merger": "PDF मर्जर",
+    "qr_generator": "QR कोड जनरेटर",
+    "password_generator": "पासवर्ड जनरेटर",
+    "age_calculator": "आयु कैलकुलेटर",
+    "word_counter": "वर्ड काउंटर"
+  },
+  
+  "quick": {
+    "all_tools": "सभी टूल्स",
+    "image_tools": "इमेज टूल्स",
+    "pdf_tools": "PDF टूल्स",
+    "calculators": "कैलकुलेटर",
+    "code_tools": "कोड टूल्स",
+    "security_tools": "सुरक्षा टूल्स"
+  },
+  
+  "company_links": {
+    "about": "हमारे बारे में",
+    "contact": "संपर्क करें",
+    "blog": "ब्लॉग",
+    "privacy": "गोपनीयता नीति",
+    "terms": "नियम और शर्तें"
+  },
+  
+  "credit": {
+    "by": "क्रेडिट",
+    "made": "निर्मित",
+    "communities": "कम्युनिटीज डॉट पाकिस्तान"
+  }
+}

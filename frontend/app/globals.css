@@ -1,0 +1,333 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #1d4ed8;
+  --secondary: #1e40af;
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-accent: #ffffff;
+  --border: #e2e8f0;
+  --success: #065f46;
+  --warning: #92400e;
+  --error: #7f1d1d;
+  --shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
+  --font-family: system-ui, -apple-system, sans-serif;
+  --primary-rgb: 29, 78, 216;
+}
+
+.dark {
+  --primary: #3b82f6;
+  --secondary: #60a5fa;
+  --background: #0f172a;
+  --surface: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-accent: #ffffff;
+  --border: #334155;
+  --shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  --primary-rgb: 59, 130, 246;
+}
+
+/* ========== HEADING STYLES ========== */
+h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.25rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+h4 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+/* ========== BODY STYLES ========== */
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* ========== CUSTOM UTILITY CLASSES (NOT IN TAILWIND) ========== */
+.badge-500-tools {
+  background-color: rgba(29, 78, 216, 0.1) !important;
+  color: #1d4ed8 !important;
+  border: 1px solid rgba(29, 78, 216, 0.3) !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 0.375rem 0.75rem !important;
+  border-radius: 9999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+}
+
+.h3-to-h2-fix {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+  color: var(--text-primary) !important;
+}
+
+.lcp-priority {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 800px;
+  will-change: transform;
+}
+
+.bg-background { background-color: var(--background); }
+.bg-surface { background-color: var(--surface); }
+.text-primary { color: var(--primary); }
+.text-text-primary { color: var(--text-primary); }
+.text-text-secondary { color: var(--text-secondary); }
+.text-text-accent { color: var(--text-accent); }
+.border-border { border-color: var(--border); }
+.shadow-theme { box-shadow: var(--shadow); }
+
+/* ========== FLOATING BUTTONS ========== */
+.floating-theme-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: var(--text-accent);
+  box-shadow: var(--shadow);
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.floating-theme-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(29, 78, 216, 0.3);
+}
+
+/* ========== MODAL OVERLAY ========== */
+.theme-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 1001;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideUpScale { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideLeft { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideRight { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@keyframes cardAppear { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pageFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.animate-pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+.animate-slide-up { animation: slideUp 0.3s ease-out; }
+.animate-slide-up-scale { animation: slideUpScale 0.3s ease-out; }
+.animate-slide-down { animation: slideDown 0.3s ease-out; }
+.animate-slide-left { animation: slideLeft 0.3s ease-out; }
+.animate-slide-right { animation: slideRight 0.3s ease-out; }
+.animate-bounce { animation: bounce 0.5s ease-in-out; }
+.animate-rotate { animation: rotate 1s linear infinite; }
+.animate-shake { animation: shake 0.3s ease-in-out; }
+.menu-slide-up { animation: slideUpScale 0.3s ease-out; }
+.menu-fade-in { animation: fadeIn 0.2s ease-in-out; }
+
+/* ========== RTL/LTR SUPPORT ========== */
+[dir="rtl"] .animate-slide-left { animation: slideRight 0.3s ease-out; }
+[dir="rtl"] .animate-slide-right { animation: slideLeft 0.3s ease-out; }
+.language-en, .language-ur, .language-ar { width: 100%; height: 100%; }
+[dir="rtl"] .flex-row { flex-direction: row-reverse; }
+[dir="rtl"] .ml-2 { margin-left: 0; margin-right: 0.5rem; }
+[dir="rtl"] .mr-2 { margin-right: 0; margin-left: 0.5rem; }
+[dir="rtl"] .space-x-2 > * + * { margin-left: 0; margin-right: 0.5rem; }
+[dir="rtl"] .header-controls { flex-direction: row-reverse; }
+[dir="rtl"] .desktop-nav-inner { flex-direction: row-reverse; }
+[dir="rtl"] body { text-align: right; }
+[dir="ltr"] body { font-family: system-ui, -apple-system, Inter, sans-serif; text-align: left; }
+html { transition: direction 0.2s ease-in-out; }
+body { transition: font-family 0.2s ease-in-out, text-align 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease; }
+
+/* ========== SCROLLBAR UTILITIES ========== */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ========== PERFORMANCE OPTIMIZATIONS ========== */
+.animate-fade-in, .animate-slide-up, .animate-slide-up-scale, .animate-slide-down,
+.animate-slide-left, .animate-slide-right, .menu-slide-up, .menu-fade-in {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========== PLANET AGES SECTION ========== */
+.planet-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+@media (min-width: 480px) { .planet-grid { grid-template-columns: repeat(4, 1fr); } }
+.planet-card { padding: 1rem; border-radius: 1rem; text-align: center; border: 1px solid var(--border); background-color: var(--surface); transition: all 0.3s ease; cursor: default; }
+.planet-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); }
+.planet-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.planet-age { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+.planet-age-label { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+.planet-name { font-size: 0.875rem; font-weight: 600; margin-top: 0.5rem; }
+
+/* ========== LEGENDS BORN SECTION ========== */
+.legend-card { padding: 1.25rem; border-radius: 1rem; border: 1px solid var(--border); background-color: var(--surface); transition: all 0.3s ease; }
+.legend-card:hover { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); border-color: var(--primary); }
+.legend-card-inner { display: flex; align-items: flex-start; gap: 1rem; }
+.legend-emoji { font-size: 2.5rem; flex-shrink: 0; line-height: 1; }
+.legend-info { flex: 1; min-width: 0; }
+.legend-name { font-weight: 700; font-size: 1.125rem; color: var(--text-primary); }
+.legend-profession { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.125rem; }
+.legend-badges { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+.legend-country-badge { font-size: 0.75rem; padding: 0.25rem 0.625rem; border-radius: 9999px; background-color: rgba(var(--primary-rgb, 37, 99, 235), 0.1); color: var(--primary); font-weight: 500; }
+.legend-birthday-badge { font-size: 0.75rem; padding: 0.25rem 0.625rem; border-radius: 9999px; background-color: rgba(16, 185, 129, 0.1); color: #10b981; font-weight: 500; }
+.legend-fun-fact { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); font-style: italic; }
+
+/* ========== RETIREMENT CALCULATOR SECTION ========== */
+.retirement-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+@media (min-width: 480px) { .retirement-grid { grid-template-columns: repeat(3, 1fr); } }
+.retirement-card { padding: 1.5rem; border-radius: 1rem; text-align: center; border: 1px solid var(--border); transition: all 0.3s ease; }
+.retirement-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
+.retirement-card-highlight { background-color: rgba(var(--primary-rgb, 37, 99, 235), 0.05); border-color: rgba(var(--primary-rgb, 37, 99, 235), 0.2); }
+.retirement-card-warning { background-color: rgba(245, 158, 11, 0.05); border-color: rgba(245, 158, 11, 0.2); }
+.retirement-card-success { background-color: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); }
+.retirement-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.retirement-value { font-size: 2rem; font-weight: 800; color: var(--primary); }
+.retirement-card-warning .retirement-value { color: #f59e0b; }
+.retirement-card-success .retirement-value { color: #10b981; }
+.retirement-label { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+/* ========== FUTURE AGES GRID ========== */
+.future-ages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+@media (min-width: 480px) { .future-ages-grid { grid-template-columns: repeat(5, 1fr); } }
+.future-age-card { padding: 0.875rem; border-radius: 0.75rem; text-align: center; border: 1px solid var(--border); background-color: var(--surface); transition: all 0.3s ease; }
+.future-age-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border-color: var(--primary); }
+.future-age-label { font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+.future-age-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+.future-age-suffix { font-size: 0.75rem; color: var(--text-secondary); }
+
+/* ========== SECTION TITLES WITH ICONS ========== */
+.section-title-with-icon { display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+.section-title-icon { font-size: 1.5rem; }
+
+/* ========== HOVER TOOLTIP ========== */
+.hover-tooltip { position: relative; }
+.hover-tooltip:hover::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding: 0.5rem 0.75rem; background-color: var(--text-primary); color: var(--background); font-size: 0.75rem; border-radius: 0.5rem; white-space: nowrap; margin-bottom: 0.5rem; z-index: 100; }
+
+/* ========== SECTION DIVIDER ========== */
+.section-divider { border: none; border-top: 2px solid var(--border); margin: 2rem 0; opacity: 0.5; }
+
+/* ========== RESPONSIVE FIXES ========== */
+@media (max-width: 480px) {
+  .planet-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .planet-card { padding: 0.75rem; }
+  .planet-emoji { font-size: 2rem; }
+  .planet-age { font-size: 1.25rem; }
+  .legend-card-inner { gap: 0.75rem; }
+  .legend-emoji { font-size: 2rem; }
+  .retirement-value { font-size: 1.5rem; }
+}
+
+/* ========== DARK MODE OVERRIDES ========== */
+.dark .planet-card:hover, .dark .legend-card:hover,
+.dark .retirement-card:hover, .dark .future-age-card:hover { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+.dark .legend-country-badge { background-color: rgba(var(--primary-rgb, 59, 130, 246), 0.2); }
+.dark .legend-birthday-badge { background-color: rgba(16, 185, 129, 0.2); }
+
+.advanced-section .planet-card, .advanced-section .legend-card,
+.advanced-section .retirement-card { animation: cardAppear 0.3s ease-out; }
+
+/* ========== ZERO GAP FIX ========== */
+#main-content .container { max-width: 100% !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+@media (min-width: 768px) { #main-content .container { padding-left: 1rem !important; padding-right: 1rem !important; } }
+#main-content section { padding-left: 0 !important; padding-right: 0 !important; }
+section.relative.overflow-hidden .container { max-width: 1200px !important; margin-left: auto !important; margin-right: auto !important; }
+section .grid { margin-left: 0 !important; margin-right: 0 !important; }
+
+/* ========== PREVENT WHITE FLASH ========== */
+html { background-color: var(--background, #0f172a); color: var(--text-primary, #f1f5f9); transition: background-color 0.3s ease, color 0.3s ease; }
+body { background-color: var(--background, #0f172a); min-height: 100vh; }
+main { animation: pageFadeIn 0.3s ease-out; }
+html { scroll-behavior: smooth; }
+html.dark { background-color: #0f172a !important; color-scheme: dark; }
+html.light { background-color: #ffffff !important; color-scheme: light; }
+
+/* ========== JAMEEL FONT ========== */
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/JameelNooriNastaleeq.woff2') format('woff2'),
+       url('/fonts/JameelNooriNastaleeq.ttf') format('truetype');
+}
+
+.font-urdu {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Amiri', 'Noto Sans Arabic', system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.8;
+}
+
+[lang="ur"] body, [lang="ur"] .font-urdu {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Amiri', 'Noto Sans Arabic', system-ui, sans-serif;
+}
+
+[lang="ur"] h1, [lang="ur"] h2, [lang="ur"] h3 {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Amiri', 'Noto Sans Arabic', system-ui, sans-serif;
+  font-weight: 700;
+}

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><title>Logout - Centers.pk</title></head>
+<body>
+  <h3>Logged out successfully!</h3>
+  <p>Redirecting to home...</p>
+  <script>
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
+    setTimeout(function() { location.href = "/en"; }, 1000);
+  </script>
+</body>
+</html>

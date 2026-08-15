@@ -1,0 +1,67 @@
+/* components/tools/calculators/bmi-calculator/bmi-calculator.css */
+.bmi-calculator {
+  transition: all 0.3s ease;
+}
+
+.bmi-calculator input[type="number"]::-webkit-inner-spin-button,
+.bmi-calculator input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bmi-calculator input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* BMI Scale Animation */
+.bmi-scale {
+  position: relative;
+  overflow: hidden;
+}
+
+.bmi-scale::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.8) 0%,
+    rgba(59, 130, 246, 0.8) 18.5%,
+    rgba(16, 185, 129, 0.8) 18.5%,
+    rgba(16, 185, 129, 0.8) 25%,
+    rgba(245, 158, 11, 0.8) 25%,
+    rgba(245, 158, 11, 0.8) 30%,
+    rgba(239, 68, 68, 0.8) 30%,
+    rgba(239, 68, 68, 0.8) 100%
+  );
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* Chart Responsiveness */
+@media (max-width: 640px) {
+  .chart-container {
+    height: 200px !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .chart-container {
+    height: 250px !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .bmi-calculator {
+    color: black !important;
+    background: white !important;
+  }
+}

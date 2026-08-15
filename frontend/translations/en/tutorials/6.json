@@ -1,0 +1,23 @@
+{
+  "title": "Code Tools for Developers",
+  "description": "Formatters, validators, and code utilities for developers",
+  "duration": "20 minutes",
+  "author": "Dev Team",
+  "difficulty": "Advanced",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Paste your code in the input area",
+    "Select formatting options",
+    "Review the formatted code",
+    "Copy or download the result",
+    "Test with different code samples"
+  ],
+  "tips": [
+    "Use consistent formatting for team projects",
+    "Validate code before deployment",
+    "Check for security vulnerabilities"
+  ]
+}

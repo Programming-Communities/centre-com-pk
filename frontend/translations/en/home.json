@@ -1,0 +1,116 @@
+{
+  "hero": {
+    "badge": "500+ FREE ONLINE TOOLS",
+    "title": "Professional",
+    "title_highlight": "Tools Collection",
+    "description": "Access 500+ free online tools across 25+ categories. No registration required.",
+    "cta": "Explore All Tools"
+  },
+  "popular_tools": {
+    "title": "Popular Tools",
+    "view_all": "View All →",
+    "trending": "TRENDING NOW",
+    "try_now": "Try Now →",
+    "no_installation": "🔧 No installation required",
+    "free_badge": "Free",
+    "use_action": "Use Tool"
+  },
+  "categories": {
+    "title": "Browse by Category",
+    "description": "Each category has unique tools with specialized features for different needs",
+    "calculators": "Calculators Tools",
+    "code_tools": "Code tools Tools",
+    "design_tools": "Design tools Tools",
+    "security_tools": "Security tools Tools",
+    "view_all": "View All ({{count}}+)",
+    "explore_all": "Explore All →",
+    "calculators_desc": "Math, finance, and conversion calculators for everyday use",
+    "code_desc": "Programming, development and IT utilities for developers",
+    "design_desc": "Graphics, color, and design utilities for creatives",
+    "image_desc": "Image editing, conversion and optimization tools",
+    "pdf_desc": "PDF manipulation, conversion and optimization",
+    "security_desc": "Privacy, encryption and security utilities",
+    "text_desc": "Text processing, formatting and analysis tools",
+    "educational_desc": "Tools for students, teachers, and researchers"
+  },
+  "all_tools": {
+    "title": "All Available Tools",
+    "showing": "Showing {{current}} of {{total}}+ tools",
+    "explore_all": "Explore All {{total}}+ Tools"
+  },
+  "stats": {
+    "tools": {
+      "value": "500+",
+      "label": "Free Tools",
+      "sublabel": "Available now"
+    },
+    "users": {
+      "value": "50K+",
+      "label": "Monthly Users",
+      "sublabel": "Trusted by users"
+    },
+    "registration": {
+      "value": "100%",
+      "label": "No Registration",
+      "sublabel": "Use instantly"
+    },
+    "uptime": {
+      "value": "24/7",
+      "label": "Uptime",
+      "sublabel": "Always available"
+    }
+  },
+  "most_popular": {
+    "title": "Most Popular Tools",
+    "description": "Tools our users love and use most frequently"
+  },
+  "features": {
+    "title": "Features",
+    "instant": {
+      "title": "Instant Access",
+      "description": "No registration, no waiting. Use tools immediately"
+    },
+    "privacy": {
+      "title": "Privacy First",
+      "description": "Your data never leaves your browser"
+    },
+    "mobile": {
+      "title": "Mobile Optimized",
+      "description": "Works perfectly on all devices"
+    },
+    "updates": {
+      "title": "Regular Updates",
+      "description": "New tools added weekly"
+    },
+    "zero_ads": {
+      "title": "Zero Ads",
+      "description": "Clean, distraction-free interface"
+    },
+    "free": {
+      "title": "100% Free",
+      "description": "No hidden costs, forever"
+    }
+  },
+  "mission": {
+    "title": "Our Mission",
+    "text": "To provide free, high-quality tools that make everyday tasks easier for everyone",
+    "cta": "Browse All Tools"
+  },
+  "infinite_scroll": {
+    "showing": "Showing {{current}} of {{total}} tools",
+    "found": "Found what you need?",
+    "view_directory": "View All Tools Directory",
+    "search_title": "Search Specific Tool",
+    "need_specific": "Need something specific?",
+    "cant_find": "Can't find the tool you need? Let us know and we'll build it for you!",
+    "suggest": "Suggest a Tool",
+    "contact": "Contact Support",
+    "instant_access": "Instant Access",
+    "privacy_first": "Privacy First",
+    "mobile_friendly": "Mobile Friendly",
+    "no_ads": "No Ads"
+  },
+  "footer": {
+    "description": "Free online tools for developers, designers, and professionals."
+  }
+}

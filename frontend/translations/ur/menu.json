@@ -1,0 +1,29 @@
+{
+  "menu": {
+    "home": "ہوم",
+    "tools": "ٹولز",
+    "calculators": "کیلکولیٹرز",
+    "code": "کوڈ ٹولز",
+    "design": "ڈیزائن ٹولز",
+    "image": "امیج ٹولز",
+    "pdf": "پی ڈی ایف ٹولز",
+    "security": "سیکیورٹی ٹولز",
+    "text": "ٹیکسٹ ٹولز",
+    "educational": "تعلیمی ٹولز",
+    "all_tools": "تمام ٹولز",
+    "blog": "بلاگ",
+    "about": "ہمارے بارے میں",
+    "contact": "رابطہ کریں",
+    "popular": "مقبول ٹولز",
+    "categories": "زمرہ جات",
+    "imageTools": "امیج ٹولز",
+    "pdfTools": "پی ڈی ایف ٹولز",
+    "codeTools": "کوڈ ٹولز",
+    "textTools": "ٹیکسٹ ٹولز",
+    "designTools": "ڈیزائن ٹولز",
+    "securityTools": "سیکیورٹی ٹولز",
+    "about_us": "ہمارے بارے میں",
+    "privacy_policy": "پرائیویسی پالیسی",
+    "terms": "شرائط و ضوابط"
+  }
+}

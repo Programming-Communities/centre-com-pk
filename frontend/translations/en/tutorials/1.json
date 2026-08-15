@@ -1,0 +1,23 @@
+{
+  "title": "Getting Started with Centre.com.pk",
+  "description": "Learn how to navigate and use our platform effectively",
+  "duration": "5 minutes",
+  "author": "Admin Team",
+  "difficulty": "Beginner",
+  "steps_title": "Step-by-Step Guide",
+  "step_prefix": "Step",
+  "back_button": "Back to All Tutorials",
+  "tips_title": "Pro Tips",
+  "steps": [
+    "Visit Centre.com.pk homepage",
+    "Browse tools by category or use search",
+    "Click on any tool to open it",
+    "Follow the tool-specific instructions",
+    "Save or share your results"
+  ],
+  "tips": [
+    "Bookmark frequently used tools",
+    "Use dark mode for better eye comfort",
+    "Clear browser cache for optimal performance"
+  ]
+}

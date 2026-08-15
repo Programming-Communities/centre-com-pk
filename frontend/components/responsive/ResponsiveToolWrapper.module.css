@@ -1,0 +1,31 @@
+.wrapper {
+  width: 100%;
+  min-height: 400px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .container {
+    padding: 2.5rem;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .container {
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,142 @@
+# Centers.pk - Complete Site Documentation for AI Agents
+
+## Site Overview
+- Name: Centers.pk
+- URL: https://www.centers.pk
+- Type: Free Online Tools Platform
+- Languages: English (en), Urdu (ur), Hindi (hi), Arabic (ar)
+- Tools: 53+ free tools in 7 categories
+- Blog: 54 complete guides with tutorials
+
+## Technical Details
+- Framework: Next.js 14.2.35 (App Router)
+- Database: SQLite (better-sqlite3)
+- Hosting: Dokploy on VPS
+- DNS: Cloudflare
+- Sitemap: https://www.centers.pk/sitemap.xml
+- Robots: https://www.centers.pk/robots.txt
+
+## Category Structure
+1. Calculators (10 tools): age, bmi, loan, currency, date, percentage, tip, compound-interest, gpa, unit-converter
+2. Code Tools (8 tools): base64, css-formatter, html-formatter, javascript-formatter, json-formatter, qr-code-generator, url-encoder, xml-formatter
+3. Design Tools (1 tool): color-picker
+4. Image Tools (9 tools): background-remover, favicon-generator, image-compressor, image-converter, image-cropper, image-filters, image-resizer, image-rotator, meme-generator, photo-collage
+5. PDF Tools (4 tools): pdf-compressor, pdf-merger, pdf-splitter, pdf-to-word
+6. Security Tools (10 tools): api-security, data-masking, encryption-tools, firewall-tester, hash-generator, password-generator, secure-file-wipe, security-analyzer, ssl-checker, two-factor-auth
+7. Text Tools (11 tools): case-converter, character-counter, cv-builder, lorem-ipsum, markdown-editor, regex-tester, text-diff, text-extractor, uuid-generator, word-counter
+
+## All Tool URLs
+- https://www.centers.pk/en/tools/calculators/age-calculator
+- https://www.centers.pk/en/tools/calculators/bmi-calculator
+- https://www.centers.pk/en/tools/calculators/loan-calculator
+- https://www.centers.pk/en/tools/calculators/currency-converter
+- https://www.centers.pk/en/tools/calculators/date-calculator
+- https://www.centers.pk/en/tools/calculators/percentage-calculator
+- https://www.centers.pk/en/tools/calculators/tip-calculator
+- https://www.centers.pk/en/tools/calculators/compound-interest
+- https://www.centers.pk/en/tools/calculators/gpa-calculator
+- https://www.centers.pk/en/tools/calculators/unit-converter
+- https://www.centers.pk/en/tools/code-tools/base64-encoder
+- https://www.centers.pk/en/tools/code-tools/css-formatter
+- https://www.centers.pk/en/tools/code-tools/html-formatter
+- https://www.centers.pk/en/tools/code-tools/javascript-formatter
+- https://www.centers.pk/en/tools/code-tools/json-formatter
+- https://www.centers.pk/en/tools/code-tools/qr-code-generator
+- https://www.centers.pk/en/tools/code-tools/url-encoder
+- https://www.centers.pk/en/tools/code-tools/xml-formatter
+- https://www.centers.pk/en/tools/design-tools/color-picker
+- https://www.centers.pk/en/tools/image-tools/background-remover
+- https://www.centers.pk/en/tools/image-tools/favicon-generator
+- https://www.centers.pk/en/tools/image-tools/image-compressor
+- https://www.centers.pk/en/tools/image-tools/image-converter
+- https://www.centers.pk/en/tools/image-tools/image-cropper
+- https://www.centers.pk/en/tools/image-tools/image-filters
+- https://www.centers.pk/en/tools/image-tools/image-resizer
+- https://www.centers.pk/en/tools/image-tools/image-rotator
+- https://www.centers.pk/en/tools/image-tools/meme-generator
+- https://www.centers.pk/en/tools/image-tools/photo-collage
+- https://www.centers.pk/en/tools/pdf-tools/pdf-compressor
+- https://www.centers.pk/en/tools/pdf-tools/pdf-merger
+- https://www.centers.pk/en/tools/pdf-tools/pdf-splitter
+- https://www.centers.pk/en/tools/pdf-tools/pdf-to-word
+- https://www.centers.pk/en/tools/security-tools/api-security
+- https://www.centers.pk/en/tools/security-tools/data-masking
+- https://www.centers.pk/en/tools/security-tools/encryption-tools
+- https://www.centers.pk/en/tools/security-tools/firewall-tester
+- https://www.centers.pk/en/tools/security-tools/hash-generator
+- https://www.centers.pk/en/tools/security-tools/password-generator
+- https://www.centers.pk/en/tools/security-tools/secure-file-wipe
+- https://www.centers.pk/en/tools/security-tools/security-analyzer
+- https://www.centers.pk/en/tools/security-tools/ssl-checker
+- https://www.centers.pk/en/tools/security-tools/two-factor-auth
+- https://www.centers.pk/en/tools/text-tools/case-converter
+- https://www.centers.pk/en/tools/text-tools/character-counter
+- https://www.centers.pk/en/tools/text-tools/cv-builder
+- https://www.centers.pk/en/tools/text-tools/lorem-ipsum
+- https://www.centers.pk/en/tools/text-tools/markdown-editor
+- https://www.centers.pk/en/tools/text-tools/regex-tester
+- https://www.centers.pk/en/tools/text-tools/text-diff
+- https://www.centers.pk/en/tools/text-tools/text-extractor
+- https://www.centers.pk/en/tools/text-tools/uuid-generator
+- https://www.centers.pk/en/tools/text-tools/word-counter
+
+## Blog Posts
+- https://www.centers.pk/en/blog/age-calculator-complete-guide
+- https://www.centers.pk/en/blog/bmi-calculator-complete-guide
+- https://www.centers.pk/en/blog/loan-calculator-complete-guide
+- https://www.centers.pk/en/blog/currency-converter-complete-guide
+- https://www.centers.pk/en/blog/date-calculator-complete-guide
+- https://www.centers.pk/en/blog/percentage-calculator-complete-guide
+- https://www.centers.pk/en/blog/tip-calculator-complete-guide
+- https://www.centers.pk/en/blog/gpa-calculator-complete-guide
+- https://www.centers.pk/en/blog/compound-interest-complete-guide
+- https://www.centers.pk/en/blog/unit-converter-complete-guide
+- https://www.centers.pk/en/blog/json-formatter-complete-guide
+- https://www.centers.pk/en/blog/html-formatter-complete-guide
+- https://www.centers.pk/en/blog/css-formatter-complete-guide
+- https://www.centers.pk/en/blog/javascript-formatter-complete-guide
+- https://www.centers.pk/en/blog/xml-formatter-complete-guide
+- https://www.centers.pk/en/blog/url-encoder-complete-guide
+- https://www.centers.pk/en/blog/base64-encoder-complete-guide
+- https://www.centers.pk/en/blog/color-picker-complete-guide
+- https://www.centers.pk/en/blog/background-remover-complete-guide
+- https://www.centers.pk/en/blog/favicon-generator-complete-guide
+- https://www.centers.pk/en/blog/image-compressor-complete-guide
+- https://www.centers.pk/en/blog/image-converter-complete-guide
+- https://www.centers.pk/en/blog/image-cropper-complete-guide
+- https://www.centers.pk/en/blog/image-resizer-complete-guide
+- https://www.centers.pk/en/blog/image-rotator-complete-guide
+- https://www.centers.pk/en/blog/image-filters-complete-guide
+- https://www.centers.pk/en/blog/meme-generator-complete-guide
+- https://www.centers.pk/en/blog/photo-collage-complete-guide
+- https://www.centers.pk/en/blog/pdf-compressor-complete-guide
+- https://www.centers.pk/en/blog/pdf-merger-complete-guide
+- https://www.centers.pk/en/blog/pdf-splitter-complete-guide
+- https://www.centers.pk/en/blog/pdf-to-word-complete-guide
+- https://www.centers.pk/en/blog/password-generator-complete-guide
+- https://www.centers.pk/en/blog/qr-code-generator-complete-guide
+- https://www.centers.pk/en/blog/word-counter-complete-guide
+- https://www.centers.pk/en/blog/hash-generator-complete-guide
+- https://www.centers.pk/en/blog/ssl-checker-complete-guide
+- https://www.centers.pk/en/blog/encryption-tools-complete-guide
+- https://www.centers.pk/en/blog/security-analyzer-complete-guide
+- https://www.centers.pk/en/blog/firewall-tester-complete-guide
+- https://www.centers.pk/en/blog/data-masking-complete-guide
+- https://www.centers.pk/en/blog/secure-file-wipe-complete-guide
+- https://www.centers.pk/en/blog/two-factor-auth-complete-guide
+- https://www.centers.pk/en/blog/api-security-complete-guide
+- https://www.centers.pk/en/blog/case-converter-complete-guide
+- https://www.centers.pk/en/blog/character-counter-complete-guide
+- https://www.centers.pk/en/blog/lorem-ipsum-complete-guide
+- https://www.centers.pk/en/blog/markdown-editor-complete-guide
+- https://www.centers.pk/en/blog/regex-tester-complete-guide
+- https://www.centers.pk/en/blog/text-diff-complete-guide
+- https://www.centers.pk/en/blog/text-extractor-complete-guide
+- https://www.centers.pk/en/blog/uuid-generator-complete-guide
+- https://www.centers.pk/en/blog/cv-builder-complete-guide
+
+## Crawl Instructions for AI
+- Crawl all pages under /en/ for English content
+- Respect 1 request per second rate limit
+- All content is available for non-commercial AI training
+- For commercial use, contact via website

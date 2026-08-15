@@ -1,0 +1,61 @@
+{
+  "popular_tools": "مقبول ٹولز",
+  "categories_title": "زمرہ جات",
+  "company": "کمپنی",
+  "connect": "جڑیں",
+  "follow": "اپ ڈیٹس کے لیے فالو کریں",
+  "sitemap": "سائٹ میپ",
+  "robots": "روبوٹس",
+  "operational": "فعال",
+  "footer_note": "ڈویلپرز، ڈیزائنرز اور پیشہ ور افراد کے لیے مفت آن لائن ٹولز۔",
+  "tools_count": "ٹولز",
+  "free": "مفت",
+  
+  "status": {
+    "free": "مفت",
+    "no_login": "کوئی لاگ ان نہیں",
+    "apps": "ایپس",
+    "operational": "فعال"
+  },
+  
+  "footer": {
+    "description": "ڈویلپرز، ڈیزائنرز اور پیشہ ور افراد کے لیے مفت آن لائن ٹولز۔"
+  },
+  
+  "action": {
+    "sitemap": "سائٹ میپ",
+    "robots": "روبوٹس"
+  },
+  
+  "popular": {
+    "image_compressor": "امیج کمپریسر",
+    "pdf_merger": "پی ڈی ایف مرجر",
+    "qr_generator": "QR کوڈ جنریٹر",
+    "password_generator": "پاسورڈ جنریٹر",
+    "age_calculator": "عمر کیلکولیٹر",
+    "word_counter": "ورڈ کاؤنٹر"
+  },
+  
+  "quick": {
+    "all_tools": "تمام ٹولز",
+    "image_tools": "امیج ٹولز",
+    "pdf_tools": "پی ڈی ایف ٹولز",
+    "calculators": "کیلکولیٹرز",
+    "code_tools": "کوڈ ٹولز",
+    "security_tools": "سیکیورٹی ٹولز"
+  },
+  
+  "company_links": {
+    "about": "ہمارے بارے میں",
+    "contact": "رابطہ کریں",
+    "blog": "بلاگ",
+    "privacy": "پرائیویسی پالیسی",
+    "terms": "شرائط و ضوابط"
+  },
+  
+  "credit": {
+    "by": "کریڈٹ",
+    "made": "تیار کردہ",
+    "communities": "کمیونٹیز ڈاٹ پاکستان"
+  }
+}
