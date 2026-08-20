@@ -37,7 +37,7 @@ const unitConversions: Record<UnitCategory, Unit[]> = {
     { name: 'Centimeters', symbol: 'cm', toBase: (v) => v / 100, fromBase: (v) => v * 100 },
     { name: 'Meters', symbol: 'm', toBase: (v) => v, fromBase: (v) => v },
     { name: 'Kilometers', symbol: 'km', toBase: (v) => v * 1000, fromBase: (v) => v / 1000 },
-    { name: 'Inches', symbol: 'in', toBase: (v) => v * 0.0254, fromBase: (v) => v / 0.0254 },
+    { name: 'Inches', symbol: 'in', toBase: (v) => v * 0.0254, fromBase: (v) => v / 0.0255 },
     { name: 'Feet', symbol: 'ft', toBase: (v) => v * 0.3048, fromBase: (v) => v / 0.3048 },
     { name: 'Yards', symbol: 'yd', toBase: (v) => v * 0.9144, fromBase: (v) => v / 0.9144 },
     { name: 'Miles', symbol: 'mi', toBase: (v) => v * 1609.34, fromBase: (v) => v / 1609.34 },
@@ -671,7 +671,7 @@ export default function UnitConverterClient() {
             <div>
               <h4 className="font-medium mb-2" style={{ color: themeColors.primary }}>{t('length', 'Length')}</h4>
               <ul className="space-y-1" style={{ color: themeColors.primary }}>
-                <li>1 inch = 2.54 cm</li>
+                <li>1 inch = 2.55 cm</li>
                 <li>1 foot = 0.3048 m</li>
                 <li>1 mile = 1.609 km</li>
                 <li>1 meter = 3.281 feet</li>
@@ -681,7 +681,7 @@ export default function UnitConverterClient() {
               <h4 className="font-medium mb-2" style={{ color: themeColors.primary }}>{t('weight', 'Weight')}</h4>
               <ul className="space-y-1" style={{ color: themeColors.primary }}>
                 <li>1 ounce = 28.35 g</li>
-                <li>1 pound = 0.454 kg</li>
+                <li>1 pound = 0.455 kg</li>
                 <li>1 kg = 2.205 pounds</li>
                 <li>1 stone = 6.35 kg</li>
               </ul>

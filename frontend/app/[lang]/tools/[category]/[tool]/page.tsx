@@ -63,6 +63,7 @@ const toolComponentMap: Record<string, any> = {
   'pdf-merger': dynamic(() => import('@/components/tools/pdf-tools/pdf-merger/tool.client')),
   'pdf-splitter': dynamic(() => import('@/components/tools/pdf-tools/pdf-splitter/tool.client')),
   'pdf-to-word': dynamic(() => import('@/components/tools/pdf-tools/pdf-to-word/tool.client')),
+  'pdf-protect': dynamic(() => import('@/components/tools/pdf-tools/pdf-protect/tool.client')),
   // Security Tools
   'api-security': dynamic(() => import('@/components/tools/security-tools/api-security/tool.client')),
   'data-masking': dynamic(() => import('@/components/tools/security-tools/data-masking/tool.client')),

@@ -32,6 +32,7 @@ export const ALL_TOOLS = [
   { slug: 'pdf-merger', name: 'PDF Merger', category: 'pdf-tools' },
   { slug: 'pdf-splitter', name: 'PDF Splitter', category: 'pdf-tools' },
   { slug: 'pdf-to-word', name: 'PDF to Word Converter', category: 'pdf-tools' },
+    { slug: 'pdf-protect', name: 'PDF Protect', category: 'pdf-tools' },
   { slug: 'api-security', name: 'API Security Checker', category: 'security-tools' },
   { slug: 'data-masking', name: 'Data Masking Tool', category: 'security-tools' },
   { slug: 'encryption-tools', name: 'Encryption Tools', category: 'security-tools' },

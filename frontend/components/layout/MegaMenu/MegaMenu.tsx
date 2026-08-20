@@ -63,7 +63,7 @@ const staticMenuData = {
   },
   pdfTools: {
     title: "PDF Tools",
-    description: "4+ PDF manipulation tools",
+    description: "5+ PDF manipulation tools",
     icon: FileText,
     href: "/tools/pdf-tools",
     tools: [
@@ -71,6 +71,7 @@ const staticMenuData = {
       { name: "PDF Splitter", href: "/tools/pdf-tools/pdf-splitter", status: "live" as const, description: "Split PDF into multiple files", category: "pdfTools" },
       { name: "PDF Compressor", href: "/tools/pdf-tools/pdf-compressor", status: "live" as const, description: "Compress PDF file size", category: "pdfTools" },
       { name: "PDF to Word", href: "/tools/pdf-tools/pdf-to-word", status: "new" as const, description: "Convert PDF to Word document", category: "pdfTools" },
+      { name: "PDF Protect", href: "/tools/pdf-tools/pdf-protect", status: "new" as const, description: "Password protect PDF files", category: "pdfTools" },
     ],
   },
   calculators: {

@@ -902,6 +902,30 @@ export const TOOL_SEO_DATA: Record<string, ToolSEOData> = {
     changefreq: 'monthly'
   },
 
+
+  
+  'pdf-protect': {
+    slug: 'pdf-protect',
+    category: 'pdf-tools',
+    title: 'PDF Protect - Password Protect PDF Online Free',
+    description: 'Free PDF protector to password protect and encrypt PDF files. Secure your PDF documents with password encryption. No registration, no watermarks.',
+    keywords: ['pdf protect', 'protect pdf', 'password protect pdf', 'pdf encryption', 'secure pdf', 'lock pdf', 'pdf password'],
+    faqs: [
+      {
+        question: 'How does PDF protect work?',
+        answer: 'PDF protect adds password encryption to your PDF file. Only users with the correct password can open and view the document.'
+      },
+      {
+        question: 'Is PDF protection secure?',
+        answer: 'Yes, we use AES-256 encryption standard for PDF protection. Your files are processed locally in the browser and never uploaded to servers.'
+      }
+    ],
+    relatedTools: ['pdf-merger', 'pdf-compressor', 'pdf-splitter'],
+    schemaType: 'WebApplication',
+    priority: 0.8,
+    changefreq: 'monthly'
+  },
+
   // ========== TEXT TOOLS ==========
   'case-converter': {
     slug: 'case-converter',

@@ -12,14 +12,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.centre.com.pk'),
   title: 'Free Online Tools | Centre.com.pk',
-  description: 'Access 54+ free online tools — age calculator, BMI calculator, PDF merger, image compressor, password generator, JSON formatter & more. No registration needed.',
+  description: 'Access 55+ free online tools — age calculator, BMI calculator, PDF merger, image compressor, password generator, JSON formatter & more. No registration needed.',
   keywords: 'free online tools, online centre, age calculator, bmi calculator, pdf merger, image compressor, password generator, json formatter, word counter, qr code generator, calculators, converters, Pakistan, India, UK, US',
   applicationName: 'Centre.com.pk',
   robots: { index: true, follow: true },
   icons: { icon: '/logo.svg', apple: '/logo.svg' },
   openGraph: {
     title: 'Free Online Tools | Centre.com.pk',
-    description: '54+ free tools: age calculator, BMI, PDF merger, image compressor, password generator & more.',
+    description: '55+ free tools: age calculator, BMI, PDF merger, image compressor, password generator & more.',
     url: 'https://www.centre.com.pk',
     type: 'website',
     siteName: 'Centre.com.pk',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Free Online Tools | Centre.com.pk',
-    description: '54+ free tools: calculators, PDF tools, image tools, security tools & more.',
+    description: '55+ free tools: calculators, PDF tools, image tools, security tools & more.',
   },
 };
 

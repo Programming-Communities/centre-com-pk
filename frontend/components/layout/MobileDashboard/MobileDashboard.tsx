@@ -444,13 +444,14 @@ const generateNavStructure = (lang: string): NavItem[] => {
       descriptionKey: 'menu.pdf_desc',
       fallbackDescription: getTranslatedText(lang, 'menu.pdf_desc', 'PDF Manipulation'),
       type: 'category',
-      toolCount: 4,
+      toolCount: 5,
       children: [
         { id: 'pdf-compressor', nameKey: 'tools.pdf_compressor.title', fallbackName: getTranslatedText(lang, 'tools.pdf_compressor.title', 'PDF Compressor'), icon: Minus, href: `/${lang}/tools/pdf-tools/pdf-compressor`, type: 'tool' },
         { id: 'pdf-merger', nameKey: 'tools.pdf_merger.title', fallbackName: getTranslatedText(lang, 'tools.pdf_merger.title', 'PDF Merger'), icon: Merge, href: `/${lang}/tools/pdf-tools/pdf-merger`, type: 'tool' },
         { id: 'pdf-splitter', nameKey: 'tools.pdf_splitter.title', fallbackName: getTranslatedText(lang, 'tools.pdf_splitter.title', 'PDF Splitter'), icon: Scissors, href: `/${lang}/tools/pdf-tools/pdf-splitter`, type: 'tool' },
         { id: 'pdf-to-word', nameKey: 'tools.pdf_to_word.title', fallbackName: getTranslatedText(lang, 'tools.pdf_to_word.title', 'PDF to Word'), icon: FileText, href: `/${lang}/tools/pdf-tools/pdf-to-word`, type: 'tool', badge: 'popular' },
-      ]
+                { id: 'pdf-protect', nameKey: 'tools.pdf_protect.title', fallbackName: getTranslatedText(lang, 'tools.pdf_protect.title', 'PDF Protect'), icon: Lock, href: `/${lang}/tools/pdf-tools/pdf-protect`, type: 'tool', badge: 'new' },
+     ]
     },
     {
       id: 'security-tools',

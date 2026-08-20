@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const siteUrl = 'https://www.centre.com.pk';
 
   const meta: Record<string, any> = {
-    en: { title: 'Free Online Tools | Centre.com.pk', description: 'Access 54 free online tools — calculators, image editors, PDF tools & more.' },
-    ur: { title: 'مفت آن لائن ٹولز | Centre.com.pk', description: '54 مفت آن لائن ٹولز: کیلکولیٹر، امیج ایڈیٹر، PDF ٹولز۔' },
-    ar: { title: 'أدوات مجانية | Centre.com.pk', description: '54 أداة مجانية: حاسبات، محرر صور، أدوات PDF.' },
-    hi: { title: 'मुफ्त ऑनलाइन टूल्स | Centre.com.pk', description: '54 मुफ्त ऑनलाइन टूल्स: कैलकुलेटर, इमेज एडिटर, PDF टूल्स।' },
+    en: { title: 'Free Online Tools | Centre.com.pk', description: 'Access 55 free online tools — calculators, image editors, PDF tools & more.' },
+    ur: { title: 'مفت آن لائن ٹولز | Centre.com.pk', description: '55 مفت آن لائن ٹولز: کیلکولیٹر، امیج ایڈیٹر، PDF ٹولز۔' },
+    ar: { title: 'أدوات مجانية | Centre.com.pk', description: '55 أداة مجانية: حاسبات، محرر صور، أدوات PDF.' },
+    hi: { title: 'मुफ्त ऑनलाइन टूल्स | Centre.com.pk', description: '55 मुफ्त ऑनलाइन टूल्स: कैलकुलेटर, इमेज एडिटर, PDF टूल्स।' },
   };
 
   const m = meta[lang] || meta.en;
@@ -61,52 +61,52 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
   // ✅ Static translations
   const t: Record<string, any> = {
     en: {
-      heroBadge: '54 FREE ONLINE TOOLS',
+      heroBadge: '55 FREE ONLINE TOOLS',
       heroTitle: 'Professional Tools Collection',
-      heroDesc: 'Access 54 free online tools across 7 categories.',
+      heroDesc: 'Access 55 free online tools across 7 categories.',
       heroBtn1: 'Explore All Tools',
       heroBtn2: 'Popular Tools',
       needTitle: 'Need something specific?',
       needDesc: 'Can\'t find the tool? We\'ll build it!',
       suggestBtn: 'Suggest a Tool',
       contactBtn: 'Contact Support',
-      stats: [{ number: '54', label: 'Free Tools' }, { number: '50K+', label: 'Users' }, { number: '100%', label: 'Free' }, { number: '24/7', label: 'Available' }],
+      stats: [{ number: '55', label: 'Free Tools' }, { number: '50K+', label: 'Users' }, { number: '100%', label: 'Free' }, { number: '24/7', label: 'Available' }],
     },
     ur: {
-      heroBadge: '54 مفت آن لائن ٹولز',
+      heroBadge: '55 مفت آن لائن ٹولز',
       heroTitle: 'پیشہ ورانہ ٹولز کا مجموعہ',
-      heroDesc: '7 کیٹیگریز میں 54 مفت آن لائن ٹولز۔',
+      heroDesc: '7 کیٹیگریز میں 55 مفت آن لائن ٹولز۔',
       heroBtn1: 'تمام ٹولز دیکھیں',
       heroBtn2: 'مقبول ٹولز',
       needTitle: 'کوئی خاص ٹول چاہیے؟',
       needDesc: 'ٹول نہیں ملا؟ ہم بنائیں گے!',
       suggestBtn: 'ٹول تجویز کریں',
       contactBtn: 'سپورٹ',
-      stats: [{ number: '54', label: 'مفت ٹولز' }, { number: '50K+', label: 'صارفین' }, { number: '100%', label: 'مفت' }, { number: '24/7', label: 'دستیاب' }],
+      stats: [{ number: '55', label: 'مفت ٹولز' }, { number: '50K+', label: 'صارفین' }, { number: '100%', label: 'مفت' }, { number: '24/7', label: 'دستیاب' }],
     },
     ar: {
-      heroBadge: '54 أداة مجانية',
+      heroBadge: '55 أداة مجانية',
       heroTitle: 'مجموعة أدوات احترافية',
-      heroDesc: '54 أداة مجانية في 7 فئات.',
+      heroDesc: '55 أداة مجانية في 7 فئات.',
       heroBtn1: 'استكشف جميع الأدوات',
       heroBtn2: 'الأدوات الشائعة',
       needTitle: 'تحتاج شيئاً محدداً؟',
       needDesc: 'لم تجد الأداة؟ سنبنيها لك!',
       suggestBtn: 'اقترح أداة',
       contactBtn: 'اتصل بالدعم',
-      stats: [{ number: '54', label: 'أداة' }, { number: '+50K', label: 'مستخدم' }, { number: '100%', label: 'مجاني' }, { number: '24/7', label: 'متاح' }],
+      stats: [{ number: '55', label: 'أداة' }, { number: '+50K', label: 'مستخدم' }, { number: '100%', label: 'مجاني' }, { number: '24/7', label: 'متاح' }],
     },
     hi: {
-      heroBadge: '54 मुफ्त ऑनलाइन टूल्स',
+      heroBadge: '55 मुफ्त ऑनलाइन टूल्स',
       heroTitle: 'प्रोफेशनल टूल्स कलेक्शन',
-      heroDesc: '7 श्रेणियों में 54 मुफ्त ऑनलाइन टूल्स।',
+      heroDesc: '7 श्रेणियों में 55 मुफ्त ऑनलाइन टूल्स।',
       heroBtn1: 'सभी टूल्स देखें',
       heroBtn2: 'लोकप्रिय टूल्स',
       needTitle: 'कुछ विशेष चाहिए?',
       needDesc: 'टूल नहीं मिला? हम बनाएंगे!',
       suggestBtn: 'टूल सुझाएं',
       contactBtn: 'सहायता',
-      stats: [{ number: '54', label: 'टूल्स' }, { number: '50K+', label: 'उपयोगकर्ता' }, { number: '100%', label: 'मुफ्त' }, { number: '24/7', label: 'उपलब्ध' }],
+      stats: [{ number: '55', label: 'टूल्स' }, { number: '50K+', label: 'उपयोगकर्ता' }, { number: '100%', label: 'मुफ्त' }, { number: '24/7', label: 'उपलब्ध' }],
     },
   }[lang] || {} as any;
 

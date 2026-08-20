@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   };
   
   const descriptions = { 
-    en: 'Access 54 free online tools — calculators, image editors, PDF tools & more.', 
-    ur: '54 مفت آن لائن ٹولز: کیلکولیٹر، امیج ایڈیٹر، PDF ٹولز۔', 
-    hi: '54 मुफ्त ऑनलाइन टूल्स: कैलकुलेटर, इमेज एडिटर, PDF टूल्स।', 
-    ar: '54 أداة مجانية: حاسبات، محرر صور، أدوات PDF.' 
+    en: 'Access 55 free online tools — calculators, image editors, PDF tools & more.', 
+    ur: '55 مفت آن لائن ٹولز: کیلکولیٹر، امیج ایڈیٹر، PDF ٹولز۔', 
+    hi: '55 मुफ्त ऑनलाइन टूल्स: कैलकुलेटर, इमेज एडिटर, PDF टूल्स।', 
+    ar: '55 أداة مجانية: حاسبات، محرر صور، أدوات PDF.' 
   };
 
   return {
