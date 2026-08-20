@@ -117,6 +117,7 @@
 - [PDF Merger Guide](https://www.centre.com.pk/blog/pdf-merger-complete-guide)
 - [PDF Splitter Guide](https://www.centre.com.pk/blog/pdf-splitter-complete-guide)
 - [PDF to Word Guide](https://www.centre.com.pk/blog/pdf-to-word-complete-guide)
+- [PDF to Protect Guide](https://www.centre.com.pk/tools/pdf-tools/pdf-protect)
 
 ### Security Tool Guides
 - [Password Generator Guide](https://www.centre.com.pk/blog/password-generator-complete-guide)
