@@ -15,7 +15,7 @@ import {
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import MobileDashboard from '../MobileDashboard/MobileDashboard';
-import Logo from '@/components/theme/ui/Logo';
+import Image from 'next/image';
 import MegaMenu from '../MegaMenu/MegaMenu';
 import './Header.css';
 import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
@@ -232,27 +232,20 @@ export default function Header({ lang }: HeaderProps) {
         <div className="responsive-container">
           <div className="header-inner">
             
-            {/* LOGO */}
-            <div className="logo-container">
-              <Link href={`/${lang}`} className="logo-link">
-                <div 
-                  className="logo-icon"
-                  style={{ borderColor: themeColors.primary }}
-                >
-                  <Logo width={18} height={18} />
-                </div>
-                <div className="logo-text">
-                  <span 
-                    className="logo-title"
-                    style={{
-                      backgroundImage: `linear-gradient(135deg, ${themeColors.primary}, ${themeColors.secondary})`
-                    }}
-                  >
-                    Centers.PK
-                  </span>
-                </div>
-              </Link>
-            </div>
+           {/* LOGO */}
+<div className="logo-container">
+  <Link href={`/${lang}`} className="logo-link">
+    <Image
+      src="/centre.com.pk.jpeg"
+      alt="Centre.com.pk - Free Online Tools"
+      width={140}
+      height={40}
+      className="logo-image"
+      priority
+      style={{ objectFit: 'contain' }}
+    />
+  </Link>
+</div>
 
             {/* DESKTOP NAVIGATION */}
             <nav className="desktop-nav">

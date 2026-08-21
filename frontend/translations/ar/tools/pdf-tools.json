@@ -299,5 +299,38 @@
     "note": "ملاحظة",
     "settings_note": "ستؤدي إعدادات الجودة الأعلى والمزيد من الميزات المحفوظة إلى زيادة وقت المعالجة.",
     "processing_time": "قد تستغرق معالجة الملفات الكبيرة بضع لحظات"
+   },
+
+  "pdf_protect": {
+    "title": "حماية PDF - تأمين بكلمة مرور",
+    "description": "حامي PDF مجاني. قم بتأمين ملفات PDF بكلمة مرور.",
+    "loading": "جاري تحميل أداة حماية PDF...",
+    "select_pdf": "اختر ملف PDF",
+    "drag_drop": "أو اسحب وأفلت ملف PDF الخاص بك هنا",
+    "file_info": "الحد الأقصى لحجم الملف: 50MB",
+    "password_label": "كلمة المرور",
+    "password_placeholder": "أدخل كلمة المرور (6 أحرف على الأقل)",
+    "confirm_password_label": "تأكيد كلمة المرور",
+    "confirm_password_placeholder": "أعد إدخال كلمة المرور",
+    "password_strength": "قوة كلمة المرور",
+    "very_weak": "ضعيفة جداً",
+    "weak": "ضعيفة",
+    "fair": "مقبولة",
+    "good": "جيدة",
+    "strong": "قوية",
+    "protect": "حماية PDF",
+    "protecting": "جاري الحماية...",
+    "protect_complete": "تمت حماية PDF بنجاح!",
+    "download": "تنزيل PDF المحمي",
+    "protect_another": "حماية ملف آخر",
+    "cancel": "إلغاء",
+    "invalid_file": "الرجاء تحديد ملف PDF صالح",
+    "file_too_large": "حجم الملف كبير جدًا. الحد الأقصى المسموح به 50MB.",
+    "password_too_short": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
+    "password_mismatch": "كلمات المرور غير متطابقة.",
+    "select_file": "الرجاء تحديد ملف PDF أولاً",
+    "upload_success": "✓ تم تحميل \"{name}\" بنجاح!",
+    "protect_success": "✓ تمت حماية PDF بنجاح!",
+    "download_success": "✓ تم تنزيل PDF بنجاح!"
   }
 }

@@ -529,3 +529,13 @@
 .dark .language-option:hover:not(.disabled) {
   background-color: rgba(255, 255, 255, 0.1);
 }
+
+
+
+.logo-image {
+  width: auto;
+  height: 40px;
+  max-width: 40px;
+  object-fit: contain;
+  border-radius: 15px;
+}

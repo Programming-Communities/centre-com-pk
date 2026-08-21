@@ -299,5 +299,38 @@
     "note": "Note",
     "settings_note": "Higher quality settings and more preserved features will increase processing time.",
     "processing_time": "Processing large files may take a few moments"
+  },
+
+  "pdf_protect": {
+    "title": "PDF Protect - Password Protect PDF Files",
+    "description": "Protect your PDF files with password encryption. Free online PDF protector — no registration required, 100% secure.",
+    "loading": "Loading PDF Protector...",
+    "select_pdf": "Choose PDF File",
+    "drag_drop": "or drag & drop your PDF here",
+    "file_info": "Maximum file size: 50MB",
+    "password_label": "Password",
+    "password_placeholder": "Enter password (minimum 6 characters)",
+    "confirm_password_label": "Confirm Password",
+    "confirm_password_placeholder": "Re-enter password",
+    "password_strength": "Password Strength",
+    "very_weak": "Very Weak",
+    "weak": "Weak",
+    "fair": "Fair",
+    "good": "Good",
+    "strong": "Strong",
+    "protect": "Protect PDF",
+    "protecting": "Protecting...",
+    "protect_complete": "PDF Protected Successfully!",
+    "download": "Download Protected PDF",
+    "protect_another": "Protect Another File",
+    "cancel": "Cancel",
+    "invalid_file": "Please select a valid PDF file",
+    "file_too_large": "File size too large. Maximum 50MB allowed.",
+    "password_too_short": "Password must be at least 6 characters long.",
+    "password_mismatch": "Passwords do not match.",
+    "select_file": "Please select a PDF file first",
+    "upload_success": "✓ \"{name}\" uploaded successfully!",
+    "protect_success": "✓ PDF protected successfully!",
+    "download_success": "✓ PDF downloaded successfully!"
   }
 }

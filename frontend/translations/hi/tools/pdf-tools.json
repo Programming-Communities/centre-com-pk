@@ -299,5 +299,38 @@
     "note": "नोट",
     "settings_note": "उच्च गुणवत्ता सेटिंग्स और अधिक संरक्षित विशेषताएँ प्रोसेसिंग समय बढ़ा देंगी।",
     "processing_time": "बड़ी फाइलों की प्रोसेसिंग में कुछ क्षण लग सकते हैं"
+   },
+
+  "pdf_protect": {
+    "title": "PDF Protect - पासवर्ड से सुरक्षित करें",
+    "description": "मुफ्त PDF प्रोटेक्टर। पासवर्ड से PDF फाइलों को सुरक्षित करें।",
+    "loading": "PDF प्रोटेक्टर लोड हो रहा है...",
+    "select_pdf": "PDF फाइल चुनें",
+    "drag_drop": "या अपनी PDF को यहाँ खींचें और छोड़ें",
+    "file_info": "अधिकतम फाइल आकार: 50MB",
+    "password_label": "पासवर्ड",
+    "password_placeholder": "पासवर्ड दर्ज करें (कम से कम 6 अक्षर)",
+    "confirm_password_label": "पासवर्ड की पुष्टि करें",
+    "confirm_password_placeholder": "पासवर्ड फिर से दर्ज करें",
+    "password_strength": "पासवर्ड की मजबूती",
+    "very_weak": "बहुत कमजोर",
+    "weak": "कमजोर",
+    "fair": "ठीक-ठाक",
+    "good": "अच्छा",
+    "strong": "मजबूत",
+    "protect": "PDF सुरक्षित करें",
+    "protecting": "सुरक्षित किया जा रहा है...",
+    "protect_complete": "PDF सफलतापूर्वक सुरक्षित हो गया!",
+    "download": "सुरक्षित PDF डाउनलोड करें",
+    "protect_another": "एक और फाइल सुरक्षित करें",
+    "cancel": "रद्द करें",
+    "invalid_file": "कृपया एक मान्य PDF फाइल चुनें",
+    "file_too_large": "फाइल आकार बहुत बड़ा है। अधिकतम 50MB की अनुमति है।",
+    "password_too_short": "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    "password_mismatch": "पासवर्ड मेल नहीं खाते।",
+    "select_file": "कृपया पहले एक PDF फाइल चुनें",
+    "upload_success": "✓ \"{name}\" सफलतापूर्वक अपलोड हो गई!",
+    "protect_success": "✓ PDF सफलतापूर्वक सुरक्षित हो गया!",
+    "download_success": "✓ PDF सफलतापूर्वक डाउनलोड हो गया!"
   }
 }
