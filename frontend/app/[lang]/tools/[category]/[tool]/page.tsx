@@ -103,7 +103,7 @@ interface ToolPageProps {
     category: string;
     tool: string;
   }>;
-  searchParams: Promise<{ 
+  searchParams: Promise<{
     [key: string]: string | string[] | undefined;
   }>;
 }
@@ -122,7 +122,7 @@ export const viewport: Viewport = {
 export async function generateMetadata({ params }: ToolPageProps): Promise<Metadata> {
   const { lang, category, tool } = await params;
   const toolData = TOOL_SEO_DATA[tool as keyof typeof TOOL_SEO_DATA];
-  
+
   if (!toolData || toolData.category !== category) {
     return {
       title: 'Tool Not Found - Centre.com.pk',
@@ -130,16 +130,16 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       robots: { index: false, follow: false },
     };
   }
-  
+
   let translatedTitle = toolData.title;
   let translatedDescription = toolData.description;
-  
+
   if (lang !== 'en') {
     try {
       const translations = await import(`@/translations/${lang}/tools/${category}.json`)
         .then(module => module.default)
         .catch(() => null);
-      
+
       if (translations) {
         if (translations[tool]) {
           translatedTitle = translations[tool].title || toolData.title;
@@ -154,9 +154,9 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       // Fallback to English
     }
   }
-  
+
   const canonicalUrl = `https://www.centre.com.pk/${lang}/tools/${toolData.category}/${toolData.slug}`;
-  
+
   // ✅ DYNAMIC OG IMAGE URL WITH LANG SUPPORT
   const ogImageUrl = generateOgImageUrl('tool', {
     slug: toolData.slug,
@@ -164,23 +164,23 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     description: translatedDescription,
     lang: lang,
   });
-  
+
   const multilingualKeywords: Record<string, string[]> = {
     ur: ['مفت آن لائن ٹولز', 'پاکستانی ٹولز', 'اردو کیلکولیٹر'],
     hi: ['मुफ्त ऑनलाइन उपकरण', 'भारतीय उपकरण', 'हिंदी कैलकुलेटर'],
     ar: ['أدوات مجانية', 'أدوات عربية', 'حاسبات عربية']
   };
-  
+
   const keywords = [...toolData.keywords];
   if (multilingualKeywords[lang]) {
     keywords.push(...multilingualKeywords[lang]);
   }
-  
+
   return {
     title: `${translatedTitle} | Centre.com.pk`,
     description: translatedDescription,
     keywords: keywords.join(', '),
-    alternates: { 
+    alternates: {
       canonical: canonicalUrl,
       languages: {
         'en': `https://www.centre.com.pk/tools/${toolData.category}/${toolData.slug}`,
@@ -194,11 +194,11 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
       description: translatedDescription,
       url: canonicalUrl,
       type: 'website',
-      images: [{ 
-        url: ogImageUrl, 
-        width: 1200, 
+      images: [{
+        url: ogImageUrl,
+        width: 1200,
         height: 630,
-        alt: translatedTitle 
+        alt: translatedTitle
       }],
       locale: lang === 'ur' ? 'ur_PK' : lang === 'hi' ? 'hi_IN' : lang === 'ar' ? 'ar_AE' : 'en_US',
       siteName: 'Centre.com.pk',
@@ -225,13 +225,13 @@ function getAllCategoryTools(toolData: ToolSEOData): ToolSEOData[] {
 async function getToolContent(lang: string, category: string, toolData: ToolSEOData) {
   let title = toolData.title;
   let description = toolData.description;
-  
+
   if (lang !== 'en') {
     try {
       const translations = await import(`@/translations/${lang}/tools/${category}.json`)
         .then(module => module.default)
         .catch(() => null);
-      
+
       if (translations) {
         if (translations[toolData.slug]) {
           title = translations[toolData.slug].title || toolData.title;
@@ -246,60 +246,60 @@ async function getToolContent(lang: string, category: string, toolData: ToolSEOD
       // Fallback to English
     }
   }
-  
+
   return { title, description };
 }
 
 async function getBreadcrumbTranslations(lang: string): Promise<{ home: string; tools: string }> {
   if (lang === 'en') return { home: 'Home', tools: 'Tools' };
-  
+
   try {
     const common = await import(`@/translations/${lang}/common.json`).then(m => m.default).catch(() => null);
     if (common) {
       return { home: common.home || 'Home', tools: common.tools || 'Tools' };
     }
-  } catch (e) {}
-  
+  } catch (e) { }
+
   return { home: 'Home', tools: 'Tools' };
 }
 
 async function generateBreadcrumbs(toolData: ToolSEOData, lang: string, toolTitle: string) {
   const { home, tools } = await getBreadcrumbTranslations(lang);
-  
+
   let categoryName = toolData.category.replace('-', ' ').toUpperCase();
   if (lang !== 'en') {
     const categoryMap: Record<string, Record<string, string>> = {
-      ur: { 
-        calculators: 'کیلکولیٹرز', 
-        'code-tools': 'کوڈ ٹولز', 
-        'image-tools': 'امیج ٹولز', 
-        'pdf-tools': 'پی ڈی ایف ٹولز', 
-        'security-tools': 'سیکیورٹی ٹولز', 
+      ur: {
+        calculators: 'کیلکولیٹرز',
+        'code-tools': 'کوڈ ٹولز',
+        'image-tools': 'امیج ٹولز',
+        'pdf-tools': 'پی ڈی ایف ٹولز',
+        'security-tools': 'سیکیورٹی ٹولز',
         'text-tools': 'ٹیکسٹ ٹولز',
         'design-tools': 'ڈیزائن ٹولز'
       },
-      hi: { 
-        calculators: 'कैलकुलेटर', 
-        'code-tools': 'कोड टूल्स', 
-        'image-tools': 'इमेज टूल्स', 
-        'pdf-tools': 'पीडीएफ टूल्स', 
-        'security-tools': 'सुरक्षा टूल्स', 
+      hi: {
+        calculators: 'कैलकुलेटर',
+        'code-tools': 'कोड टूल्स',
+        'image-tools': 'इमेज टूल्स',
+        'pdf-tools': 'पीडीएफ टूल्स',
+        'security-tools': 'सुरक्षा टूल्स',
         'text-tools': 'टेक्स्ट टूल्स',
         'design-tools': 'डिज़ाइन टूल्स'
       },
-      ar: { 
-        calculators: 'الآلات الحاسبة', 
-        'code-tools': 'أدوات البرمجة', 
-        'image-tools': 'أدوات الصور', 
-        'pdf-tools': 'أدوات PDF', 
-        'security-tools': 'أدوات الأمان', 
+      ar: {
+        calculators: 'الآلات الحاسبة',
+        'code-tools': 'أدوات البرمجة',
+        'image-tools': 'أدوات الصور',
+        'pdf-tools': 'أدوات PDF',
+        'security-tools': 'أدوات الأمان',
         'text-tools': 'أدوات النص',
         'design-tools': 'أدوات التصميم'
       }
     };
     categoryName = categoryMap[lang]?.[toolData.category] || categoryName;
   }
-  
+
   return [
     { name: home, url: `/${lang}`, icon: Home },
     { name: tools, url: `/${lang}/tools`, icon: Wrench },
@@ -316,7 +316,7 @@ function ProfessionalBreadcrumbs({ items }: { items: Array<{ name: string; url: 
           {items.map((item, index) => {
             const isLast = index === items.length - 1;
             const Icon = item.icon;
-            
+
             return (
               <li key={item.url} className="flex items-center">
                 {!isLast ? (
@@ -341,7 +341,7 @@ function ProfessionalBreadcrumbs({ items }: { items: Array<{ name: string; url: 
           })}
         </ol>
       </div>
-      
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -352,7 +352,10 @@ function ProfessionalBreadcrumbs({ items }: { items: Array<{ name: string; url: 
               '@type': 'ListItem',
               position: index + 1,
               name: item.name,
-             item: item.url.startsWith('http') ? item.url : `https://www.centre.com.pk${item.url.startsWith('/') ? item.url : '/' + item.url}`,
+              item: {
+                '@id': item.url.startsWith('http') ? item.url : `https://www.centre.com.pk${item.url.startsWith('/') ? item.url : '/' + item.url}`,
+                'name': item.name,
+              },
             })),
           }),
         }}
@@ -365,7 +368,7 @@ async function getToolSEOScore(toolData: ToolSEOData) {
   const optimizer = new GoogleRankingOptimizer();
   const optimizations = optimizer.analyzeAllTools();
   const toolOptimization = optimizations.find(opt => opt.toolSlug === toolData.slug);
-  
+
   return {
     score: toolOptimization?.currentScore || 50,
     improvements: toolOptimization?.improvements || [],
@@ -373,9 +376,9 @@ async function getToolSEOScore(toolData: ToolSEOData) {
   };
 }
 
-function getToolFAQs(toolData: ToolSEOData): Array<{question: string; answer: string}> {
+function getToolFAQs(toolData: ToolSEOData): Array<{ question: string; answer: string }> {
   const baseFAQs = toolData.faqs || [];
-  
+
   const competitiveFAQs = [
     {
       question: `Is ${toolData.title} really free?`,
@@ -386,13 +389,13 @@ function getToolFAQs(toolData: ToolSEOData): Array<{question: string; answer: st
       answer: `Our ${toolData.title} offers better features: no file size limits, faster processing, no watermarks, complete privacy, and full support for Urdu, Hindi, and Arabic languages. Save money by using our free tool.`
     }
   ];
-  
+
   return [...competitiveFAQs, ...baseFAQs].slice(0, 10);
 }
 
 async function getCommonTranslations(lang: string): Promise<Record<string, string>> {
   if (lang === 'en') return {};
-  
+
   try {
     return await import(`@/translations/${lang}/common.json`).then(m => m.default).catch(() => ({}));
   } catch (e) {
@@ -404,7 +407,7 @@ async function generateAllSchemas(toolData: ToolSEOData, breadcrumbItems: any[],
   const toolSchema = generateToolSchema(toolData.slug, toolData.category, breadcrumbItems, lang);
   const organizationSchema = generateOrganizationSchema();
   const websiteSchema = generateWebsiteSchema();
-  
+
   return { toolSchema, organizationSchema, websiteSchema };
 }
 
@@ -422,18 +425,18 @@ function getToolCacheKey(lang: string, category: string, tool: string): string {
 export default async function ToolPage({ params, searchParams }: ToolPageProps) {
   const { lang, category, tool } = await params;
   const toolData = TOOL_SEO_DATA[tool as keyof typeof TOOL_SEO_DATA];
-  
+
   if (!toolData || toolData.category !== category) {
     notFound();
   }
-  
+
   // ========== REDIS CACHE CHECK ==========
   const cacheKey = getToolCacheKey(lang, category, tool);
   const cached = null; // CACHE DISABLED
-  
+
   if (false) { // BYPASS
     // Serve from cache — skip all processing
-    return <ToolPageContent 
+    return <ToolPageContent
       cachedData={cached}
       lang={lang}
       category={category}
@@ -441,19 +444,19 @@ export default async function ToolPage({ params, searchParams }: ToolPageProps) 
       toolData={toolData}
     />;
   }
-  
+
   // ========== FETCH FRESH DATA ==========
   const ToolComponent = await getToolComponent(tool);
   const { title: toolTitle, description: toolDescription } = await getToolContent(lang, category, toolData);
   const breadcrumbItems = await generateBreadcrumbs(toolData, lang, toolTitle);
-  
+
   const allCategoryTools = getAllCategoryTools(toolData);
   const seoScore = await getToolSEOScore(toolData);
   const toolFAQs = getToolFAQs(toolData);
-  
+
   const common = await getCommonTranslations(lang);
   const { toolSchema, organizationSchema, websiteSchema } = await generateAllSchemas(toolData, breadcrumbItems, lang);
-  
+
   // ========== BUILD CACHE DATA ==========
   const cacheData = {
     ToolComponentName: tool ? tool : null,
@@ -468,10 +471,10 @@ export default async function ToolPage({ params, searchParams }: ToolPageProps) 
     organizationSchema,
     websiteSchema,
   };
-  
+
   await setCache(cacheKey, cacheData, 7200);
-  
-  return <ToolPageContent 
+
+  return <ToolPageContent
     cachedData={{ ...cacheData, ToolComponent }}
     lang={lang}
     category={category}
@@ -505,16 +508,16 @@ function ToolPageContent({ cachedData, lang, category, toolData }: {
     websiteSchema,
     tool,
   } = cachedData;
-  
+
   const isRTL = lang === 'ur' || lang === 'ar';
-  
+
   if (!ToolComponent) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <div className="text-5xl mb-4">🔧</div>
           <h2 className="text-2xl font-bold text-text-primary mb-2">Tool Under Development</h2>
-          <Link 
+          <Link
             href={`/${lang}/tools/${category}`}
             className="inline-flex items-center px-4 py-2 rounded-lg font-medium bg-primary text-text-accent hover:bg-primary/90"
           >
@@ -526,51 +529,51 @@ function ToolPageContent({ cachedData, lang, category, toolData }: {
   }
 
   const categoryMap: Record<string, Record<string, string>> = {
-    ur: { 
-      calculators: 'کیلکولیٹرز', 
-      'code-tools': 'کوڈ ٹولز', 
+    ur: {
+      calculators: 'کیلکولیٹرز',
+      'code-tools': 'کوڈ ٹولز',
       'design-tools': 'ڈیزائن ٹولز',
-      'image-tools': 'امیج ٹولز', 
-      'pdf-tools': 'پی ڈی ایف ٹولز', 
-      'security-tools': 'سیکیورٹی ٹولز', 
-      'text-tools': 'ٹیکسٹ ٹولز' 
+      'image-tools': 'امیج ٹولز',
+      'pdf-tools': 'پی ڈی ایف ٹولز',
+      'security-tools': 'سیکیورٹی ٹولز',
+      'text-tools': 'ٹیکسٹ ٹولز'
     },
-    hi: { 
-      calculators: 'कैलकुलेटर', 
-      'code-tools': 'कोड टूल्स', 
+    hi: {
+      calculators: 'कैलकुलेटर',
+      'code-tools': 'कोड टूल्स',
       'design-tools': 'डिज़ाइन टूल्स',
-      'image-tools': 'इमेज टूल्स', 
-      'pdf-tools': 'पीडीएफ टूल्स', 
-      'security-tools': 'सुरक्षा टूल्स', 
-      'text-tools': 'टेक्स्ट टूल्स' 
+      'image-tools': 'इमेज टूल्स',
+      'pdf-tools': 'पीडीएफ टूल्स',
+      'security-tools': 'सुरक्षा टूल्स',
+      'text-tools': 'टेक्स्ट टूल्स'
     },
-    ar: { 
-      calculators: 'الآلات الحاسبة', 
-      'code-tools': 'أدوات البرمجة', 
+    ar: {
+      calculators: 'الآلات الحاسبة',
+      'code-tools': 'أدوات البرمجة',
       'design-tools': 'أدوات التصميم',
-      'image-tools': 'أدوات الصور', 
-      'pdf-tools': 'أدوات PDF', 
-      'security-tools': 'أدوات الأمان', 
-      'text-tools': 'أدوات النص' 
+      'image-tools': 'أدوات الصور',
+      'pdf-tools': 'أدوات PDF',
+      'security-tools': 'أدوات الأمان',
+      'text-tools': 'أدوات النص'
     }
   };
-  
+
   const categoryDisplay = categoryMap[lang]?.[category] || category.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase());
   const moreFreeText = common.more_free_tools?.replace('{category}', categoryDisplay) || `More Free ${categoryDisplay} Tools`;
 
   return (
     <div className="min-h-screen bg-background" dir={isRTL ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <CentralAd position="top" size="banner" />
-      
+
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationSchema }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: websiteSchema }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: toolSchema }} />
-      
+
       <ProfessionalBreadcrumbs items={breadcrumbItems} />
-      
+
       <div className="container mx-auto px-4 py-4">
         <div className="max-w-7xl mx-auto">
-          
+
           <div className="mb-8 bg-linear-to-r from-primary/5 to-primary/10 rounded-2xl p-6 md:p-8 border border-primary/20">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-text-primary mb-3">
               {toolTitle}
@@ -579,46 +582,46 @@ function ToolPageContent({ cachedData, lang, category, toolData }: {
               {toolDescription}
             </p>
           </div>
-          
+
           <div className="bg-surface rounded-1xl shadow-lg border border-border p-1 md:p-1 mb-1" suppressHydrationWarning>
             <ToolClientWrapper>
               <ToolComponent />
             </ToolClientWrapper>
           </div>
-          
+
           <div className="hidden lg:block mb-8">
             <CentralAd position="sidebar-left" size="skyscraper" />
           </div>
-          
+
           <div className="my-8">
             <CentralAd position="in-content" size="rectangle" />
           </div>
-          
+
           <div className="mb-8">
             <VideoTutorial toolData={toolData} lang={lang} />
           </div>
-          
+
           <div className="mb-8">
-            <ShareButtons 
+            <ShareButtons
               title={`${toolTitle} - Free Alternative to Paid Tools`}
               url={`https://www.centre.com.pk/${lang}/tools/${toolData.category}/${toolData.slug}`}
             />
           </div>
-          
+
           {toolFAQs.length > 0 && (
             <div className="mb-8">
-              <FAQs 
+              <FAQs
                 faqs={toolFAQs}
                 title={`${common.frequently_asked_questions || 'Frequently Asked Questions'} - ${toolTitle}`}
                 showSchema={false}
               />
             </div>
           )}
-          
+
           <div className="hidden lg:block mb-8">
             <CentralAd position="sidebar-right" size="skyscraper" />
           </div>
-                    {/* ✅ Complete Guide — HIGH PRIORITY POSITION */}
+          {/* ✅ Complete Guide — HIGH PRIORITY POSITION */}
           <ToolBlogGuide toolSlug={toolData.slug} lang={lang} />
 
           {/* {allCategoryTools.length > 0 && (
@@ -644,9 +647,9 @@ function ToolPageContent({ cachedData, lang, category, toolData }: {
               </div>
             </div>
           )} */}
-          
+
           <div className="mb-8">
-            <InternalLinks 
+            <InternalLinks
               links={allCategoryTools.map((t: ToolSEOData) => ({
                 title: t.title,
                 url: `/${lang}/tools/${t.category}/${t.slug}`,
@@ -663,7 +666,7 @@ function ToolPageContent({ cachedData, lang, category, toolData }: {
           </div>
         </div>
       </div>
-      
+
 
       <ToolSEO toolData={toolData} showFAQs={toolFAQs.length > 0} />
     </div>
