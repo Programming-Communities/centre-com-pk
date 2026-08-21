@@ -32,7 +32,7 @@ export function generateBreadcrumbsJsonLd(breadcrumbs: BreadcrumbItem[]) {
       position: index + 1,
       name: item.name,
       item: {
-        '@id': item.url,
+        '@id': item.url.startsWith('http') ? item.url : `https://www.centre.com.pk${item.url.startsWith('/') ? item.url : '/' + item.url}`,
         name: item.name,
       },
     })),

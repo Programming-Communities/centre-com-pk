@@ -301,9 +301,9 @@ async function generateBreadcrumbs(toolData: ToolSEOData, lang: string, toolTitl
   }
 
   return [
-    { name: home, url: `/${lang}`, icon: Home },
-    { name: tools, url: `/${lang}/tools`, icon: Wrench },
-    { name: categoryName, url: `/${lang}/tools/${toolData.category}`, icon: FolderOpen },
+    { name: home, url: `https://www.centre.com.pk/${lang}`, icon: Home },
+    { name: tools, url: `https://www.centre.com.pk/${lang}/tools`, icon: Wrench },
+    { name: categoryName, url: `https://www.centre.com.pk/${lang}/tools/${toolData.category}`, icon: FolderOpen },
     { name: toolTitle, url: `/${lang}/tools/${toolData.category}/${toolData.slug}`, isCurrent: true },
   ];
 }
