@@ -14,12 +14,7 @@ const nextConfig = {
       'date-fns',
       'lodash',
     ],
-    turbopack: {
-      root: __dirname,
-    },
   },
-
-  turbopack: {},
 
   async headers() {
     return [
