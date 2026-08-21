@@ -17,7 +17,7 @@ android {
     
     signingConfigs {
         release {
-            storeFile file('../centre-release.keystore')
+            storeFile file('centre-release.keystore')
             storePassword 'centre123'
             keyAlias 'centre'
             keyPassword 'centre123'

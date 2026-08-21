@@ -611,3 +611,11 @@ You now have **complete knowledge** of every folder, every file, every component
 ---
 
 **Bhai, ab yeh prompt kisi bhi naye chat mein paste karo — AI ko poori project ki complete understanding ho jayegi bina kisi file share kiye! 🚀**
+
+for vsp cd /home/centre.com.pk/public_html/frontend
+git stash
+git pull
+npm run build
+cp -r .next/static .next/standalone/.next/
+cp -r public .next/standalone/
+pm2 restart centre-com-pk
