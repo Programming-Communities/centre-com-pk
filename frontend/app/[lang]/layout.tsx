@@ -3,6 +3,8 @@ import { Metadata } from 'next';
 import { ThemeProvider } from '@/components/theme/contexts/ThemeContext';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
+import TopLoader from '@/components/layout/TopLoader';
+import BottomNavigation from '@/components/layout/BottomNavigation';
 import { WebVitals } from '@/app/web-vitals';
 import PreloadResources from '@/components/PreloadResources';
 import { redirect } from 'next/navigation';
@@ -73,12 +75,14 @@ export default async function LangLayout({ children, params }: { children: React
   return (
     <ThemeProvider>
       <PreloadResources />
+      <TopLoader />
       <div className={`min-h-screen flex flex-col ${fontClass}`} dir={dir} lang={lang} suppressHydrationWarning>
         <Header lang={lang} />
         <main className="flex-1 pt-16" id="main-content" role="main" suppressHydrationWarning>
           {children}
         </main>
         <Footer lang={lang} />
+        <BottomNavigation lang={lang} />
         <WebVitals />
       </div>
     </ThemeProvider>

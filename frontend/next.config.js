@@ -138,6 +138,40 @@ const nextConfig = {
         permanent: true,
       },
       { source: '/sitemap-:lang.xml/:path*', destination: '/sitemap.xml', permanent: true },
+
+      // ✅ NAYE REDIRECTS — GALAT URLs FIX
+      // Special characters → Clean URLs
+      { source: '/&/:path*', destination: '/:path*', permanent: true },
+      { source: '/%26/:path*', destination: '/:path*', permanent: true },
+      { source: '/&', destination: '/', permanent: true },
+      { source: '/%26', destination: '/', permanent: true },
+      
+      // Wrong prefixes → Correct URLs
+      { source: '/about/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/advertise/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/contact/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/privacy-policy/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/search/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/signup/tools/:path*', destination: '/tools/:path*', permanent: true },
+      
+      // Wrong blog prefixes
+      { source: '/advertise/blog/:path*', destination: '/blog/:path*', permanent: true },
+      { source: '/about/blog/:path*', destination: '/blog/:path*', permanent: true },
+      
+      // Manifest.json wrong path
+      { source: '/manifest.json/:path*', destination: '/:path*', permanent: true },
+      
+      // Double prefix fixes
+      { source: '/ur/en/:path*', destination: '/ur/:path*', permanent: true },
+      { source: '/hi/en/:path*', destination: '/hi/:path*', permanent: true },
+      { source: '/ar/en/:path*', destination: '/ar/:path*', permanent: true },
+      { source: '/en/en/:path*', destination: '/en/:path*', permanent: true },
+      
+      // Trailing slash fixes
+      { source: '/en/:path*/', destination: '/en/:path*', permanent: true },
+      { source: '/ur/:path*/', destination: '/ur/:path*', permanent: true },
+      { source: '/hi/:path*/', destination: '/hi/:path*', permanent: true },
+      { source: '/ar/:path*/', destination: '/ar/:path*', permanent: true },
     ];
   },
 };
