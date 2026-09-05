@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FileText, Plus, Eye, Edit3, Trash2, ArrowLeft, Clock } from "lucide-react";
+import { FileText, Plus, Eye, ArrowLeft, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import { useTheme } from "@/components/theme/contexts/ThemeContext";
 
 export default function MyPostsClient({ lang }: { lang: string }) {
@@ -32,79 +32,78 @@ export default function MyPostsClient({ lang }: { lang: string }) {
     setLoading(false);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('Delete this post?')) return;
-    await fetch('/api/admin/posts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) });
-    setPosts(p => p.filter(x => x.id !== id));
+  const getStatusBadge = (status: string) => {
+    const configs: Record<string, any> = {
+      published: { bg: '#10b98120', color: '#10b981', icon: CheckCircle, label: 'Published' },
+      pending: { bg: '#f59e0b20', color: '#f59e0b', icon: Clock, label: 'Pending Approval' },
+      draft: { bg: '#64748b20', color: '#64748b', icon: AlertCircle, label: 'Draft' },
+      rejected: { bg: '#ef444420', color: '#ef4444', icon: XCircle, label: 'Rejected' },
+    };
+    return configs[status] || configs.draft;
   };
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '16px 0' }}>
       
-      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 overflow-auto w-full">
-        <div className="max-w-5xl mx-auto">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-2 text-sm mb-2" style={{ color: textSecondary }}>
-                <ArrowLeft size={16} /> Back to Dashboard
-              </Link>
-              <h1 style={{ fontSize: '28px', fontWeight: 800, color: textPrimary, margin: '0' }}>
-                <FileText size={26} style={{ marginRight: '8px', verticalAlign: 'middle', color: primary }} />
-                My Posts
-              </h1>
-              <p style={{ fontSize: '14px', color: textSecondary, marginTop: '4px' }}>Manage your published blog posts</p>
-            </div>
-            <Link href={`/${lang}/blog`}
-              style={{ padding: '12px 24px', background: primary, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-              <Plus size={18} /> Browse Blog
-            </Link>
-          </div>
+      {/* HEADER */}
+      <div style={{ marginBottom: '20px' }}>
+        <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-1.5 text-sm mb-1" style={{ color: textSecondary, textDecoration: 'none' }}>
+          <ArrowLeft size={14} /> Back to Dashboard
+        </Link>
+        <h1 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, color: textPrimary, margin: '0' }}>
+          📝 My Posts
+        </h1>
+        <p style={{ fontSize: '13px', color: textSecondary, marginTop: '2px' }}>
+          {posts.length} total posts
+        </p>
+      </div>
 
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: textSecondary }}>Loading your posts...</div>
-          ) : posts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '80px 20px', background: surface, borderRadius: '16px', border: `1px solid ${border}` }}>
-              <FileText size={64} style={{ marginBottom: '16px', opacity: 0.2, color: textSecondary }} />
-              <h2 style={{ fontSize: '20px', fontWeight: 700, color: textPrimary, marginBottom: '8px' }}>No Posts Yet</h2>
-              <p style={{ color: textSecondary, marginBottom: '24px', fontSize: '14px' }}>You haven't written any blog posts yet. Start sharing your knowledge!</p>
-              <Link href={`/${lang}/blog`}
-                style={{ padding: '12px 28px', background: primary, color: '#fff', borderRadius: '10px', fontWeight: 600, fontSize: '14px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                <Plus size={18} /> Browse Blog
-              </Link>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {posts.map((post: any) => (
-                <div key={post.id} style={{ padding: '18px', background: surface, borderRadius: '12px', border: `1px solid ${border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, color: textPrimary, fontSize: '16px', marginBottom: '4px' }}>{post.title}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                      <span style={{ fontSize: '12px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <Clock size={12} /> {post.created_at ? new Date(post.created_at).toLocaleDateString() : '-'}
+      {/* POSTS LIST */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>Loading your posts...</div>
+      ) : posts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '50px 16px', background: surface, borderRadius: '14px', border: `1px solid ${border}` }}>
+          <FileText size={48} style={{ marginBottom: '12px', opacity: 0.2, color: textSecondary }} />
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: textPrimary, marginBottom: '6px' }}>No Posts Yet</h2>
+          <p style={{ color: textSecondary, marginBottom: '16px', fontSize: '13px' }}>Your published posts will appear here</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {posts.map((post: any) => {
+            const statusConfig = getStatusBadge(post.status);
+            const StatusIcon = statusConfig.icon;
+            
+            return (
+              <div key={post.id} style={{ padding: '14px', background: surface, borderRadius: '12px', border: `1px solid ${border}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px', marginBottom: '4px' }}>
+                      {post.title}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      <span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '10px', fontWeight: 600, 
+                        background: statusConfig.bg, color: statusConfig.color, 
+                        display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <StatusIcon size={11} /> {statusConfig.label}
                       </span>
-                      <span style={{ padding: '2px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600, background: post.status === 'published' ? '#10b98120' : '#f59e0b20', color: post.status === 'published' ? '#10b981' : '#f59e0b' }}>
-                        {post.status || 'draft'}
+                      <span style={{ fontSize: '11px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={11} /> {post.created_at ? new Date(post.created_at).toLocaleDateString() : '-'}
                       </span>
-                      <span style={{ fontSize: '12px', color: textSecondary }}>👁 {post.views || post.view_count || 0} views</span>
-                      <span style={{ fontSize: '12px', color: textSecondary }}>❤️ {post.likes || 0} likes</span>
+                      <span style={{ fontSize: '11px', color: textSecondary }}>👁 {post.views || post.view_count || 0} views</span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <Link href={`/${lang}/blog/${post.slug}`} target="_blank"
-                      style={{ padding: '8px 12px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
-                      <Eye size={14} /> View
-                    </Link>
-                    <button onClick={() => handleDelete(post.id)}
-                      style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', color: '#ef4444', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Trash2 size={14} /> Delete
-                    </button>
-                  </div>
+                  
+                  {/* VIEW ONLY — NO DELETE */}
+                  <Link href={`/${lang}/blog/${post.slug}`} target="_blank"
+                    style={{ padding: '7px 14px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', flexShrink: 0 }}>
+                    <Eye size={13} /> View
+                  </Link>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            );
+          })}
         </div>
-      </main>
+      )}
     </div>
   );
 }
