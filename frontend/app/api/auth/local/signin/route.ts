@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
 const DB_PATH = path.join(process.cwd(), "data", "centers-local.db");
@@ -11,14 +12,14 @@ function hashPassword(p: string): string {
 }
 
 function createToken(userId: number, email: string, role: string): string {
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const payload = btoa(JSON.stringify({
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
+  const payload = Buffer.from(JSON.stringify({
     sub: userId.toString(),
     email,
     role,
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
-  }));
+  })).toString('base64');
   const signature = hashPassword(`${header}.${payload}`);
   return `${header}.${payload}.${signature}`;
 }
@@ -35,15 +36,28 @@ export async function POST(request: NextRequest) {
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
 
     if (!user) {
+      db.close();
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
     if (user.status !== 'approved' && user.status !== 'active') {
+      db.close();
       return NextResponse.json({ error: 'Your account is pending approval.' }, { status: 403 });
     }
 
-    const hashedPassword = hashPassword(password);
-    if (hashedPassword !== user.password) {
+    // ✅ FIXED: Check both bcrypt AND SHA-256 password
+    let isValidPassword = false;
+    
+    if (user.password && user.password.startsWith('$2')) {
+      // bcrypt hash (signup se)
+      isValidPassword = bcrypt.compareSync(password, user.password);
+    } else {
+      // Old SHA-256 hash
+      isValidPassword = hashPassword(password) === user.password;
+    }
+
+    if (!isValidPassword) {
+      db.close();
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
@@ -58,6 +72,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         role: user.role || 'user',
         status: user.status,
+        plan: user.plan || 'free',
         avatar: user.avatar,
       }
     });
@@ -70,6 +85,7 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
+    db.close();
     return response;
   } catch (error: any) {
     console.error('Login error:', error);
