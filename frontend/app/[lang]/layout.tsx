@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { Metadata } from 'next';
-import { ThemeProvider } from '@/components/theme/contexts/ThemeContext';
 import Header from '@/components/layout/Header/Header';
 import Footer from '@/components/layout/Footer/Footer';
 import TopLoader from '@/components/layout/TopLoader';
@@ -73,7 +72,7 @@ export default async function LangLayout({ children, params }: { children: React
   const fontClass = lang === 'ur' ? 'font-urdu' : 'font-inter';
   
   return (
-    <ThemeProvider>
+    <>
       <PreloadResources />
       <TopLoader />
       <div className={`min-h-screen flex flex-col ${fontClass}`} dir={dir} lang={lang} suppressHydrationWarning>
@@ -85,6 +84,6 @@ export default async function LangLayout({ children, params }: { children: React
         <BottomNavigation lang={lang} />
         <WebVitals />
       </div>
-    </ThemeProvider>
+    </>
   );
 }

@@ -1,14 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
-import { Plus, Search, Edit3, Eye, Trash2 } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { Plus, Search, Edit3, Eye, Trash2, FileText } from 'lucide-react';
 import QuickEdit from '@/components/admin/QuickEdit';
 import BulkActions from '@/components/admin/BulkActions';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
 
 export default function PostsClient() {
   const { lang } = useParams() as { lang: string };
-  const router = useRouter();
+  const { themeColors, isDarkMode } = useTheme();
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -16,6 +17,13 @@ export default function PostsClient() {
   const [filterStatus, setFilterStatus] = useState('');
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [quickEditPost, setQuickEditPost] = useState<any>(null);
+
+  const bg = themeColors?.background || (isDarkMode ? '#0f172a' : '#f8fafc');
+  const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
+  const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
+  const textSecondary = themeColors?.text?.secondary || (isDarkMode ? '#94a3b8' : '#64748b');
+  const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
+  const primary = themeColors?.primary || '#3b82f6';
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -30,7 +38,7 @@ export default function PostsClient() {
   useEffect(() => { fetchPosts(); }, [search]);
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Move to trash?')) return;
+    if (!confirm('Delete this post?')) return;
     await fetch(`/api/admin/blog?id=${id}`, { method: 'DELETE' });
     fetchPosts();
   };
@@ -50,132 +58,137 @@ export default function PostsClient() {
     return true;
   });
 
+  const inputStyle: React.CSSProperties = {
+    padding: '8px 12px',
+    border: `1px solid ${border}`,
+    borderRadius: '8px',
+    fontSize: '12px',
+    backgroundColor: surface,
+    color: textPrimary,
+    outline: 'none',
+  };
+
+  const getStatusStyle = (status: string) => {
+    if (status === 'published') {
+      return { bg: '#10b98115', color: '#10b981', label: 'Published' };
+    }
+    if (status === 'draft') {
+      return { bg: '#64748b15', color: '#64748b', label: 'Draft' };
+    }
+    return { bg: '#f59e0b15', color: '#f59e0b', label: status };
+  };
+
   return (
-    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '23px', fontWeight: 400, color: '#1d2327', margin: 0 }}>Posts</h1>
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '12px 0' }}>
+      
+      {/* HEADER */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+        <div>
+          <h1 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 700, color: textPrimary, margin: 0 }}>
+            📝 Posts
+          </h1>
+          <p style={{ fontSize: '12px', color: textSecondary, margin: '2px 0 0' }}>
+            {posts.length} total posts
+          </p>
+        </div>
         <Link href={`/${lang}/admin/posts/new`} style={{
-          padding: '8px 16px', backgroundColor: '#2271b1', color: '#fff', borderRadius: '3px',
+          padding: '8px 16px', backgroundColor: primary, color: '#fff', borderRadius: '8px',
           textDecoration: 'none', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px'
         }}>
-          <Plus size={16} /> Add New Post
+          <Plus size={15} /> Add New Post
         </Link>
       </div>
 
-      {/* Filters Bar */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-          style={{ padding: '4px 8px', border: '1px solid #8c8f94', borderRadius: '3px', fontSize: '13px' }}>
-          <option value="">All Statuses</option>
+      {/* FILTERS */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={inputStyle}>
+          <option value="">All Status</option>
           <option value="published">Published</option>
           <option value="draft">Draft</option>
         </select>
-        <select value={filterLang} onChange={e => setFilterLang(e.target.value)}
-          style={{ padding: '4px 8px', border: '1px solid #8c8f94', borderRadius: '3px', fontSize: '13px' }}>
+        <select value={filterLang} onChange={e => setFilterLang(e.target.value)} style={inputStyle}>
           <option value="">All Languages</option>
           <option value="en">English</option>
           <option value="ur">Urdu</option>
           <option value="hi">Hindi</option>
           <option value="ar">Arabic</option>
         </select>
-        <div style={{ marginLeft: 'auto', position: 'relative' }}>
-          <Search size={16} style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', color: '#8c8f94' }} />
+        <div style={{ position: 'relative', flex: 1, minWidth: '160px' }}>
+          <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: textSecondary }} />
           <input type="text" placeholder="Search posts..." value={search} onChange={e => setSearch(e.target.value)}
-            style={{ padding: '4px 8px 4px 28px', border: '1px solid #8c8f94', borderRadius: '3px', fontSize: '13px', width: '200px' }} />
+            style={{ ...inputStyle, paddingLeft: '32px', width: '100%', boxSizing: 'border-box' }} />
         </div>
-        <span style={{ fontSize: '13px', color: '#50575e' }}>{filteredPosts.length} items</span>
+        <span style={{ fontSize: '12px', color: textSecondary }}>{filteredPosts.length} items</span>
       </div>
 
-      {/* Bulk Actions */}
+      {/* BULK ACTIONS */}
       {selectedPosts.length > 0 && (
         <BulkActions count={selectedPosts.length} onDelete={handleBulkDelete} onClear={() => setSelectedPosts([])} />
       )}
 
-      {/* Table */}
-      <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #c3c4c7' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f0f0f1' }}>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', width: '30px', textAlign: 'center' }}>
-              <input type="checkbox" onChange={e => {
-                setSelectedPosts(e.target.checked ? filteredPosts.map(p => p.id) : []);
-              }} />
-            </th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Title</th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Category</th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Language</th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Status</th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Date</th>
-            <th style={{ padding: '8px 10px', borderBottom: '1px solid #c3c4c7', textAlign: 'left', fontSize: '13px', fontWeight: 600, color: '#1d2327' }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {loading ? (
-            <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center' }}>Loading...</td></tr>
-          ) : filteredPosts.length === 0 ? (
-            <tr><td colSpan={7} style={{ padding: '20px', textAlign: 'center' }}>No posts found.</td></tr>
-          ) : (
-            filteredPosts.map((post: any) => (
-              <tr key={post.id} style={{ borderBottom: '1px solid #c3c4c7' }}>
-                <td style={{ padding: '8px 10px', textAlign: 'center' }}>
-                  <input type="checkbox" checked={selectedPosts.includes(post.id)}
-                    onChange={e => {
-                      setSelectedPosts(e.target.checked ? [...selectedPosts, post.id] : selectedPosts.filter(id => id !== post.id));
-                    }} />
-                </td>
-                <td style={{ padding: '8px 10px' }}>
-                  <div style={{ fontWeight: 600, fontSize: '14px', color: '#1d2327' }}>
+      {/* POSTS LIST */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>Loading...</div>
+      ) : filteredPosts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '50px 16px', background: surface, borderRadius: '12px', border: `1px solid ${border}` }}>
+          <FileText size={40} style={{ marginBottom: '10px', opacity: 0.2, color: textSecondary }} />
+          <p style={{ fontSize: '14px', color: textSecondary, margin: 0 }}>No posts found</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {filteredPosts.map((post: any) => {
+            const statusStyle = getStatusStyle(post.status);
+            return (
+              <div key={post.id} style={{ padding: '12px 14px', background: surface, borderRadius: '10px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                
+                {/* CHECKBOX */}
+                <input type="checkbox" checked={selectedPosts.includes(post.id)}
+                  onChange={e => {
+                    setSelectedPosts(e.target.checked ? [...selectedPosts, post.id] : selectedPosts.filter(id => id !== post.id));
+                  }}
+                  style={{ width: '16px', height: '16px', cursor: 'pointer', flexShrink: 0 }} />
+
+                {/* POST INFO */}
+                <div style={{ flex: 1, minWidth: '180px' }}>
+                  <div style={{ fontWeight: 600, fontSize: '14px', color: textPrimary, marginBottom: '2px' }}>
                     {post.title || '(no title)'}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#8c8f94', marginTop: '2px' }}>
-                    {post.slug}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: statusStyle.bg, color: statusStyle.color }}>
+                      {statusStyle.label}
+                    </span>
+                    <span style={{ fontSize: '11px', color: textSecondary }}>{post.category || '—'}</span>
+                    <span style={{ fontSize: '11px', color: textSecondary }}>
+                      {(post.available_langs || [post.lang || 'en']).join(', ').toUpperCase()}
+                    </span>
+                    <span style={{ fontSize: '11px', color: textSecondary }}>
+                      {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                    </span>
                   </div>
-                  <div style={{ marginTop: '4px', display: 'flex', gap: '4px' }}>
-                    <button onClick={() => setQuickEditPost(post)} style={{ fontSize: '11px', color: '#2271b1', border: 'none', background: 'none', cursor: 'pointer', padding: 0 }}>
-                      Quick Edit
-                    </button>
-                    <span style={{ color: '#c3c4c7' }}>|</span>
-                    <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ fontSize: '11px', color: '#2271b1', textDecoration: 'none' }}>
-                      View
-                    </Link>
-                  </div>
-                </td>
-                <td style={{ padding: '8px 10px', fontSize: '13px', color: '#50575e' }}>
-                  {post.category || '—'}
-                </td>
-                <td style={{ padding: '8px 10px', fontSize: '13px', color: '#50575e' }}>
-                  {(post.available_langs || [post.lang || 'en']).join(', ').toUpperCase()}
-                </td>
-                <td style={{ padding: '8px 10px' }}>
-                  <span style={{
-                    padding: '2px 8px', borderRadius: '3px', fontSize: '12px', fontWeight: 600,
-                    backgroundColor: post.status === 'published' ? '#d4edda' : '#f8d7da',
-                    color: post.status === 'published' ? '#155724' : '#721c24'
-                  }}>
-                    {post.status || 'draft'}
-                  </span>
-                </td>
-                <td style={{ padding: '8px 10px', fontSize: '13px', color: '#50575e' }}>
-                  {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
-                </td>
-                <td style={{ padding: '8px 10px', display: 'flex', gap: '6px' }}>
-                  <Link href={`/${lang}/admin/posts/${post.id}`} style={{ color: '#2271b1' }} title="Edit">
-                    <Edit3 size={16} />
-                  </Link>
-                  <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ color: '#50575e' }} title="View">
-                    <Eye size={16} />
-                  </Link>
-                  <button onClick={() => handleDelete(post.id)} style={{ color: '#dc3232', border: 'none', background: 'none', cursor: 'pointer' }} title="Trash">
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+                </div>
 
-      {/* Quick Edit Modal */}
+                {/* ACTIONS */}
+                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                  <button onClick={() => setQuickEditPost(post)} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '11px', cursor: 'pointer' }}>
+                    Quick Edit
+                  </button>
+                  <Link href={`/${lang}/admin/posts/${post.id}`} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                    <Edit3 size={12} />
+                  </Link>
+                  <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                    <Eye size={12} />
+                  </Link>
+                  <button onClick={() => handleDelete(post.id)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', color: '#ef4444', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* QUICK EDIT MODAL */}
       {quickEditPost && (
         <QuickEdit post={quickEditPost} lang={lang} onClose={() => setQuickEditPost(null)} onSaved={() => { setQuickEditPost(null); fetchPosts(); }} />
       )}

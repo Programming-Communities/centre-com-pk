@@ -5,7 +5,7 @@ import { useTheme } from "@/components/theme/contexts/ThemeContext";
 import { 
   Plus, Trash2, Search, Eye, EyeOff, Edit3, 
   Folder, Save, X, AlertTriangle, Code, Terminal, Package,
-  ArrowLeft, FileText
+  ArrowLeft
 } from "lucide-react";
 
 const CATEGORIES = ["calculators", "code-tools", "design-tools", "image-tools", "pdf-tools", "security-tools", "text-tools"];
@@ -17,7 +17,6 @@ export default function ToolsManagerClient({ lang }: { lang: string }) {
   const [search, setSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   
-  // Editor states
   const [selectedTool, setSelectedTool] = useState<any>(null);
   const [toolFiles, setToolFiles] = useState<any[]>([]);
   const [editingFile, setEditingFile] = useState<any>(null);
@@ -30,6 +29,13 @@ export default function ToolsManagerClient({ lang }: { lang: string }) {
   const [message, setMessage] = useState("");
   const [newToolForm, setNewToolForm] = useState({ slug: "", category: "calculators", name: "" });
   const [newFileName, setNewFileName] = useState("");
+
+  const bg = themeColors?.background || (isDarkMode ? '#0f172a' : '#f8fafc');
+  const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
+  const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
+  const textSecondary = themeColors?.text?.secondary || (isDarkMode ? '#94a3b8' : '#64748b');
+  const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
+  const primary = themeColors?.primary || '#3b82f6';
 
   useEffect(() => { fetchTools(); }, []);
 
@@ -136,254 +142,196 @@ export default function ToolsManagerClient({ lang }: { lang: string }) {
     return m && c;
   });
 
-  const inputStyle = { width: "100%", padding: "10px 14px", border: "1px solid var(--border)", borderRadius: "10px", fontSize: "14px", backgroundColor: "var(--background)", color: "var(--text-primary)" };
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 14px',
+    border: `1px solid ${border}`,
+    borderRadius: '8px',
+    fontSize: '13px',
+    backgroundColor: surface,
+    color: textPrimary,
+    boxSizing: 'border-box',
+    outline: 'none',
+  };
 
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '12px 0' }}>
       
-      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 overflow-auto w-full">
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Toast Message */}
-          {message && (
-            <div className="fixed top-20 right-4 z-50 px-4 py-3 rounded-xl shadow-lg text-white text-sm font-medium animate-slide-down"
-              style={{ backgroundColor: message.includes("✅") ? "var(--success)" : "var(--warning)" }}>
-              {message}
+      {/* TOAST */}
+      {message && (
+        <div style={{ position: 'fixed', top: '70px', right: '16px', zIndex: 1000, padding: '10px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, color: '#fff', backgroundColor: message.includes('✅') ? '#10b981' : '#f59e0b' }}>
+          {message}
+        </div>
+      )}
+
+      {/* TOOLS LIST VIEW */}
+      {!selectedTool && (
+        <>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+            <h1 style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 700, color: textPrimary, margin: 0 }}>
+              🛠️ Tools Manager <span style={{ fontSize: '13px', color: textSecondary }}>({tools.length})</span>
+            </h1>
+            <button onClick={() => setShowCreateTool(true)}
+              style={{ padding: '8px 16px', background: primary, color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Plus size={15} /> New Tool
+            </button>
+          </div>
+
+          {/* SEARCH + FILTER */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
+              <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: textSecondary }} />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..." 
+                style={{ ...inputStyle, paddingLeft: '34px' }} />
             </div>
-          )}
+            <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} style={{ ...inputStyle, width: 'auto' }}>
+              <option value="all">All Categories</option>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
 
-          {/* ============ TOOLS LIST VIEW ============ */}
-          {!selectedTool && (
-            <>
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <h1 className="text-2xl lg:text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-                  🛠️ Tools Manager <span className="text-sm opacity-50">({tools.length})</span>
-                </h1>
-                <button onClick={() => setShowCreateTool(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-white rounded-xl text-sm font-medium transition hover:opacity-90"
-                  style={{ backgroundColor: "var(--primary)" }}>
-                  <Plus size={18} /> New Tool
+          {/* TOOLS TABLE → CARDS ON MOBILE */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {filtered.map((tool: any) => (
+              <div key={tool.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: surface, borderRadius: '10px', border: `1px solid ${border}`, flexWrap: 'wrap', gap: '8px' }}>
+                <button onClick={() => fetchToolFiles(tool)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: primary, fontWeight: 600, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px', padding: 0 }}>
+                  {tool.icon} {tool.slug}
                 </button>
-              </div>
-
-              <div className="flex flex-wrap gap-3 mb-4">
-                <div className="relative flex-1 min-w-[200px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: "var(--text-secondary)" }} />
-                  <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tools..."
-                    className="w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
-                </div>
-                <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}
-                  className="px-4 py-2.5 border rounded-lg text-sm" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)", color: "var(--text-primary)" }}>
-                  <option value="all">All Categories</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-
-              <div className="overflow-x-auto rounded-xl border" style={{ borderColor: "var(--border)" }}>
-                <table className="w-full text-sm">
-                  <thead style={{ backgroundColor: "var(--surface)" }}>
-                    <tr>
-                      <th className="p-3 text-left">Tool</th>
-                      <th className="p-3 text-left">Category</th>
-                      <th className="p-3 text-left">Status</th>
-                      <th className="p-3 text-left">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((tool: any) => (
-                      <tr key={tool.id} className="border-t hover:bg-black/5" style={{ borderColor: "var(--border)" }}>
-                        <td className="p-3">
-                          <button onClick={() => fetchToolFiles(tool)} className="font-medium hover:underline text-left" style={{ color: "var(--primary)" }}>
-                            {tool.icon} {tool.slug}
-                          </button>
-                        </td>
-                        <td className="p-3"><span className="px-2 py-1 rounded-full text-xs" style={{ backgroundColor: "var(--surface)", color: "var(--text-secondary)" }}>{tool.category}</span></td>
-                        <td className="p-3">
-                          <button onClick={() => handleToggleStatus(tool.id, tool.status)} className="flex items-center gap-1 text-xs">
-                            {tool.status === "active" ? <span style={{ color: "var(--success)" }}><Eye size={14} className="inline" /> Active</span> : <span style={{ color: "var(--error)" }}><EyeOff size={14} className="inline" /> Inactive</span>}
-                          </button>
-                        </td>
-                        <td className="p-3">
-                          <div className="flex gap-2">
-                            <Link href={`/${lang}/tools/${tool.category}/${tool.slug}`} target="_blank" className="p-1.5 rounded-lg" style={{ color: "var(--primary)" }}>👁️</Link>
-                            <button onClick={() => fetchToolFiles(tool)} className="p-1.5 rounded-lg hover:bg-black/5" style={{ color: "var(--primary)" }} title="Edit Files">
-                              <Edit3 size={14} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-
-          {/* ============ FILE EDITOR VIEW ============ */}
-          {selectedTool && (
-            <>
-              <div className="flex items-center gap-3 mb-6">
-                <button onClick={() => { setSelectedTool(null); setShowEditor(false); }}
-                  className="flex items-center gap-1 text-sm hover:underline" style={{ color: "var(--primary)" }}>
-                  <ArrowLeft size={16} /> Back to List
-                </button>
-                <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-                  <Terminal size={24} className="inline mr-2" style={{ color: "var(--primary)" }} />
-                  {selectedTool.slug}
-                </h1>
-                <span className="text-sm" style={{ color: "var(--text-secondary)" }}>({toolFiles.length} files)</span>
-                <button onClick={() => setShowCreateFile(true)}
-                  className="ml-auto flex items-center gap-2 px-4 py-2 rounded-xl text-white text-sm font-medium"
-                  style={{ backgroundColor: "var(--success)" }}>
-                  <Plus size={16} /> New File
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {/* File Tree */}
-                <div className="lg:col-span-1 rounded-xl border p-4 max-h-[70vh] overflow-y-auto" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-                  <h3 className="font-semibold mb-3 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
-                    <Folder size={18} style={{ color: "var(--primary)" }} /> Files
-                  </h3>
-                  {toolFiles.map((f: any, i: number) => (
-                    <div key={i}>
-                      {f.type === "folder" ? (
-                        <div className="mb-2">
-                          <div className="flex items-center gap-2 text-sm font-medium mb-1" style={{ color: "var(--text-secondary)" }}>
-                            <Folder size={14} /> {f.name}/
-                          </div>
-                          {f.children?.map((child: any, j: number) => (
-                            <div key={j} className="flex items-center justify-between ml-6 py-1.5 px-2 rounded-lg hover:bg-black/5 cursor-pointer group"
-                              onClick={() => openFile(f.name + "/" + child.name)}>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span>{child.icon}</span>
-                                <span style={{ color: "var(--text-primary)" }}>{child.name}</span>
-                              </div>
-                              <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(child); }}
-                                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-100">
-                                <Trash2 size={12} style={{ color: "var(--error)" }} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-black/5 cursor-pointer group ml-0"
-                          onClick={() => openFile(f.name)}>
-                          <div className="flex items-center gap-2 text-xs">
-                            <span>{f.icon}</span>
-                            <span style={{ color: "var(--text-primary)" }}>{f.name}</span>
-                            <span className="text-[10px]" style={{ color: "var(--text-secondary)" }}>{f.size ? Math.round(f.size/1024) + "KB" : ""}</span>
-                          </div>
-                          <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(f); }}
-                            className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-100">
-                            <Trash2 size={12} style={{ color: "var(--error)" }} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                  {toolFiles.length === 0 && (
-                    <p className="text-xs text-center py-8" style={{ color: "var(--text-secondary)" }}>No files found</p>
-                  )}
-                </div>
-
-                {/* Code Editor */}
-                <div className="lg:col-span-2 rounded-xl border overflow-hidden" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
-                  {showEditor && editingFile ? (
-                    <>
-                      <div className="flex items-center justify-between p-3 border-b" style={{ borderColor: "var(--border)" }}>
-                        <div className="flex items-center gap-2">
-                          <Code size={16} style={{ color: "var(--primary)" }} />
-                          <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{editingFile.file}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded" style={{ backgroundColor: "var(--background)", color: "var(--text-secondary)" }}>{editingFile.ext}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <button onClick={saveFile} disabled={saving}
-                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-white text-xs font-medium"
-                            style={{ backgroundColor: "var(--success)" }}>
-                            <Save size={14} /> {saving ? "Saving..." : "Save (Ctrl+S)"}
-                          </button>
-                          <button onClick={() => { setShowEditor(false); setEditingFile(null); }}
-                            className="p-1.5 rounded-lg" style={{ color: "var(--text-secondary)" }}>
-                            <X size={16} />
-                          </button>
-                        </div>
-                      </div>
-                      <textarea value={fileContent} onChange={e => setFileContent(e.target.value)}
-                        onKeyDown={e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); } }}
-                        className="w-full p-4 font-mono text-sm resize-none focus:outline-none"
-                        style={{ minHeight: "500px", backgroundColor: isDarkMode ? "#0d1117" : "#f8f9fa", color: isDarkMode ? "#c9d1d9" : "#24292f", border: "none", lineHeight: 1.6 }}
-                        placeholder="// Edit your code here... (Ctrl+S to save)" />
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-center h-64" style={{ color: "var(--text-secondary)" }}>
-                      <div className="text-center">
-                        <Code size={48} className="mx-auto mb-3 opacity-30" />
-                        <p className="text-sm">Select a file from the left panel to edit</p>
-                        <p className="text-xs mt-1 opacity-50">Click on any file to open it in the editor</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ============ MODALS ============ */}
-          
-          {/* Create Tool Modal */}
-          {showCreateTool && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowCreateTool(false)}>
-              <div className="w-full max-w-md p-6 rounded-xl mx-4" style={{ backgroundColor: "var(--surface)" }} onClick={e => e.stopPropagation()}>
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>🆕 Create New Tool</h2>
-                  <button onClick={() => setShowCreateTool(false)}><X size={20} /></button>
-                </div>
-                <div className="space-y-3">
-                  <input value={newToolForm.name} onChange={e => setNewToolForm({...newToolForm, name: e.target.value})} placeholder="Tool Display Name" style={inputStyle} />
-                  <input value={newToolForm.slug} onChange={e => setNewToolForm({...newToolForm, slug: e.target.value})} placeholder="tool-slug (e.g. my-tool)" style={inputStyle} />
-                  <select value={newToolForm.category} onChange={e => setNewToolForm({...newToolForm, category: e.target.value})} style={inputStyle}>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                  <button onClick={createTool} className="w-full py-3 text-white rounded-xl font-medium transition hover:opacity-90" style={{ backgroundColor: "var(--primary)" }}>
-                    <Package size={16} className="inline mr-2" /> Create Tool with Default Files
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '11px', color: textSecondary, padding: '2px 8px', borderRadius: '10px', background: surface, border: `1px solid ${border}` }}>{tool.category}</span>
+                  <button onClick={() => handleToggleStatus(tool.id, tool.status)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '11px', color: tool.status === 'active' ? '#10b981' : '#ef4444', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    {tool.status === 'active' ? <Eye size={12} /> : <EyeOff size={12} />} {tool.status}
+                  </button>
+                  <button onClick={() => fetchToolFiles(tool)} style={{ padding: '5px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', cursor: 'pointer', color: primary, fontSize: '11px' }}>
+                    <Edit3 size={12} />
                   </button>
                 </div>
               </div>
-            </div>
-          )}
+            ))}
+          </div>
+        </>
+      )}
 
-          {/* Create File Modal */}
-          {showCreateFile && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowCreateFile(false)}>
-              <div className="w-full max-w-sm p-6 rounded-xl mx-4" style={{ backgroundColor: "var(--surface)" }} onClick={e => e.stopPropagation()}>
-                <h2 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>📄 Create New File</h2>
-                <input value={newFileName} onChange={e => setNewFileName(e.target.value)} placeholder="e.g. new-component.tsx" style={inputStyle} />
-                <p className="text-[10px] mt-1 mb-3" style={{ color: "var(--text-secondary)" }}>Use .tsx, .ts, .css, .json extensions</p>
-                <button onClick={createFile} className="w-full py-2.5 text-white rounded-xl font-medium transition hover:opacity-90" style={{ backgroundColor: "var(--success)" }}>
-                  <Plus size={14} className="inline mr-1" /> Create File
-                </button>
-              </div>
-            </div>
-          )}
+      {/* FILE EDITOR VIEW */}
+      {selectedTool && (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
+            <button onClick={() => { setSelectedTool(null); setShowEditor(false); }} style={{ padding: '6px 12px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', cursor: 'pointer', color: primary, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ArrowLeft size={13} /> Back
+            </button>
+            <h1 style={{ fontSize: 'clamp(16px, 3vw, 22px)', fontWeight: 700, color: textPrimary, margin: 0 }}>
+              <Terminal size={18} style={{ marginRight: '6px', verticalAlign: 'middle', color: primary }} />
+              {selectedTool.slug}
+            </h1>
+            <button onClick={() => setShowCreateFile(true)} style={{ marginLeft: 'auto', padding: '6px 14px', borderRadius: '6px', border: 'none', background: '#10b981', color: '#fff', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <Plus size={13} /> New File
+            </button>
+          </div>
 
-          {/* Delete Confirmation Modal */}
-          {showDeleteConfirm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowDeleteConfirm(null)}>
-              <div className="w-full max-w-sm p-6 rounded-xl mx-4 text-center" style={{ backgroundColor: "var(--surface)" }} onClick={e => e.stopPropagation()}>
-                <AlertTriangle size={48} className="mx-auto mb-3" style={{ color: "var(--warning)" }} />
-                <h3 className="text-lg font-bold mb-2" style={{ color: "var(--text-primary)" }}>Delete File?</h3>
-                <p className="text-sm mb-1" style={{ color: "var(--text-secondary)" }}>"{showDeleteConfirm.name}"</p>
-                <p className="text-xs mb-4" style={{ color: "var(--text-secondary)" }}>File will be moved to backup (not permanently deleted)</p>
-                <div className="flex gap-3">
-                  <button onClick={() => setShowDeleteConfirm(null)} className="flex-1 py-2.5 rounded-xl border text-sm" style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}>Cancel</button>
-                  <button onClick={deleteFile} className="flex-1 py-2.5 rounded-xl text-white text-sm font-medium" style={{ backgroundColor: "var(--error)" }}>Delete</button>
+          {/* MOBILE: Stack vertically | DESKTOP: Side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+            {/* FILE TREE */}
+            <div style={{ padding: '12px', background: surface, borderRadius: '10px', border: `1px solid ${border}`, maxHeight: '300px', overflowY: 'auto' }}>
+              <h3 style={{ fontSize: '13px', fontWeight: 600, color: textPrimary, margin: '0 0 8px' }}>📁 Files ({toolFiles.length})</h3>
+              {toolFiles.map((f: any, i: number) => (
+                <div key={i}>
+                  {f.type === "folder" ? (
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 600, color: textSecondary, padding: '4px 6px' }}>📁 {f.name}/</div>
+                      {f.children?.map((child: any, j: number) => (
+                        <div key={j} onClick={() => openFile(f.name + "/" + child.name)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px 6px 20px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: textPrimary }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${primary}08`}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                          <span>{child.icon} {child.name}</span>
+                          <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(child); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: '11px' }}>
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div onClick={() => openFile(f.name)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 8px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', color: textPrimary }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${primary}08`}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                      <span>{f.icon} {f.name}</span>
+                      <button onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(f); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444', fontSize: '11px' }}>
+                        <Trash2 size={11} />
+                      </button>
+                    </div>
+                  )}
                 </div>
-              </div>
+              ))}
             </div>
-          )}
+
+            {/* CODE EDITOR */}
+            <div style={{ background: surface, borderRadius: '10px', border: `1px solid ${border}`, overflow: 'hidden' }}>
+              {showEditor && editingFile ? (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', borderBottom: `1px solid ${border}` }}>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: textPrimary }}>{editingFile.file}</span>
+                    <button onClick={saveFile} disabled={saving} style={{ padding: '6px 14px', borderRadius: '6px', border: 'none', background: '#10b981', color: '#fff', cursor: 'pointer', fontSize: '12px' }}>
+                      {saving ? 'Saving...' : '💾 Save'}
+                    </button>
+                  </div>
+                  <textarea value={fileContent} onChange={e => setFileContent(e.target.value)} 
+                    style={{ width: '100%', minHeight: '300px', padding: '12px', fontFamily: 'monospace', fontSize: '12px', backgroundColor: isDarkMode ? '#0d1117' : '#f8f9fa', color: isDarkMode ? '#c9d1d9' : '#24292f', border: 'none', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+                    placeholder="// Edit your code here..." />
+                </>
+              ) : (
+                <div style={{ padding: '40px', textAlign: 'center', color: textSecondary }}>
+                  <Code size={32} style={{ marginBottom: '8px', opacity: 0.3 }} />
+                  <p style={{ fontSize: '13px', margin: 0 }}>Select a file to edit</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* CREATE TOOL MODAL */}
+      {showCreateTool && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }} onClick={() => setShowCreateTool(false)}>
+          <div style={{ width: '100%', maxWidth: '400px', padding: '20px', background: surface, borderRadius: '12px', border: `1px solid ${border}` }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: textPrimary, margin: '0 0 14px' }}>🆕 Create New Tool</h2>
+            <input value={newToolForm.name} onChange={e => setNewToolForm({...newToolForm, name: e.target.value})} placeholder="Tool Display Name" style={{ ...inputStyle, marginBottom: '10px' }} />
+            <input value={newToolForm.slug} onChange={e => setNewToolForm({...newToolForm, slug: e.target.value})} placeholder="tool-slug (e.g. my-tool)" style={{ ...inputStyle, marginBottom: '10px' }} />
+            <select value={newToolForm.category} onChange={e => setNewToolForm({...newToolForm, category: e.target.value})} style={{ ...inputStyle, marginBottom: '14px' }}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <button onClick={createTool} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', background: primary, color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+              Create Tool
+            </button>
+          </div>
         </div>
-      </main>
+      )}
+
+      {/* CREATE FILE MODAL */}
+      {showCreateFile && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }} onClick={() => setShowCreateFile(false)}>
+          <div style={{ width: '100%', maxWidth: '340px', padding: '20px', background: surface, borderRadius: '12px', border: `1px solid ${border}` }} onClick={e => e.stopPropagation()}>
+            <h2 style={{ fontSize: '16px', fontWeight: 700, color: textPrimary, margin: '0 0 14px' }}>📄 New File</h2>
+            <input value={newFileName} onChange={e => setNewFileName(e.target.value)} placeholder="e.g. new-component.tsx" style={{ ...inputStyle, marginBottom: '14px' }} />
+            <button onClick={createFile} style={{ width: '100%', padding: '10px', borderRadius: '8px', border: 'none', background: '#10b981', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+              Create File
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRM MODAL */}
+      {showDeleteConfirm && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }} onClick={() => setShowDeleteConfirm(null)}>
+          <div style={{ width: '100%', maxWidth: '320px', padding: '20px', background: surface, borderRadius: '12px', border: `1px solid ${border}`, textAlign: 'center' }} onClick={e => e.stopPropagation()}>
+            <AlertTriangle size={32} style={{ color: '#f59e0b', marginBottom: '8px' }} />
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: textPrimary, margin: '0 0 6px' }}>Delete File?</h3>
+            <p style={{ fontSize: '12px', color: textSecondary, margin: '0 0 14px' }}>File will be moved to backup</p>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => setShowDeleteConfirm(null)} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textPrimary, fontSize: '12px', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={deleteFile} style={{ flex: 1, padding: '8px', borderRadius: '6px', border: 'none', background: '#ef4444', color: '#fff', fontSize: '12px', cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
