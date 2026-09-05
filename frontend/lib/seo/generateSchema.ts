@@ -56,8 +56,8 @@ export function generateToolSchema(
     url: SITE_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE_URL}/search?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
+      target: `${SITE_URL}/search?q=`,
+      'query-input': 'required name=q',
     },
   };
   
@@ -89,8 +89,8 @@ export function generateWebsiteSchema() {
     },
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE_URL}/search?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
+      target: `${SITE_URL}/search?q=`,
+      'query-input': 'required name=q',
     },
     inLanguage: ['en', 'ur', 'hi', 'ar'],
   };

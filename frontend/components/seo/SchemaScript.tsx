@@ -48,8 +48,8 @@ export function WebsiteSchema() {
     description: 'Free online tools for developers, designers, students, and professionals. Calculators, converters, formatters, and more!',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://www.centre.com.pk/search?q={search_term_string}',
-      'query-input': 'required name=search_term_string',
+      target: 'https://www.centre.com.pk/search?q=',
+      'query-input': 'required name=q',
     },
     publisher: {
       '@type': 'Organization',
@@ -210,8 +210,8 @@ export function SoftwareApplicationSchema(slug: string, category: string, title:
 //     description: 'Free online tools for developers, designers, students, and professionals. Calculators, converters, formatters, and more!',
 //     potentialAction: {
 //       '@type': 'SearchAction',
-//       target: 'https://www.centre.com.pk/search?q={search_term_string}',
-//       'query-input': 'required name=search_term_string',
+//       target: 'https://www.centre.com.pk/search?q=',
+//       'query-input': 'required name=q',
 //     },
 //     publisher: {
 //       '@type': 'Organization',
