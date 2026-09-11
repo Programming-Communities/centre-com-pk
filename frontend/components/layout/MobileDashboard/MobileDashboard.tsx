@@ -165,7 +165,6 @@ const fallbackTranslations: Record<string, Record<string, string>> = {
     'badge.new': 'جديد',
     'badge.popular': 'شائع',
     'badge.trending': 'رائج',
-    // Tool names in Arabic
     'tools.age_calculator.title': 'حاسبة العمر',
     'tools.bmi_calculator.title': 'حاسبة BMI',
     'tools.compound_interest.title': 'الفائدة المركبة',
@@ -254,7 +253,6 @@ const fallbackTranslations: Record<string, Record<string, string>> = {
     'badge.new': 'नया',
     'badge.popular': 'लोकप्रिय',
     'badge.trending': 'ट्रेंडिंग',
-    // Tool names in Hindi
     'tools.age_calculator.title': 'आयु कैलकुलेटर',
     'tools.bmi_calculator.title': 'BMI कैलकुलेटर',
     'tools.compound_interest.title': 'चक्रवृद्धि ब्याज',
@@ -310,7 +308,6 @@ const fallbackTranslations: Record<string, Record<string, string>> = {
     'tools.cv_builder.title': 'CV बिल्डर',
   },
   en: {
-    // English fallbacks (same as keys but with proper formatting)
     'navigation.main': 'Main Navigation',
     'navigation.categories_count': '7 Categories • 50+ Tools',
     'action.search_placeholder': 'Search tools...',
@@ -325,20 +322,16 @@ const fallbackTranslations: Record<string, Record<string, string>> = {
   }
 };
 
-// 🔥 Helper function to get translated text with complete fallback
 const getTranslatedText = (lang: string, key: string, defaultValue: string): string => {
-  // First check fallback translations
   if (fallbackTranslations[lang]?.[key]) {
     return fallbackTranslations[lang][key];
   }
-  // Then check English fallback
   if (fallbackTranslations.en[key]) {
     return fallbackTranslations.en[key];
   }
   return defaultValue;
 };
 
-// Generate navigation structure with proper translations
 const generateNavStructure = (lang: string): NavItem[] => {
   return [
     {
@@ -450,8 +443,8 @@ const generateNavStructure = (lang: string): NavItem[] => {
         { id: 'pdf-merger', nameKey: 'tools.pdf_merger.title', fallbackName: getTranslatedText(lang, 'tools.pdf_merger.title', 'PDF Merger'), icon: Merge, href: `/${lang}/tools/pdf-tools/pdf-merger`, type: 'tool' },
         { id: 'pdf-splitter', nameKey: 'tools.pdf_splitter.title', fallbackName: getTranslatedText(lang, 'tools.pdf_splitter.title', 'PDF Splitter'), icon: Scissors, href: `/${lang}/tools/pdf-tools/pdf-splitter`, type: 'tool' },
         { id: 'pdf-to-word', nameKey: 'tools.pdf_to_word.title', fallbackName: getTranslatedText(lang, 'tools.pdf_to_word.title', 'PDF to Word'), icon: FileText, href: `/${lang}/tools/pdf-tools/pdf-to-word`, type: 'tool', badge: 'popular' },
-                { id: 'pdf-protect', nameKey: 'tools.pdf_protect.title', fallbackName: getTranslatedText(lang, 'tools.pdf_protect.title', 'PDF Protect'), icon: Lock, href: `/${lang}/tools/pdf-tools/pdf-protect`, type: 'tool', badge: 'new' },
-     ]
+        { id: 'pdf-protect', nameKey: 'tools.pdf_protect.title', fallbackName: getTranslatedText(lang, 'tools.pdf_protect.title', 'PDF Protect'), icon: Lock, href: `/${lang}/tools/pdf-tools/pdf-protect`, type: 'tool', badge: 'new' },
+      ]
     },
     {
       id: 'security-tools',
@@ -536,16 +529,19 @@ const generateNavStructure = (lang: string): NavItem[] => {
 export default function MobileDashboard({ isOpen, onClose, lang }: MobileDashboardProps) {
   const [activeDropdowns, setActiveDropdowns] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
   
   const { themeColors, isDarkMode } = useTheme();
   const pathname = usePathname();
 
-  // Generate nav structure with proper translations
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const navStructure = useMemo(() => {
     return generateNavStructure(lang);
   }, [lang]);
 
-  // 🔥 Helper to get translated name (simplified - uses pre-generated fallback)
   const getTranslatedName = useCallback((item: NavItem): string => {
     return item.fallbackName;
   }, []);
@@ -554,7 +550,6 @@ export default function MobileDashboard({ isOpen, onClose, lang }: MobileDashboa
     return item.fallbackDescription;
   }, []);
 
-  // 🔥 Get UI text with fallback
   const getUIText = useCallback((key: string, fallback: string): string => {
     return getTranslatedText(lang, key, fallback);
   }, [lang]);
@@ -613,7 +608,6 @@ export default function MobileDashboard({ isOpen, onClose, lang }: MobileDashboa
   const getTextPrimaryColor = useCallback(() => themeColors.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a'), [themeColors.text?.primary, isDarkMode]);
   const getTextSecondaryColor = useCallback(() => themeColors.text?.secondary || (isDarkMode ? '#94a3b8' : '#64748b'), [themeColors.text?.secondary, isDarkMode]);
 
-  // Body scroll lock
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -629,7 +623,6 @@ export default function MobileDashboard({ isOpen, onClose, lang }: MobileDashboa
     };
   }, [isOpen]);
 
-  // 🔥 Badge text translation
   const getBadgeText = useCallback((type: 'new' | 'popular' | 'premium' | 'trending'): string => {
     const key = `badge.${type}`;
     return getUIText(key, type.charAt(0).toUpperCase() + type.slice(1));
@@ -844,6 +837,8 @@ export default function MobileDashboard({ isOpen, onClose, lang }: MobileDashboa
   }, [navStructure, searchQuery, getTranslatedName, getTranslatedDescription]);
 
   if (!isOpen) return null;
+  
+  if (!mounted) return null;
 
   return (
     <>

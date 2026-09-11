@@ -21,6 +21,22 @@ export default function CssFormatterClient() {
 
 
   const { themeColors } = useTheme();
+  
+  // ✅ HYDration FIX
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // ✅ Safe colors (light theme during SSR)
+  const colors = mounted ? themeColors : {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+  };
 
   const formatCss = () => {
     try {
@@ -104,18 +120,18 @@ export default function CssFormatterClient() {
           {/* Input Section */}
           <div className="space-y-6">
             <div className="rounded-lg border" style={{ 
-              backgroundColor: themeColors.surface,
-              borderColor: themeColors.border
+              backgroundColor: colors.surface,
+              borderColor: colors.border
             }}>
-              <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: themeColors.border }}>
-                <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: themeColors.text.primary }}>
-                  <Code className="h-5 w-5" style={{ color: themeColors.primary }} />
+              <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: colors.border }}>
+                <h2 className="text-lg font-semibold flex items-center gap-2" style={{ color: colors.text.primary }}>
+                  <Code className="h-5 w-5" style={{ color: colors.primary }} />
                   Input CSS
                 </h2>
                 <button
                   onClick={clearAll}
                   className="text-error hover:opacity-80 text-sm transition-colors"
-                  style={{ color: themeColors.error }}
+                  style={{ color: colors.error }}
                 >
                   Clear All
                 </button>
@@ -127,26 +143,26 @@ export default function CssFormatterClient() {
                 placeholder="Paste your CSS code here..."
                 spellCheck="false"
                 style={{ 
-                  backgroundColor: themeColors.background,
-                  color: themeColors.text.primary,
-                  caretColor: themeColors.primary
+                  backgroundColor: colors.background,
+                  color: colors.text.primary,
+                  caretColor: colors.primary
                 }}
               />
             </div>
 
             {/* Formatting Options */}
             <div className="rounded-lg border p-6" style={{ 
-              backgroundColor: themeColors.surface,
-              borderColor: themeColors.border
+              backgroundColor: colors.surface,
+              borderColor: colors.border
             }}>
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2" style={{ color: themeColors.text.primary }}>
-                <Settings className="h-5 w-5" style={{ color: themeColors.primary }} />
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2" style={{ color: colors.text.primary }}>
+                <Settings className="h-5 w-5" style={{ color: colors.primary }} />
                 Formatting Options
               </h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.primary }}>
+                  <label className="block text-sm font-medium mb-2" style={{ color: colors.text.primary }}>
                     Indent Size: {indentSize} spaces
                   </label>
                   <input
@@ -161,10 +177,10 @@ export default function CssFormatterClient() {
                     }}
                     className="w-full"
                     style={{
-                      accentColor: themeColors.primary
+                      accentColor: colors.primary
                     }}
                   />
-                  <div className="flex justify-between text-xs mt-1" style={{ color: themeColors.text.secondary }}>
+                  <div className="flex justify-between text-xs mt-1" style={{ color: colors.text.secondary }}>
                     <span>2 spaces</span>
                     <span>4 spaces</span>
                     <span>8 spaces</span>
@@ -175,8 +191,8 @@ export default function CssFormatterClient() {
                   onClick={formatCss}
                   className="w-full py-3 px-4 rounded-lg hover:opacity-90 transition-colors font-semibold"
                   style={{ 
-                    backgroundColor: themeColors.primary,
-                    color: themeColors.text.accent
+                    backgroundColor: colors.primary,
+                    color: colors.text.accent
                   }}
                 >
                   Format CSS
@@ -188,20 +204,20 @@ export default function CssFormatterClient() {
           {/* Output Section */}
           <div className="space-y-6">
             <div className="rounded-lg border" style={{ 
-              backgroundColor: themeColors.surface,
-              borderColor: themeColors.border
+              backgroundColor: colors.surface,
+              borderColor: colors.border
             }}>
-              <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: themeColors.border }}>
-                <h2 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>Formatted CSS</h2>
+              <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: colors.border }}>
+                <h2 className="text-lg font-semibold" style={{ color: colors.text.primary }}>Formatted CSS</h2>
                 <div className="flex gap-2">
                   <button
                     onClick={copyToClipboard}
                     disabled={!formattedCss}
                     className="flex items-center gap-2 px-3 py-1 rounded-lg hover:opacity-80 transition-colors text-sm disabled:opacity-50"
                     style={{ 
-                      backgroundColor: `${themeColors.primary}15`,
-                      color: themeColors.primary,
-                      border: `1px solid ${themeColors.primary}30`
+                      backgroundColor: `${colors.primary}15`,
+                      color: colors.primary,
+                      border: `1px solid ${colors.primary}30`
                     }}
                   >
                     <Copy className="h-4 w-4" />
@@ -212,9 +228,9 @@ export default function CssFormatterClient() {
                     disabled={!formattedCss}
                     className="flex items-center gap-2 px-3 py-1 rounded-lg hover:opacity-80 transition-colors text-sm disabled:opacity-50"
                     style={{ 
-                      backgroundColor: `${themeColors.primary}15`,
-                      color: themeColors.primary,
-                      border: `1px solid ${themeColors.primary}30`
+                      backgroundColor: `${colors.primary}15`,
+                      color: colors.primary,
+                      border: `1px solid ${colors.primary}30`
                     }}
                   >
                     <Download className="h-4 w-4" />
@@ -225,8 +241,8 @@ export default function CssFormatterClient() {
               <pre 
                 className="w-full h-96 p-4 overflow-auto text-sm font-mono whitespace-pre-wrap"
                 style={{ 
-                  backgroundColor: themeColors.background,
-                  color: themeColors.text.primary
+                  backgroundColor: colors.background,
+                  color: colors.text.primary
                 }}
               >
                 {formattedCss || 'Formatted CSS will appear here...'}
@@ -237,12 +253,12 @@ export default function CssFormatterClient() {
             <div 
               className="rounded-lg p-6"
               style={{ 
-                backgroundColor: `${themeColors.primary}10`,
-                border: `1px solid ${themeColors.primary}30`
+                backgroundColor: `${colors.primary}10`,
+                border: `1px solid ${colors.primary}30`
               }}
             >
-              <h3 className="font-semibold mb-2" style={{ color: themeColors.primary }}>CSS Formatting Best Practices</h3>
-              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: themeColors.primary }}>
+              <h3 className="font-semibold mb-2" style={{ color: colors.primary }}>CSS Formatting Best Practices</h3>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: colors.primary }}>
                 <li>Use consistent indentation (2 or 4 spaces recommended)</li>
                 <li>Group related properties together (position, box model, typography, etc.)</li>
                 <li>Always include semicolons after declarations</li>
@@ -255,10 +271,10 @@ export default function CssFormatterClient() {
 
         {/* Sample CSS */}
         <div className="mt-8 rounded-lg border p-6" style={{ 
-          backgroundColor: themeColors.surface,
-          borderColor: themeColors.border
+          backgroundColor: colors.surface,
+          borderColor: colors.border
         }}>
-          <h3 className="font-semibold mb-3" style={{ color: themeColors.text.primary }}>Try Sample CSS</h3>
+          <h3 className="font-semibold mb-3" style={{ color: colors.text.primary }}>Try Sample CSS</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
@@ -278,21 +294,21 @@ export default function CssFormatterClient() {
                 }}
                 className="p-4 rounded-lg border transition-colors text-left"
                 style={{ 
-                  backgroundColor: themeColors.background,
-                  borderColor: themeColors.border,
-                  color: themeColors.text.primary
+                  backgroundColor: colors.background,
+                  borderColor: colors.border,
+                  color: colors.text.primary
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = themeColors.primary;
-                  e.currentTarget.style.backgroundColor = `${themeColors.primary}10`;
+                  e.currentTarget.style.borderColor = colors.primary;
+                  e.currentTarget.style.backgroundColor = `${colors.primary}10`;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = themeColors.border;
-                  e.currentTarget.style.backgroundColor = themeColors.background;
+                  e.currentTarget.style.borderColor = colors.border;
+                  e.currentTarget.style.backgroundColor = colors.background;
                 }}
               >
                 <div className="font-semibold text-sm mb-2">{sample.name}</div>
-                <div className="text-xs font-mono truncate" style={{ color: themeColors.text.secondary }}>
+                <div className="text-xs font-mono truncate" style={{ color: colors.text.secondary }}>
                   {sample.code}
                 </div>
               </button>

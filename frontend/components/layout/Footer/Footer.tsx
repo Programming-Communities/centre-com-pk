@@ -54,22 +54,28 @@ export default function Footer({ lang }: FooterProps) {
   const { themeColors } = useTheme();
   const { t: tCommon } = useTranslation({ namespace: 'common' });
   
+  // ✅ HYDration FIX
+  const [mounted, setMounted] = useState(false);
+  
   // State for footer translations
   const [footerT, setFooterT] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // ✅ HYDration FIX — mounted set karo
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ✅ DYNAMIC IMPORT - Import footer.json for current language
   useEffect(() => {
     setLoading(true);
     
-    // Try to import the language-specific footer
     import(`@/translations/${lang}/footer.json`)
       .then((module) => {
         setFooterT(module.default || module);
         setLoading(false);
       })
       .catch(() => {
-        // Fallback to English if language not found
         import(`@/translations/en/footer.json`)
           .then((module) => {
             setFooterT(module.default || module);
@@ -83,14 +89,28 @@ export default function Footer({ lang }: FooterProps) {
       });
   }, [lang]);
   
-  const memoizedTheme = useMemo(() => ({
-    bg: themeColors.background,
-    border: themeColors.border,
-    textPrimary: themeColors.text.primary,
-    textSecondary: themeColors.text.secondary,
-    primary: themeColors.primary,
-    gradient: `linear-gradient(135deg, ${themeColors.primary}, ${themeColors.secondary})`
-  }), [themeColors]);
+  // ✅ HYDration FIX — Default LIGHT theme (server + client same)
+  const memoizedTheme = useMemo(() => {
+    const fallback = {
+      bg: '#ffffff',
+      border: '#e2e8f0',
+      textPrimary: '#0f172a',
+      textSecondary: '#334155',
+      primary: '#1d4ed8',
+      gradient: 'linear-gradient(135deg, #1d4ed8, #1e40af)',
+    };
+    
+    if (!mounted || !themeColors) return fallback;
+    
+    return {
+      bg: themeColors.background || fallback.bg,
+      border: themeColors.border || fallback.border,
+      textPrimary: themeColors.text?.primary || fallback.textPrimary,
+      textSecondary: themeColors.text?.secondary || fallback.textSecondary,
+      primary: themeColors.primary || fallback.primary,
+      gradient: `linear-gradient(135deg, ${themeColors.primary || '#1d4ed8'}, ${themeColors.secondary || '#1e40af'})`,
+    };
+  }, [themeColors, mounted]);
 
   // Helper function to safely get translation with fallback
   const getFooterText = (path: string, fallback: string = ''): string => {
@@ -113,7 +133,7 @@ export default function Footer({ lang }: FooterProps) {
   // Loading state
   if (loading || !footerT) {
     return (
-      <footer className="border-t" style={{ backgroundColor: memoizedTheme.bg, borderColor: memoizedTheme.border }}>
+      <footer className="border-t" suppressHydrationWarning style={{ backgroundColor: memoizedTheme.bg, borderColor: memoizedTheme.border }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="animate-pulse">
             <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -125,7 +145,7 @@ export default function Footer({ lang }: FooterProps) {
   }
 
   return (
-    <footer className="border-t" style={{ backgroundColor: memoizedTheme.bg, borderColor: memoizedTheme.border }}>
+    <footer className="border-t" suppressHydrationWarning style={{ backgroundColor: memoizedTheme.bg, borderColor: memoizedTheme.border }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Header Section */}
@@ -285,7 +305,6 @@ export default function Footer({ lang }: FooterProps) {
             </span>
           </div>
           
-          {/* ✅ FIXED: Direct URLs — no language prefix needed for sitemap/robots */}
           <div className="flex items-center gap-3 text-xs" style={{ color: memoizedTheme.textSecondary }}>
             <Link href="/sitemap.xml" className="hover:underline" prefetch={false}>
               {getFooterText('action.sitemap', footerT.sitemap || tCommon('action.sitemap') || 'Sitemap')}

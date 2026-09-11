@@ -41,6 +41,7 @@ export default function Header({ lang }: HeaderProps) {
   const [isFontMenuOpen, setIsFontMenuOpen] = useState(false);
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
   const fontButtonRef = useRef<HTMLButtonElement>(null);
   const themeButtonRef = useRef<HTMLButtonElement>(null);
@@ -53,17 +54,23 @@ export default function Header({ lang }: HeaderProps) {
     availableFonts, theme, setTheme, availableThemes 
   } = useTheme();
 
-  // ✅ DEFAULT VALUES — Server aur Client dono same use karenge
+  // ✅ HYDration FIX — Default values LIGHT theme (server + client same)
   const defaultThemeColors = {
-    background: '#0f172a',
-    surface: '#1e293b',
-    text: { primary: '#f1f5f9', secondary: '#94a3b8', accent: '#ffffff' },
-    border: '#334155',
-    primary: '#3b82f6',
-    secondary: '#60a5fa',
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
   };
   
-  const colors = themeColors || defaultThemeColors;
+  // ✅ HYDration FIX — Sirf mounted hone ke baad theme use karo
+  const colors = mounted ? (themeColors || defaultThemeColors) : defaultThemeColors;
+
+  // ✅ HYDration FIX — mounted set karo
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,6 +95,7 @@ export default function Header({ lang }: HeaderProps) {
     <div suppressHydrationWarning>
       <header 
         className="header-container"
+        suppressHydrationWarning
         style={{
           transform: isHeaderVisible ? 'translateY(0)' : 'translateY(-100%)',
           opacity: isHeaderVisible ? 1 : 0,
@@ -108,11 +116,11 @@ export default function Header({ lang }: HeaderProps) {
             {/* DESKTOP NAVIGATION */}
             <nav className="desktop-nav">
               <div className="desktop-nav-inner">
-                <Link href={`/${lang}`} className="home-button" style={{ color: colors.text.primary, borderColor: colors.border, backgroundColor: colors.surface }}>
+                <Link href={`/${lang}`} className="home-button" suppressHydrationWarning style={{ color: colors.text.primary, borderColor: colors.border, backgroundColor: colors.surface }}>
                   <Home className="home-icon" /><span>{getText('menu.home', 'Home')}</span>
                 </Link>
                 <div className="mega-menu-item"><MegaMenu category="all" lang={lang} /></div>
-                <Link href={`/${lang}/blog`} className="home-button" style={{ color: colors.text.primary, borderColor: colors.border, backgroundColor: colors.surface }}>
+                <Link href={`/${lang}/blog`} className="home-button" suppressHydrationWarning style={{ color: colors.text.primary, borderColor: colors.border, backgroundColor: colors.surface }}>
                   <BookOpen className="home-icon" /><span>{getText('menu.blog', 'Blog')}</span>
                 </Link>
               </div>
@@ -124,7 +132,7 @@ export default function Header({ lang }: HeaderProps) {
 
               {/* USER MENU */}
               <div className="relative" ref={userMenuRef}>
-                <button onClick={toggleUserMenu} className="control-button" style={{ backgroundColor: isUserMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isUserMenuOpen ? colors.primary : colors.border }}>
+                <button onClick={toggleUserMenu} className="control-button" suppressHydrationWarning style={{ backgroundColor: isUserMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isUserMenuOpen ? colors.primary : colors.border }}>
                   <User className="control-icon" />
                 </button>
                 {isUserMenuOpen && (
@@ -137,7 +145,7 @@ export default function Header({ lang }: HeaderProps) {
 
               {/* FONT SELECTOR */}
               <div className="font-control-wrapper">
-                <button ref={fontButtonRef} onClick={toggleFontMenu} className="font-btn control-button" style={{ backgroundColor: isFontMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isFontMenuOpen ? colors.primary : colors.border }}>
+                <button ref={fontButtonRef} onClick={toggleFontMenu} className="font-btn control-button" suppressHydrationWarning style={{ backgroundColor: isFontMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isFontMenuOpen ? colors.primary : colors.border }}>
                   <Type className="control-icon" />
                 </button>
                 {isFontMenuOpen && (
@@ -151,14 +159,14 @@ export default function Header({ lang }: HeaderProps) {
                 )}
               </div>
 
-              {/* DARK MODE TOGGLE */}
-              <button onClick={toggleDarkMode} className="control-button" style={{ backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.border }} title={isDarkMode ? getText('action.light', 'Light Mode') : getText('action.dark', 'Dark Mode')}>
-                {isDarkMode ? <Sun className="control-icon" /> : <Moon className="control-icon" />}
+              {/* DARK MODE TOGGLE — HYDration FIXED */}
+              <button onClick={toggleDarkMode} className="control-button" suppressHydrationWarning style={{ backgroundColor: colors.surface, color: colors.text.primary, borderColor: colors.border }} title={mounted && isDarkMode ? getText('action.light', 'Light Mode') : getText('action.dark', 'Dark Mode')}>
+                {!mounted ? <Moon className="control-icon" /> : isDarkMode ? <Sun className="control-icon" /> : <Moon className="control-icon" />}
               </button>
 
               {/* THEME SELECTOR */}
               <div className="theme-control-wrapper">
-                <button ref={themeButtonRef} onClick={toggleThemeMenu} className="theme-btn control-button" style={{ backgroundColor: isThemeMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isThemeMenuOpen ? colors.primary : colors.border }}>
+                <button ref={themeButtonRef} onClick={toggleThemeMenu} className="theme-btn control-button" suppressHydrationWarning style={{ backgroundColor: isThemeMenuOpen ? `${colors.primary}15` : colors.surface, color: colors.text.primary, borderColor: isThemeMenuOpen ? colors.primary : colors.border }}>
                   <Palette className="control-icon" />
                 </button>
                 {isThemeMenuOpen && (
@@ -179,7 +187,7 @@ export default function Header({ lang }: HeaderProps) {
               </div>
 
               {/* MOBILE MENU */}
-              <button onClick={toggleDashboard} className="mobile-menu-button control-button" style={{ color: colors.text.primary, backgroundColor: `${colors.primary}10`, borderColor: colors.border }}>
+              <button onClick={toggleDashboard} className="mobile-menu-button control-button" suppressHydrationWarning style={{ color: colors.text.primary, backgroundColor: `${colors.primary}10`, borderColor: colors.border }}>
                 <Menu className="control-icon" />
               </button>
             </div>

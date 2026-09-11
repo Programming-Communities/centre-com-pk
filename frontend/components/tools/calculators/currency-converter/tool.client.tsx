@@ -123,27 +123,43 @@ const generateMockRates = () => {
 const AdSlot = ({ size = { width: 300, height: 250 }, label = 'Advertisement' }: { size?: { width: number; height: number }; label?: string }) => {
   const { themeColors } = useTheme();
   
+  // ✅ HYDration FIX
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // ✅ Safe colors (light theme during SSR)
+  const colors = mounted ? themeColors : {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+  };
+  
   const displayWidth = Math.min(size.width, 300);
   const displayHeight = Math.min(size.height, 250);
 
   return (
-    <div className="my-4 text-center">
-      <div className="text-xs mb-1" style={{ color: themeColors.text.secondary }}>{label}</div>
+    <div suppressHydrationWarning className="my-4 text-center">
+      <div className="text-xs mb-1" style={{ color: colors.text.secondary }}>{label}</div>
       <div 
         className="mx-auto border border-dashed flex items-center justify-center rounded-lg overflow-hidden"
         style={{ 
           width: `${displayWidth}px`, 
           height: `${displayHeight}px`,
           maxWidth: '100%',
-          backgroundColor: themeColors.background + '80',
-          borderColor: themeColors.border
+          backgroundColor: colors.background + '80',
+          borderColor: colors.border
         }}
       >
         <div className="text-center p-2">
-          <div className="text-xs font-medium mb-1" style={{ color: themeColors.text.secondary }}>
+          <div className="text-xs font-medium mb-1" style={{ color: colors.text.secondary }}>
             {size.width}×{size.height} Ad
           </div>
-          <div className="text-xs" style={{ color: themeColors.text.secondary }}>
+          <div className="text-xs" style={{ color: colors.text.secondary }}>
             Google AdSense
           </div>
         </div>
@@ -160,25 +176,25 @@ const SponsorAd = () => {
     <div 
       className="rounded-lg border p-4 my-4"
       style={{ 
-        backgroundColor: themeColors.surface,
-        borderColor: themeColors.border,
+        backgroundColor: colors.surface,
+        borderColor: colors.border,
         borderStyle: 'dashed'
       }}
     >
       <div className="text-center">
-        <div className="text-xs font-medium mb-2" style={{ color: themeColors.primary }}>
+        <div className="text-xs font-medium mb-2" style={{ color: colors.primary }}>
           💰 SPONSORED: FOREX PARTNER
         </div>
-        <div className="text-sm mb-2 font-semibold" style={{ color: themeColors.text.primary }}>
+        <div className="text-sm mb-2 font-semibold" style={{ color: colors.text.primary }}>
           Get Premium Forex Signals
         </div>
-        <div className="text-xs mb-3 opacity-80" style={{ color: themeColors.text.secondary }}>
+        <div className="text-xs mb-3 opacity-80" style={{ color: colors.text.secondary }}>
           90% accuracy rate • Real-time alerts • Expert analysis
         </div>
         <button 
           className="text-xs px-4 py-2 rounded font-medium hover:opacity-90 transition-opacity"
           style={{ 
-            backgroundColor: themeColors.primary,
+            backgroundColor: colors.primary,
             color: '#ffffff'
           }}
         >
@@ -357,8 +373,8 @@ export default function CurrencyConverterClient() {
       <div 
         className="min-h-screen" 
         style={{ 
-          backgroundColor: themeColors.background, 
-          color: themeColors.text.primary, 
+          backgroundColor: colors.background, 
+          color: colors.text.primary, 
           fontFamily: fontFamily 
         }}
       >
@@ -378,33 +394,33 @@ export default function CurrencyConverterClient() {
             <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${rateChange >= 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                <span style={{ color: rateChange >= 0 ? themeColors.success : themeColors.error }}>
+                <span style={{ color: rateChange >= 0 ? colors.success : colors.error }}>
                   {rateChange >= 0 ? '+' : ''}{rateChange.toFixed(2)}%
                 </span>
-                <span style={{ color: themeColors.text.secondary }}>24h change</span>
+                <span style={{ color: colors.text.secondary }}>24h change</span>
               </div>
               <div className="flex items-center gap-2">
-                <RefreshCw className="h-3 w-3" style={{ color: themeColors.text.secondary }} />
-                <span style={{ color: themeColors.text.secondary }}>Updated: {lastUpdated}</span>
+                <RefreshCw className="h-3 w-3" style={{ color: colors.text.secondary }} />
+                <span style={{ color: colors.text.secondary }}>Updated: {lastUpdated}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Globe className="h-3 w-3" style={{ color: themeColors.text.secondary }} />
-                <span style={{ color: themeColors.text.secondary }}>{CURRENCIES.length} currencies</span>
+                <Globe className="h-3 w-3" style={{ color: colors.text.secondary }} />
+                <span style={{ color: colors.text.secondary }}>{CURRENCIES.length} currencies</span>
               </div>
             </div>
             
             {/* Pro Upgrade Banner */}
             {!isProUser && (
               <div className="mt-4 sm:mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg" 
-                   style={{ backgroundColor: themeColors.primary + '20', border: `1px solid ${themeColors.primary}` }}>
-                <Crown className="h-4 w-4" style={{ color: themeColors.primary }} />
-                <span className="text-sm" style={{ color: themeColors.primary }}>
+                   style={{ backgroundColor: colors.primary + '20', border: `1px solid ${colors.primary}` }}>
+                <Crown className="h-4 w-4" style={{ color: colors.primary }} />
+                <span className="text-sm" style={{ color: colors.primary }}>
                   <span className="font-semibold">Upgrade to Pro</span> for live rates & analytics
                 </span>
                 <button 
                   onClick={() => setIsProUser(true)}
                   className="ml-2 px-3 py-1 rounded text-sm font-semibold hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+                  style={{ backgroundColor: colors.primary, color: '#ffffff' }}
                 >
                   Try Pro Free
                 </button>
@@ -421,9 +437,9 @@ export default function CurrencyConverterClient() {
               onClick={() => setActiveTab('convert')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${activeTab === 'convert' ? '' : 'opacity-70 hover:opacity-100'}`}
               style={{
-                backgroundColor: activeTab === 'convert' ? themeColors.primary : themeColors.surface,
-                color: activeTab === 'convert' ? '#ffffff' : themeColors.text.secondary,
-                border: activeTab === 'convert' ? 'none' : `1px solid ${themeColors.border}`
+                backgroundColor: activeTab === 'convert' ? colors.primary : colors.surface,
+                color: activeTab === 'convert' ? '#ffffff' : colors.text.secondary,
+                border: activeTab === 'convert' ? 'none' : `1px solid ${colors.border}`
               }}
             >
               <Calculator className="h-4 w-4" />
@@ -435,9 +451,9 @@ export default function CurrencyConverterClient() {
               disabled={!isProUser}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${!isProUser ? 'opacity-50 cursor-not-allowed' : activeTab === 'trends' ? '' : 'opacity-70 hover:opacity-100'}`}
               style={{
-                backgroundColor: activeTab === 'trends' ? themeColors.primary : themeColors.surface,
-                color: activeTab === 'trends' ? '#ffffff' : themeColors.text.secondary,
-                border: activeTab === 'trends' ? 'none' : `1px solid ${themeColors.border}`
+                backgroundColor: activeTab === 'trends' ? colors.primary : colors.surface,
+                color: activeTab === 'trends' ? '#ffffff' : colors.text.secondary,
+                border: activeTab === 'trends' ? 'none' : `1px solid ${colors.border}`
               }}
             >
               <TrendingUp className="h-4 w-4" />
@@ -450,9 +466,9 @@ export default function CurrencyConverterClient() {
               disabled={!isProUser}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${!isProUser ? 'opacity-50 cursor-not-allowed' : activeTab === 'watchlist' ? '' : 'opacity-70 hover:opacity-100'}`}
               style={{
-                backgroundColor: activeTab === 'watchlist' ? themeColors.primary : themeColors.surface,
-                color: activeTab === 'watchlist' ? '#ffffff' : themeColors.text.secondary,
-                border: activeTab === 'watchlist' ? 'none' : `1px solid ${themeColors.border}`
+                backgroundColor: activeTab === 'watchlist' ? colors.primary : colors.surface,
+                color: activeTab === 'watchlist' ? '#ffffff' : colors.text.secondary,
+                border: activeTab === 'watchlist' ? 'none' : `1px solid ${colors.border}`
               }}
             >
               <Star className="h-4 w-4" />
@@ -464,9 +480,9 @@ export default function CurrencyConverterClient() {
               onClick={() => setActiveTab('history')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${activeTab === 'history' ? '' : 'opacity-70 hover:opacity-100'}`}
               style={{
-                backgroundColor: activeTab === 'history' ? themeColors.primary : themeColors.surface,
-                color: activeTab === 'history' ? '#ffffff' : themeColors.text.secondary,
-                border: activeTab === 'history' ? 'none' : `1px solid ${themeColors.border}`
+                backgroundColor: activeTab === 'history' ? colors.primary : colors.surface,
+                color: activeTab === 'history' ? '#ffffff' : colors.text.secondary,
+                border: activeTab === 'history' ? 'none' : `1px solid ${colors.border}`
               }}
             >
               <HistoryIcon className="h-4 w-4" />
@@ -480,18 +496,18 @@ export default function CurrencyConverterClient() {
             {/* Left Sidebar - Currency List */}
             <div className="lg:col-span-1">
               {/* Currency Search */}
-              <div className="rounded-xl border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+              <div className="rounded-xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                 <div className="flex items-center gap-2 mb-4">
-                  <Search className="h-4 w-4" style={{ color: themeColors.text.secondary }} />
+                  <Search className="h-4 w-4" style={{ color: colors.text.secondary }} />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search currencies..."
                     className="flex-1 bg-transparent outline-none text-sm"
-                    style={{ color: themeColors.text.primary }}
+                    style={{ color: colors.text.primary }}
                   />
-                  <Filter className="h-4 w-4 cursor-pointer hover:opacity-80" style={{ color: themeColors.text.secondary }} />
+                  <Filter className="h-4 w-4 cursor-pointer hover:opacity-80" style={{ color: colors.text.secondary }} />
                 </div>
                 
                 <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -500,9 +516,9 @@ export default function CurrencyConverterClient() {
                       key={currency.code}
                       className={`flex items-center justify-between p-2 rounded cursor-pointer hover:opacity-80 transition-opacity ${(fromCurrency === currency.code || toCurrency === currency.code) ? 'ring-1' : ''}`}
                       style={{
-                        backgroundColor: themeColors.background,
-                        color: themeColors.text.primary,
-                        border: (fromCurrency === currency.code || toCurrency === currency.code) ? `1px solid ${themeColors.primary}` : 'none'
+                        backgroundColor: colors.background,
+                        color: colors.text.primary,
+                        border: (fromCurrency === currency.code || toCurrency === currency.code) ? `1px solid ${colors.primary}` : 'none'
                       }}
                       onClick={() => {
                         if (currencyListType === 'from') {
@@ -534,8 +550,8 @@ export default function CurrencyConverterClient() {
                         >
                           <Star 
                             className="h-4 w-4" 
-                            fill={favorites.includes(currency.code) ? themeColors.warning : 'none'} 
-                            style={{ color: favorites.includes(currency.code) ? themeColors.warning : themeColors.text.secondary }} 
+                            fill={favorites.includes(currency.code) ? colors.warning : 'none'} 
+                            style={{ color: favorites.includes(currency.code) ? colors.warning : colors.text.secondary }} 
                           />
                         </button>
                       </div>
@@ -558,13 +574,13 @@ export default function CurrencyConverterClient() {
               {activeTab === 'convert' && (
                 <div className="space-y-6">
                   {/* Conversion Card */}
-                  <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                  <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                       
                       {/* From Currency */}
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                          <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                             Amount
                           </label>
                           <div className="relative">
@@ -575,10 +591,10 @@ export default function CurrencyConverterClient() {
                               onChange={(e) => setAmount(Number(e.target.value))}
                               className="w-full pl-16 pr-4 py-3 sm:py-4 border rounded-lg focus:ring-2 text-lg sm:text-xl font-semibold"
                               style={{
-                                borderColor: themeColors.border,
-                                backgroundColor: themeColors.background,
-                                color: themeColors.text.primary,
-                                outlineColor: themeColors.primary
+                                borderColor: colors.border,
+                                backgroundColor: colors.background,
+                                color: colors.text.primary,
+                                outlineColor: colors.primary
                               }}
                               min="0"
                               step="0.01"
@@ -587,7 +603,7 @@ export default function CurrencyConverterClient() {
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
                               <div className="flex items-center gap-2">
                                 <span className="text-xl">{getCurrencyInfo(fromCurrency).flag}</span>
-                                <div className="font-semibold" style={{ color: themeColors.text.primary }}>
+                                <div className="font-semibold" style={{ color: colors.text.primary }}>
                                   {fromCurrency}
                                 </div>
                               </div>
@@ -597,7 +613,7 @@ export default function CurrencyConverterClient() {
 
                         {/* Currency Selector */}
                         <div>
-                          <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                          <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                             From Currency
                           </label>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -612,9 +628,9 @@ export default function CurrencyConverterClient() {
                                   }}
                                   className={`p-3 rounded-lg border flex items-center justify-center gap-2 ${fromCurrency === code ? 'ring-2' : ''}`}
                                   style={{
-                                    backgroundColor: fromCurrency === code ? themeColors.primary + '20' : themeColors.background,
-                                    borderColor: fromCurrency === code ? themeColors.primary : themeColors.border,
-                                    color: themeColors.text.primary,
+                                    backgroundColor: fromCurrency === code ? colors.primary + '20' : colors.background,
+                                    borderColor: fromCurrency === code ? colors.primary : colors.border,
+                                    color: colors.text.primary,
                                     borderWidth: '1px'
                                   }}
                                 >
@@ -630,9 +646,9 @@ export default function CurrencyConverterClient() {
                               }}
                               className="p-3 rounded-lg border flex items-center justify-center gap-2"
                               style={{
-                                backgroundColor: themeColors.background,
-                                borderColor: themeColors.border,
-                                color: themeColors.text.primary,
+                                backgroundColor: colors.background,
+                                borderColor: colors.border,
+                                color: colors.text.primary,
                                 borderWidth: '1px'
                               }}
                             >
@@ -651,9 +667,9 @@ export default function CurrencyConverterClient() {
                             onClick={swapCurrencies}
                             className="p-3 rounded-full hover:opacity-80 transition-opacity"
                             style={{ 
-                              backgroundColor: themeColors.surface,
-                              color: themeColors.primary,
-                              border: `2px solid ${themeColors.border}`
+                              backgroundColor: colors.surface,
+                              color: colors.primary,
+                              border: `2px solid ${colors.border}`
                             }}
                           >
                             <ArrowRightLeft className="h-5 w-5" />
@@ -662,7 +678,7 @@ export default function CurrencyConverterClient() {
 
                         {/* To Currency */}
                         <div>
-                          <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                          <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                             Converted Amount
                           </label>
                           <div className="relative">
@@ -673,15 +689,15 @@ export default function CurrencyConverterClient() {
                               readOnly
                               className="w-full pl-16 pr-4 py-3 sm:py-4 border rounded-lg text-lg sm:text-xl font-semibold"
                               style={{
-                                borderColor: themeColors.border,
-                                backgroundColor: themeColors.background,
-                                color: themeColors.text.primary
+                                borderColor: colors.border,
+                                backgroundColor: colors.background,
+                                color: colors.text.primary
                               }}
                             />
                             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
                               <div className="flex items-center gap-2">
                                 <span className="text-xl">{getCurrencyInfo(toCurrency).flag}</span>
-                                <div className="font-semibold" style={{ color: themeColors.text.primary }}>
+                                <div className="font-semibold" style={{ color: colors.text.primary }}>
                                   {toCurrency}
                                 </div>
                               </div>
@@ -691,7 +707,7 @@ export default function CurrencyConverterClient() {
 
                         {/* Currency Selector */}
                         <div>
-                          <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                          <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                             To Currency
                           </label>
                           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -706,9 +722,9 @@ export default function CurrencyConverterClient() {
                                   }}
                                   className={`p-3 rounded-lg border flex items-center justify-center gap-2 ${toCurrency === code ? 'ring-2' : ''}`}
                                   style={{
-                                    backgroundColor: toCurrency === code ? themeColors.primary + '20' : themeColors.background,
-                                    borderColor: toCurrency === code ? themeColors.primary : themeColors.border,
-                                    color: themeColors.text.primary,
+                                    backgroundColor: toCurrency === code ? colors.primary + '20' : colors.background,
+                                    borderColor: toCurrency === code ? colors.primary : colors.border,
+                                    color: colors.text.primary,
                                     borderWidth: '1px'
                                   }}
                                 >
@@ -724,9 +740,9 @@ export default function CurrencyConverterClient() {
                               }}
                               className="p-3 rounded-lg border flex items-center justify-center gap-2"
                               style={{
-                                backgroundColor: themeColors.background,
-                                borderColor: themeColors.border,
-                                color: themeColors.text.primary,
+                                backgroundColor: colors.background,
+                                borderColor: colors.border,
+                                color: colors.text.primary,
                                 borderWidth: '1px'
                               }}
                             >
@@ -742,13 +758,13 @@ export default function CurrencyConverterClient() {
                     <div 
                       className="mt-6 p-4 rounded-lg"
                       style={{ 
-                        backgroundColor: `${themeColors.primary}10`,
-                        border: `1px solid ${themeColors.primary}30`
+                        backgroundColor: `${colors.primary}10`,
+                        border: `1px solid ${colors.primary}30`
                       }}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="text-center sm:text-left">
-                          <div className="text-sm" style={{ color: themeColors.text.secondary }}>Exchange Rate</div>
+                          <div className="text-sm" style={{ color: colors.text.secondary }}>Exchange Rate</div>
                           <div className="font-bold text-lg sm:text-xl">
                             1 {fromCurrency} = {exchangeRate.toFixed(6)} {toCurrency}
                           </div>
@@ -758,8 +774,8 @@ export default function CurrencyConverterClient() {
                             onClick={() => copyToClipboard(`${exchangeRate.toFixed(6)}`)}
                             className="px-3 py-2 border rounded-lg text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
                             style={{ 
-                              borderColor: themeColors.border,
-                              color: themeColors.text.secondary
+                              borderColor: colors.border,
+                              color: colors.text.secondary
                             }}
                           >
                             <Copy className="h-4 w-4" />
@@ -769,8 +785,8 @@ export default function CurrencyConverterClient() {
                             onClick={shareResults}
                             className="px-3 py-2 border rounded-lg text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
                             style={{ 
-                              borderColor: themeColors.border,
-                              color: themeColors.text.secondary
+                              borderColor: colors.border,
+                              color: colors.text.secondary
                             }}
                           >
                             <Share2 className="h-4 w-4" />
@@ -784,17 +800,17 @@ export default function CurrencyConverterClient() {
                     <div className="mt-4 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {rateChange >= 0 ? (
-                          <TrendingUp className="h-4 w-4" style={{ color: themeColors.success }} />
+                          <TrendingUp className="h-4 w-4" style={{ color: colors.success }} />
                         ) : (
-                          <TrendingDown className="h-4 w-4" style={{ color: themeColors.error }} />
+                          <TrendingDown className="h-4 w-4" style={{ color: colors.error }} />
                         )}
-                        <span className="text-sm" style={{ color: rateChange >= 0 ? themeColors.success : themeColors.error }}>
+                        <span className="text-sm" style={{ color: rateChange >= 0 ? colors.success : colors.error }}>
                           {rateChange >= 0 ? '↑' : '↓'} {Math.abs(rateChange).toFixed(2)}% in 24h
                         </span>
                       </div>
                       <div className="text-sm flex items-center gap-2">
-                        <Clock className="h-3 w-3" style={{ color: themeColors.text.secondary }} />
-                        <span style={{ color: themeColors.text.secondary }}>Updated: {lastUpdated}</span>
+                        <Clock className="h-3 w-3" style={{ color: colors.text.secondary }} />
+                        <span style={{ color: colors.text.secondary }}>Updated: {lastUpdated}</span>
                       </div>
                     </div>
                   </div>
@@ -815,9 +831,9 @@ export default function CurrencyConverterClient() {
                             }}
                             className={`p-4 rounded-lg border text-left transition-all ${isActive ? 'ring-2' : ''}`}
                             style={{
-                              backgroundColor: isActive ? themeColors.primary + '20' : themeColors.surface,
-                              borderColor: isActive ? themeColors.primary : themeColors.border,
-                              color: themeColors.text.primary,
+                              backgroundColor: isActive ? colors.primary + '20' : colors.surface,
+                              borderColor: isActive ? colors.primary : colors.border,
+                              color: colors.text.primary,
                               borderWidth: '1px'
                             }}
                           >
@@ -826,10 +842,10 @@ export default function CurrencyConverterClient() {
                                 <span>{getCurrencyInfo(pair.from).flag}</span>
                                 <span className="font-semibold">{pair.label}</span>
                               </div>
-                              <TrendingUp className="h-4 w-4" style={{ color: themeColors.success }} />
+                              <TrendingUp className="h-4 w-4" style={{ color: colors.success }} />
                             </div>
                             <div className="text-2xl font-bold">{rate.toFixed(4)}</div>
-                            <div className="text-xs mt-1" style={{ color: themeColors.text.secondary }}>
+                            <div className="text-xs mt-1" style={{ color: colors.text.secondary }}>
                               {pair.from} to {pair.to}
                             </div>
                           </button>
@@ -845,12 +861,12 @@ export default function CurrencyConverterClient() {
 
               {/* Trends Tab (Pro Feature) */}
               {activeTab === 'trends' && isProUser && (
-                <div className="rounded-xl border p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-6">
-                    <BarChart3 className="h-6 w-6" style={{ color: themeColors.primary }} />
+                    <BarChart3 className="h-6 w-6" style={{ color: colors.primary }} />
                     <h3 className="text-xl font-semibold">Currency Trends & Analytics</h3>
                   </div>
-                  <div className="h-64 flex items-center justify-center" style={{ backgroundColor: themeColors.background + '50', borderRadius: '8px' }}>
+                  <div className="h-64 flex items-center justify-center" style={{ backgroundColor: colors.background + '50', borderRadius: '8px' }}>
                     <div className="text-center">
                       <div className="text-lg font-semibold mb-2">Live Trend Charts</div>
                       <div className="text-sm opacity-70">Currency performance over selected timeframe</div>
@@ -861,9 +877,9 @@ export default function CurrencyConverterClient() {
                       onClick={() => setTimeframe('1d')}
                       className={`px-4 py-2 rounded ${timeframe === '1d' ? 'font-semibold' : 'opacity-70'}`}
                       style={{ 
-                        backgroundColor: timeframe === '1d' ? themeColors.primary : themeColors.background,
-                        color: timeframe === '1d' ? '#ffffff' : themeColors.text.secondary,
-                        border: timeframe === '1d' ? 'none' : `1px solid ${themeColors.border}`
+                        backgroundColor: timeframe === '1d' ? colors.primary : colors.background,
+                        color: timeframe === '1d' ? '#ffffff' : colors.text.secondary,
+                        border: timeframe === '1d' ? 'none' : `1px solid ${colors.border}`
                       }}
                     >
                       1 Day
@@ -872,9 +888,9 @@ export default function CurrencyConverterClient() {
                       onClick={() => setTimeframe('1w')}
                       className={`px-4 py-2 rounded ${timeframe === '1w' ? 'font-semibold' : 'opacity-70'}`}
                       style={{ 
-                        backgroundColor: timeframe === '1w' ? themeColors.primary : themeColors.background,
-                        color: timeframe === '1w' ? '#ffffff' : themeColors.text.secondary,
-                        border: timeframe === '1w' ? 'none' : `1px solid ${themeColors.border}`
+                        backgroundColor: timeframe === '1w' ? colors.primary : colors.background,
+                        color: timeframe === '1w' ? '#ffffff' : colors.text.secondary,
+                        border: timeframe === '1w' ? 'none' : `1px solid ${colors.border}`
                       }}
                     >
                       1 Week
@@ -883,9 +899,9 @@ export default function CurrencyConverterClient() {
                       onClick={() => setTimeframe('1m')}
                       className={`px-4 py-2 rounded ${timeframe === '1m' ? 'font-semibold' : 'opacity-70'}`}
                       style={{ 
-                        backgroundColor: timeframe === '1m' ? themeColors.primary : themeColors.background,
-                        color: timeframe === '1m' ? '#ffffff' : themeColors.text.secondary,
-                        border: timeframe === '1m' ? 'none' : `1px solid ${themeColors.border}`
+                        backgroundColor: timeframe === '1m' ? colors.primary : colors.background,
+                        color: timeframe === '1m' ? '#ffffff' : colors.text.secondary,
+                        border: timeframe === '1m' ? 'none' : `1px solid ${colors.border}`
                       }}
                     >
                       1 Month
@@ -896,16 +912,16 @@ export default function CurrencyConverterClient() {
 
               {/* Watchlist Tab (Pro Feature) */}
               {activeTab === 'watchlist' && isProUser && (
-                <div className="rounded-xl border p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
-                      <Star className="h-6 w-6" style={{ color: themeColors.warning }} />
+                      <Star className="h-6 w-6" style={{ color: colors.warning }} />
                       <div>
                         <h3 className="text-xl font-semibold mb-1">Currency Watchlist</h3>
                         <p className="text-sm opacity-80">Track your favorite currencies</p>
                       </div>
                     </div>
-                    <Bell className="h-5 w-5" style={{ color: themeColors.primary }} />
+                    <Bell className="h-5 w-5" style={{ color: colors.primary }} />
                   </div>
                   <div className="space-y-4">
                     {favorites.map(code => {
@@ -913,7 +929,7 @@ export default function CurrencyConverterClient() {
                       const rate = exchangeRates[code] || 1;
                       const change = (Math.random() - 0.5) * 2; // Mock change
                       return (
-                        <div key={code} className="flex items-center justify-between p-4 rounded-lg" style={{ backgroundColor: themeColors.background }}>
+                        <div key={code} className="flex items-center justify-between p-4 rounded-lg" style={{ backgroundColor: colors.background }}>
                           <div className="flex items-center gap-4">
                             <span className="text-2xl">{currency.flag}</span>
                             <div>
@@ -936,8 +952,8 @@ export default function CurrencyConverterClient() {
 
               {/* History Tab */}
               {activeTab === 'history' && (
-                <div className="rounded-xl border" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                  <div className="p-4 sm:p-6 border-b" style={{ borderColor: themeColors.border }}>
+                <div className="rounded-xl border" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                  <div className="p-4 sm:p-6 border-b" style={{ borderColor: colors.border }}>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h3 className="text-lg sm:text-xl font-semibold">Conversion History</h3>
@@ -951,8 +967,8 @@ export default function CurrencyConverterClient() {
                           }}
                           className="px-4 py-2 border rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
                           style={{ 
-                            borderColor: themeColors.error,
-                            color: themeColors.error
+                            borderColor: colors.error,
+                            color: colors.error
                           }}
                         >
                           Clear History
@@ -965,7 +981,7 @@ export default function CurrencyConverterClient() {
                     <div className="overflow-x-auto">
                       <table className="w-full">
                         <thead>
-                          <tr className="border-b" style={{ borderColor: themeColors.border }}>
+                          <tr className="border-b" style={{ borderColor: colors.border }}>
                             <th className="text-left p-4 text-sm font-medium">Time</th>
                             <th className="text-left p-4 text-sm font-medium">From</th>
                             <th className="text-left p-4 text-sm font-medium">To</th>
@@ -976,7 +992,7 @@ export default function CurrencyConverterClient() {
                         </thead>
                         <tbody>
                           {conversionHistory.map((entry) => (
-                            <tr key={entry.id} className="border-b hover:opacity-80 transition-opacity" style={{ borderColor: themeColors.border }}>
+                            <tr key={entry.id} className="border-b hover:opacity-80 transition-opacity" style={{ borderColor: colors.border }}>
                               <td className="p-4 text-sm">
                                 {new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                               </td>
@@ -995,7 +1011,7 @@ export default function CurrencyConverterClient() {
                               <td className="p-4 font-medium">
                                 {entry.amount.toLocaleString()} {entry.from}
                               </td>
-                              <td className="p-4 font-bold" style={{ color: themeColors.primary }}>
+                              <td className="p-4 font-bold" style={{ color: colors.primary }}>
                                 {formatCurrency(entry.converted, entry.to)}
                               </td>
                               <td className="p-4">
@@ -1018,8 +1034,8 @@ export default function CurrencyConverterClient() {
 
               {/* Pro Upgrade for Locked Tabs */}
               {!isProUser && activeTab !== 'convert' && activeTab !== 'history' && (
-                <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                  <Crown className="h-12 w-12 mx-auto mb-4" style={{ color: themeColors.primary }} />
+                <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                  <Crown className="h-12 w-12 mx-auto mb-4" style={{ color: colors.primary }} />
                   <h3 className="text-xl font-semibold mb-2">Upgrade to Pro for Advanced Features</h3>
                   <p className="mb-6 opacity-80">
                     Get access to live rate trends, currency watchlists, and historical data
@@ -1027,7 +1043,7 @@ export default function CurrencyConverterClient() {
                   <button
                     onClick={() => setIsProUser(true)}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-                    style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+                    style={{ backgroundColor: colors.primary, color: '#ffffff' }}
                   >
                     Unlock Pro Features - ₹199/month
                   </button>
@@ -1045,20 +1061,20 @@ export default function CurrencyConverterClient() {
           <div className="mt-8 sm:mt-12">
             <h3 className="text-xl font-semibold mb-6">Currency Converter FAQ</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="rounded-lg border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <div className="font-semibold mb-2" style={{ color: themeColors.primary }} role="heading" aria-level={4}>How accurate are the exchange rates?</div>
+              <div className="rounded-lg border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <div className="font-semibold mb-2" style={{ color: colors.primary }} role="heading" aria-level={4}>How accurate are the exchange rates?</div>
                 <p className="text-sm opacity-80">Rates update every 60 seconds using multiple financial data sources. For real-time trading rates, consult your financial institution.</p>
               </div>
-              <div className="rounded-lg border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <div className="font-semibold mb-2" style={{ color: themeColors.primary }} role="heading" aria-level={4}>How many currencies are supported?</div>
+              <div className="rounded-lg border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <div className="font-semibold mb-2" style={{ color: colors.primary }} role="heading" aria-level={4}>How many currencies are supported?</div>
                 <p className="text-sm opacity-80">We support 150+ world currencies including major, minor, and exotic pairs. Crypto currencies available in Pro version.</p>
               </div>
-              <div className="rounded-lg border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <div className="font-semibold mb-2" style={{ color: themeColors.primary }} role="heading" aria-level={4}>Can I set up rate alerts?</div>
+              <div className="rounded-lg border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <div className="font-semibold mb-2" style={{ color: colors.primary }} role="heading" aria-level={4}>Can I set up rate alerts?</div>
                 <p className="text-sm opacity-80">Rate alerts and notifications are available in the Pro version. Set custom thresholds for your favorite currency pairs.</p>
               </div>
-              <div className="rounded-lg border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <div className="font-semibold mb-2" style={{ color: themeColors.primary }} role="heading" aria-level={4}>Are the rates suitable for trading?</div>
+              <div className="rounded-lg border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <div className="font-semibold mb-2" style={{ color: colors.primary }} role="heading" aria-level={4}>Are the rates suitable for trading?</div>
                 <p className="text-sm opacity-80">Rates are indicative. For actual trading, banks and forex brokers add spreads. Always verify rates before large transactions.</p>
               </div>
             </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 
 interface RichTextEditorProps {
@@ -12,8 +12,27 @@ interface RichTextEditorProps {
 export default function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
   const { themeColors } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // ✅ Fix: Use correct theme properties
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div
+        suppressHydrationWarning
+        style={{
+          width: '100%',
+          minHeight: '200px',
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
+          borderRadius: '4px',
+        }}
+      />
+    );
+  }
+
   const bgColor = themeColors.surface || '#f8fafc';
   const borderColor = themeColors.border || '#e2e8f0';
   const textColor = themeColors.text?.primary || '#0f172a';
@@ -25,11 +44,11 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
     padding: '4px 8px',
     margin: '0 2px',
     borderRadius: '4px',
-    cursor: 'pointer'
+    cursor: 'pointer',
   };
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       <div style={{ marginBottom: '8px' }}>
         <button style={btnStyle} title="Bold">B</button>
         <button style={btnStyle} title="Italic">I</button>
@@ -46,7 +65,7 @@ export default function RichTextEditor({ content, onChange, placeholder }: RichT
           background: bgColor,
           color: textColor,
           border: `1px solid ${borderColor}`,
-          borderRadius: '4px'
+          borderRadius: '4px',
         }}
       />
     </div>

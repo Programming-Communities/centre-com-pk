@@ -442,6 +442,7 @@ export const semanticKeywords: Record<string, ToolKeywords> = {
       'meter to feet urdu',
       'celsius to fahrenheit pakistan',
     ],
+    
   },
 
   // ========== CODE TOOLS ==========
@@ -817,6 +818,8 @@ export const semanticKeywords: Record<string, ToolKeywords> = {
   },
 
   // ========== IMAGE TOOLS ==========
+
+  
   'image-compressor': {
     primary: 'image compressor',
     secondary: [
@@ -979,6 +982,8 @@ export const semanticKeywords: Record<string, ToolKeywords> = {
       'crop photo urdu',
       'picture cutter pk',
     ],
+  
+  
   },
 
   'background-remover': {
@@ -1309,7 +1314,53 @@ export const semanticKeywords: Record<string, ToolKeywords> = {
       'convert PDF urdu',
       'PDF converter pk',
     ],
+  
+  
   },
+  'pdf-protect': {
+    primary: 'PDF protect',
+    secondary: [
+      'protect PDF',
+      'password protect PDF',
+      'PDF encryption',
+      'secure PDF',
+      'lock PDF',
+      'PDF password',
+      'protect PDF online',
+      'PDF security',
+      'encrypt PDF file',
+      'PDF protection tool',
+    ],
+    questions: [
+      'how to password protect PDF',
+      'how to encrypt PDF file',
+      'how to lock PDF with password',
+      'how to secure PDF document',
+      'how to protect PDF from copying',
+      'how to add password to PDF',
+    ],
+    related: [
+      'pdf-merger',
+      'pdf-compressor',
+      'pdf-splitter',
+      'encryption-tools',
+    ],
+    longTail: [
+      'password protect PDF file online free',
+      'encrypt PDF with password online',
+      'lock PDF file from editing online',
+      'protect PDF document with password',
+    ],
+    localTerms: [
+      'PDF protect pakistan',
+      'password protect PDF urdu',
+      'PDF security pk',
+    ],
+  },
+  
+
+
+
 
   // ========== SECURITY TOOLS ==========
   'password-generator': {
@@ -2092,7 +2143,98 @@ export const semanticKeywords: Record<string, ToolKeywords> = {
       'placeholder text pk',
     ],
   },
-};
+  'cv-builder': {
+    primary: 'CV builder',
+    secondary: ['resume builder', 'CV maker', 'create CV online', 'professional CV', 'resume creator', 'CV template', 'build resume', 'CV generator', 'online resume builder', 'free CV maker'],
+    questions: ['how to create a CV', 'how to make a resume', 'best CV format', 'how to write professional CV', 'CV vs resume difference', 'how to make CV for job'],
+    related: ['text-extractor', 'pdf-to-word', 'markdown-editor', 'word-counter'],
+    longTail: ['free CV builder online without registration', 'professional resume builder with templates', 'create CV for job application online', 'ATS friendly CV builder free'],
+    localTerms: ['CV builder pakistan', 'resume maker urdu', 'CV template pk'],
+  },
+  
+  // ========== IMAGE TOOLS (ADDED) ==========
+  'image-filters': {
+    primary: 'image filters',
+    secondary: [
+      'photo filters online',
+      'image effects',
+      'photo editor online',
+      'instagram filters',
+      'photo enhancer',
+      'image editor free',
+      'vintage filter',
+      'black and white filter',
+      'sepia filter',
+      'blur image',
+    ],
+    questions: [
+      'how to apply filters to photos',
+      'best photo filter app',
+      'how to add vintage effect',
+      'how to make photo black and white',
+      'how to blur image background',
+      'how to enhance photo quality',
+    ],
+    related: [
+      'image-converter',
+      'image-compressor',
+      'meme-generator',
+      'photo-collage',
+    ],
+    longTail: [
+      'apply instagram filters online without app',
+      'photo enhancer online free for portraits',
+      'vintage photo filter online free',
+      'blur image background online tool',
+    ],
+    localTerms: [
+      'photo filters pakistan',
+      'image editor urdu',
+      'photo effects pk',
+    ],
+  },
+
+  'image-rotator': {
+    primary: 'image rotator',
+    secondary: [
+      'rotate image online',
+      'flip image',
+      'photo rotator',
+      'rotate photo 90 degrees',
+      'image orientation changer',
+      'straighten photo',
+      'rotate image 180 degrees',
+      'flip image horizontally',
+      'flip image vertically',
+      'rotate image by degrees',
+    ],
+    questions: [
+      'how to rotate an image',
+      'how to flip image horizontally',
+      'how to rotate image 90 degrees',
+      'how to straighten a photo',
+      'how to rotate image by custom angle',
+      'how to fix image orientation',
+    ],
+    related: [
+      'image-cropper',
+      'image-resizer',
+      'image-converter',
+      'image-filters',
+    ],
+    longTail: [
+      'rotate image by custom angle online',
+      'flip image horizontally and vertically online',
+      'straighten tilted photo online free',
+      'fix image orientation for social media',
+    ],
+    localTerms: [
+      'image rotator pakistan',
+      'rotate photo urdu',
+      'photo flip pk',
+    ],
+  },
+}; 
 
 /**
  * Get semantic keywords for a tool

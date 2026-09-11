@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Wrench, BookOpen, User, Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MobileDashboard from './MobileDashboard/MobileDashboard';
 
 interface BottomNavigationProps {
@@ -13,6 +13,11 @@ interface BottomNavigationProps {
 export default function BottomNavigation({ lang }: BottomNavigationProps) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navItems = [
     { href: `/${lang}`, icon: Home, label: 'Home' },
@@ -25,6 +30,10 @@ export default function BottomNavigation({ lang }: BottomNavigationProps) {
     if (href === `/${lang}`) return pathname === href;
     return pathname.startsWith(href);
   };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>

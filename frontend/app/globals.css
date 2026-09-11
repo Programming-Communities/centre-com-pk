@@ -310,11 +310,9 @@ html.light { background-color: #ffffff !important; color-scheme: light; }
 /* ========== JAMEEL FONT ========== */
 @font-face {
   font-family: 'Jameel Noori Nastaleeq';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
   src: url('/fonts/JameelNooriNastaleeq.woff2') format('woff2'),
        url('/fonts/JameelNooriNastaleeq.ttf') format('truetype');
+  font-display: swap;
 }
 
 .font-urdu {
@@ -330,4 +328,164 @@ html.light { background-color: #ffffff !important; color-scheme: light; }
 [lang="ur"] h1, [lang="ur"] h2, [lang="ur"] h3 {
   font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Amiri', 'Noto Sans Arabic', system-ui, sans-serif;
   font-weight: 700;
+}
+
+
+
+
+/* ========== CREATE AD PAGE — RESPONSIVE ========== */
+.create-ad-container {
+  min-height: 100vh;
+  background-color: var(--background);
+  padding: 16px 12px;
+}
+
+.create-ad-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Mobile First — Default: Stack */
+.create-ad-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Preview Display */
+.preview-desktop {
+  display: none;
+}
+
+.preview-mobile {
+  display: block;
+}
+
+/* Advanced Options */
+.advanced-options {
+  display: none;
+}
+
+.advanced-options.open {
+  display: block;
+}
+
+/* Templates Horizontal Scroll */
+.templates-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.templates-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.templates-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .color-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .create-ad-container {
+    padding: 20px 16px;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .create-ad-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  .preview-desktop {
+    display: block;
+    position: sticky;
+    top: 20px;
+  }
+  
+  .preview-mobile {
+    display: none;
+  }
+  
+  .advanced-options {
+    display: block !important;
+  }
+  
+  .form-section {
+    padding: 24px !important;
+  }
+}
+
+/* Large Desktop: 1440px+ */
+@media (min-width: 1440px) {
+  .create-ad-grid {
+    grid-template-columns: 2.5fr 1fr;
+    gap: 32px;
+  }
+}
+
+/* Ultra-wide: 1920px+ */
+@media (min-width: 1920px) {
+  .create-ad-wrapper {
+    max-width: 1600px;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .create-ad-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .templates-scroll {
+  direction: rtl;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .templates-scroll {
+    scroll-behavior: auto;
+  }
+}
+
+
+
+/* Mobile Preview Toggle — Desktop pe hide */
+.preview-mobile-toggle,
+.advanced-toggle-mobile {
+  display: flex;
+}
+
+@media (min-width: 1024px) {
+  .preview-mobile-toggle,
+  .advanced-toggle-mobile {
+    display: none !important;
+  }
+  .advanced-options {
+    display: block !important;
+  }
 }

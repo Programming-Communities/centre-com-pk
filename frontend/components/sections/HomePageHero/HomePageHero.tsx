@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Zap, ArrowRight } from 'lucide-react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { useState, useEffect } from 'react';
 
 interface HomePageHeroProps {
   badge?: string;
@@ -29,29 +30,78 @@ export default function HomePageHero({
   lang
 }: HomePageHeroProps) {
   const { themeColors } = useTheme();
-  const themeColor = themeColors.primary;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ✅ FIX: Static fallback colors for server + first client render
+  // These match `professional-blue` light theme to prevent hydration mismatch
+  const staticColors = {
+    primary: '#1d4ed8',
+    textPrimary: '#0f172a',
+    textSecondary: '#334155',
+  };
+
+  // After mounted, use real theme colors
+  const themeColor = mounted ? (themeColors?.primary || staticColors.primary) : staticColors.primary;
+  const textPrimary = mounted ? (themeColors?.text?.primary || staticColors.textPrimary) : staticColors.textPrimary;
+  const textSecondary = mounted ? (themeColors?.text?.secondary || staticColors.textSecondary) : staticColors.textSecondary;
 
   return (
-    <section className="relative py-12 md:py-16 lg:py-20">
+    <section className="relative py-12 md:py-16 lg:py-20" suppressHydrationWarning>
       {withBackground && (
-        <div className="absolute inset-0" style={{ backgroundColor: `${themeColor}10` }} />
+        <div
+          className="absolute inset-0"
+          suppressHydrationWarning
+          style={{ backgroundColor: `${themeColor}10` }}
+        />
       )}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center">
           {/* ✅ Badge — Static height, no layout shift */}
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6" style={{ backgroundColor: `${themeColor}10`, border: `1px solid ${themeColor}30` }}>
-            <Zap className="h-4 w-4" style={{ color: themeColor }} />
-            <span className="text-sm font-medium" style={{ color: themeColor }}>{badge || 'Free Online Tools'}</span>
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6"
+            suppressHydrationWarning
+            style={{
+              backgroundColor: `${themeColor}10`,
+              border: `1px solid ${themeColor}30`,
+            }}
+          >
+            <Zap className="h-4 w-4" suppressHydrationWarning style={{ color: themeColor }} />
+            <span
+              className="text-sm font-medium"
+              suppressHydrationWarning
+              style={{ color: themeColor }}
+            >
+              {badge || 'Free Online Tools'}
+            </span>
           </div>
 
           {/* ✅ Title — No animation, pure static */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight" style={{ color: themeColors.text.primary }}>
+          <h1
+            className="text-3xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight"
+            suppressHydrationWarning
+            style={{ color: textPrimary }}
+          >
             {title}
-            {highlightedTitle && <><br /><span style={{ color: themeColor }}>{highlightedTitle}</span></>}
+            {highlightedTitle && (
+              <>
+                <br />
+                <span suppressHydrationWarning style={{ color: themeColor }}>
+                  {highlightedTitle}
+                </span>
+              </>
+            )}
           </h1>
-          
+
           {/* ✅ Description — Static */}
-          <p className="text-base sm:text-lg mb-8 max-w-3xl mx-auto" style={{ color: themeColors.text.secondary }}>
+          <p
+            className="text-base sm:text-lg mb-8 max-w-3xl mx-auto"
+            suppressHydrationWarning
+            style={{ color: textSecondary }}
+          >
             {description}
           </p>
 
@@ -60,18 +110,24 @@ export default function HomePageHero({
             <Link
               href={`/${lang}${primaryButton.href}`}
               className="px-6 py-3 rounded-xl font-bold text-sm sm:text-base transition-opacity hover:opacity-90 inline-flex items-center gap-2"
+              suppressHydrationWarning
               style={{ backgroundColor: themeColor, color: '#ffffff' }}
               prefetch={false}
             >
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" suppressHydrationWarning />
               {primaryButton.text}
             </Link>
-            
+
             {secondaryButton && (
               <Link
                 href={`/${lang}${secondaryButton.href || '#'}`}
                 className="px-6 py-3 rounded-xl font-bold text-sm sm:text-base border inline-flex items-center gap-2"
-                style={{ borderColor: themeColor, color: themeColor, backgroundColor: `${themeColor}10` }}
+                suppressHydrationWarning
+                style={{
+                  borderColor: themeColor,
+                  color: themeColor,
+                  backgroundColor: `${themeColor}10`,
+                }}
               >
                 {secondaryButton.text}
               </Link>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Plus, Search, Edit3, Eye, Trash2, FileText } from 'lucide-react';
+import { Plus, Search, Edit3, Eye, Trash2, FileText, Globe, Calendar } from 'lucide-react';
 import QuickEdit from '@/components/admin/QuickEdit';
 import BulkActions from '@/components/admin/BulkActions';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
@@ -78,6 +78,11 @@ export default function PostsClient() {
     return { bg: '#f59e0b15', color: '#f59e0b', label: status };
   };
 
+  const getLangBadge = (post: any) => {
+    const langs = post.available_langs || [post.lang || 'en'];
+    return langs.map(l => l.toUpperCase()).join(', ');
+  };
+
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '12px 0' }}>
       
@@ -135,57 +140,141 @@ export default function PostsClient() {
           <p style={{ fontSize: '14px', color: textSecondary, margin: 0 }}>No posts found</p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          {filteredPosts.map((post: any) => {
-            const statusStyle = getStatusStyle(post.status);
-            return (
-              <div key={post.id} style={{ padding: '12px 14px', background: surface, borderRadius: '10px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                
-                {/* CHECKBOX */}
-                <input type="checkbox" checked={selectedPosts.includes(post.id)}
-                  onChange={e => {
-                    setSelectedPosts(e.target.checked ? [...selectedPosts, post.id] : selectedPosts.filter(id => id !== post.id));
-                  }}
-                  style={{ width: '16px', height: '16px', cursor: 'pointer', flexShrink: 0 }} />
+        <>
+          {/* ========== MOBILE CARDS — < 640px ========== */}
+          <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {filteredPosts.map((post: any) => {
+              const statusStyle = getStatusStyle(post.status);
+              const langBadge = getLangBadge(post);
 
-                {/* POST INFO */}
-                <div style={{ flex: 1, minWidth: '180px' }}>
-                  <div style={{ fontWeight: 600, fontSize: '14px', color: textPrimary, marginBottom: '2px' }}>
-                    {post.title || '(no title)'}
+              return (
+                <div key={post.id} style={{ 
+                  padding: '16px', 
+                  background: surface, 
+                  borderRadius: '12px', 
+                  border: `1px solid ${border}` 
+                }}>
+                  {/* Checkbox + Title */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '10px' }}>
+                    <input type="checkbox" checked={selectedPosts.includes(post.id)}
+                      onChange={e => {
+                        setSelectedPosts(e.target.checked ? [...selectedPosts, post.id] : selectedPosts.filter(id => id !== post.id));
+                      }}
+                      style={{ width: '16px', height: '16px', cursor: 'pointer', flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, fontSize: '14px', color: textPrimary, marginBottom: '6px', lineHeight: 1.3 }}>
+                        {post.title || '(no title)'}
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: statusStyle.bg, color: statusStyle.color }}>
+
+                  {/* Badges */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px', paddingLeft: '26px' }}>
+                    <span style={{ padding: '3px 10px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: statusStyle.bg, color: statusStyle.color }}>
                       {statusStyle.label}
                     </span>
-                    <span style={{ fontSize: '11px', color: textSecondary }}>{post.category || '—'}</span>
-                    <span style={{ fontSize: '11px', color: textSecondary }}>
-                      {(post.available_langs || [post.lang || 'en']).join(', ').toUpperCase()}
+                    <span style={{ padding: '3px 10px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: `${primary}15`, color: primary, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                      <Globe size={10} /> {langBadge}
                     </span>
-                    <span style={{ fontSize: '11px', color: textSecondary }}>
-                      {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                    <span style={{ padding: '3px 10px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: 'var(--surface)', color: textSecondary, border: `1px solid ${border}` }}>
+                      {post.category || '—'}
                     </span>
                   </div>
-                </div>
 
-                {/* ACTIONS */}
-                <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                  <button onClick={() => setQuickEditPost(post)} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '11px', cursor: 'pointer' }}>
-                    Quick Edit
-                  </button>
-                  <Link href={`/${lang}/admin/posts/${post.id}`} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                    <Edit3 size={12} />
-                  </Link>
-                  <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-                    <Eye size={12} />
-                  </Link>
-                  <button onClick={() => handleDelete(post.id)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', color: '#ef4444', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                    <Trash2 size={12} />
-                  </button>
+                  {/* Date */}
+                  <div style={{ fontSize: '11px', color: textSecondary, marginBottom: '12px', paddingLeft: '26px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Calendar size={11} /> {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ paddingTop: '12px', borderTop: `1px solid ${border}`, display: 'flex', gap: '8px' }}>
+                    <button onClick={() => setQuickEditPost(post)} style={{ 
+                      flex: 1, padding: '8px 10px', borderRadius: '8px', border: `1px solid ${primary}`, 
+                      background: 'transparent', color: primary, fontSize: '11px', fontWeight: 600, cursor: 'pointer' 
+                    }}>
+                      Quick Edit
+                    </button>
+                    <Link href={`/${lang}/admin/posts/${post.id}`} style={{ 
+                      padding: '8px 10px', borderRadius: '8px', border: `1px solid ${border}`, 
+                      background: 'transparent', color: textSecondary, textDecoration: 'none', display: 'flex', alignItems: 'center' 
+                    }}>
+                      <Edit3 size={14} />
+                    </Link>
+                    <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ 
+                      padding: '8px 10px', borderRadius: '8px', border: `1px solid ${border}`, 
+                      background: 'transparent', color: textSecondary, textDecoration: 'none', display: 'flex', alignItems: 'center' 
+                    }}>
+                      <Eye size={14} />
+                    </Link>
+                    <button onClick={() => handleDelete(post.id)} style={{ 
+                      padding: '8px 10px', borderRadius: '8px', border: '1px solid #ef4444', 
+                      background: '#ef444410', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center' 
+                    }}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
+              );
+            })}
+            {filteredPosts.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>
+                No posts found
               </div>
-            );
-          })}
-        </div>
+            )}
+          </div>
+
+          {/* ========== DESKTOP TABLE — > 640px ========== */}
+          <div className="hidden md:block" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {filteredPosts.map((post: any) => {
+              const statusStyle = getStatusStyle(post.status);
+              const langBadge = getLangBadge(post);
+              return (
+                <div key={post.id} style={{ padding: '12px 14px', background: surface, borderRadius: '10px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  
+                  {/* CHECKBOX */}
+                  <input type="checkbox" checked={selectedPosts.includes(post.id)}
+                    onChange={e => {
+                      setSelectedPosts(e.target.checked ? [...selectedPosts, post.id] : selectedPosts.filter(id => id !== post.id));
+                    }}
+                    style={{ width: '16px', height: '16px', cursor: 'pointer', flexShrink: 0 }} />
+
+                  {/* POST INFO */}
+                  <div style={{ flex: 1, minWidth: '180px' }}>
+                    <div style={{ fontWeight: 600, fontSize: '14px', color: textPrimary, marginBottom: '2px' }}>
+                      {post.title || '(no title)'}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                      <span style={{ padding: '2px 8px', borderRadius: '10px', fontSize: '10px', fontWeight: 600, background: statusStyle.bg, color: statusStyle.color }}>
+                        {statusStyle.label}
+                      </span>
+                      <span style={{ fontSize: '11px', color: textSecondary }}>{post.category || '—'}</span>
+                      <span style={{ fontSize: '11px', color: textSecondary }}>{langBadge}</span>
+                      <span style={{ fontSize: '11px', color: textSecondary }}>
+                        {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* ACTIONS */}
+                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                    <button onClick={() => setQuickEditPost(post)} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '11px', cursor: 'pointer' }}>
+                      Quick Edit
+                    </button>
+                    <Link href={`/${lang}/admin/posts/${post.id}`} style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                      <Edit3 size={12} />
+                    </Link>
+                    <Link href={`/${lang}/blog/${post.slug}`} target="_blank" style={{ padding: '6px 10px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: textSecondary, fontSize: '11px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+                      <Eye size={12} />
+                    </Link>
+                    <button onClick={() => handleDelete(post.id)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', color: '#ef4444', fontSize: '11px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       {/* QUICK EDIT MODAL */}

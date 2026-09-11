@@ -107,6 +107,18 @@ db.exec(`
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
+  CREATE TABLE IF NOT EXISTS user_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    theme TEXT DEFAULT 'professional-blue',
+    font_family TEXT DEFAULT 'system-ui',
+    dark_mode INTEGER DEFAULT 0,
+    language TEXT DEFAULT 'en',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
   CREATE INDEX IF NOT EXISTS idx_docs_user ON user_documents(user_id);
   CREATE INDEX IF NOT EXISTS idx_cv_user ON cv_resumes(user_id);

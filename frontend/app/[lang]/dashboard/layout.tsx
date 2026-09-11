@@ -20,27 +20,41 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // ✅ FIX: mounted=false pe hardcoded light colors (server = client, no mismatch)
+  if (!mounted) {
+    return (
+      <div
+        suppressHydrationWarning
+        style={{
+          display: 'flex',
+          minHeight: '100vh',
+          backgroundColor: '#f8fafc',
+        }}
+      />
+    );
+  }
+
+  // ✅ FIX: Ab colors calculate karo (mounted=true ke baad)
   const bg = themeColors?.background || (isDarkMode ? '#0f172a' : '#f8fafc');
   const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
   const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
   const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
 
-  if (!mounted) {
-    return <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: bg }} />;
-  }
-
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: bg }}>
+    <div
+      suppressHydrationWarning
+      style={{ display: 'flex', minHeight: '100vh', backgroundColor: bg }}
+    >
       {/* SIDEBAR */}
-      <ProSidebar 
-        lang={lang} 
-        role="user" 
+      <ProSidebar
+        lang={lang}
+        role="user"
         isMobileOpen={isMobileOpen}
         onMobileClose={() => setIsMobileOpen(false)}
       />
-      
+
       {/* MAIN CONTENT */}
-      <main 
+      <main
         style={{
           flex: 1,
           minWidth: 0,
@@ -55,7 +69,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         {isMobile && (
           <button
             onClick={() => setIsMobileOpen(true)}
-            style={{ 
+            style={{
               position: 'fixed',
               top: '66px',
               left: '12px',
@@ -77,7 +91,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <Menu size={18} />
           </button>
         )}
-        
+
         {children}
       </main>
     </div>

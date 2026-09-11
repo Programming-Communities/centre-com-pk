@@ -90,6 +90,12 @@ const menuTranslations: Record<string, Record<string, string>> = {
 };
 
 export default function HeaderMenu({ mobile = false, showDashboardToggle = false, lang = 'en' }: HeaderMenuProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // ✅ FIXED: Update global lang when prop changes
   useEffect(() => {
     if (lang && lang !== 'en') {
@@ -191,9 +197,14 @@ export default function HeaderMenu({ mobile = false, showDashboardToggle = false
     { id: 'security-tools', key: 'menu.security_tools', fallback: 'Security Tools', path: 'tools/security-tools' },
   ];
 
+  // ✅ FIX: Don't render until mounted (prevents hydration mismatch)
+  if (!mounted) {
+    return <div style={{ height: '40px', width: '100%' }} suppressHydrationWarning />;
+  }
+
   if (!mobile) {
     return (
-      <div ref={menuRef} className="relative">
+      <div ref={menuRef} className="relative" suppressHydrationWarning>
         <div className="flex items-center gap-4">
           {showDashboardToggle && (
             <button
@@ -423,7 +434,7 @@ export default function HeaderMenu({ mobile = false, showDashboardToggle = false
 
   // ✅ FIXED: Mobile-only version with translations
   return (
-    <div ref={menuRef} className="w-full">
+    <div ref={menuRef} className="w-full" suppressHydrationWarning>
       <div className="flex items-center justify-between p-4">
         {showDashboardToggle && (
           <button onClick={toggleDashboard} className="p-2 rounded-lg"

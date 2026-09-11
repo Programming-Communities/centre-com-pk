@@ -19,6 +19,7 @@ const languages = [
 
 export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const { themeColors } = useTheme();
@@ -28,6 +29,23 @@ export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const isRTL = lang === 'ur' || lang === 'ar';
+
+  // ✅ HYDration FIX — Default colors (LIGHT)
+  const defaultThemeColors = {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+  };
+
+  // ✅ HYDration FIX — Sirf mounted hone ke baad theme use karo
+  const colors = mounted ? (themeColors || defaultThemeColors) : defaultThemeColors;
+
+  // ✅ HYDration FIX — mounted set karo
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -59,16 +77,13 @@ export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
   const switchLanguage = (newLang: string) => {
     setGlobalLang(newLang);
     
-    // ✅ PROPER FIX: Remove current lang from path, then add new lang
     const segments = pathname.split('/').filter(Boolean);
     const langCodes = languages.map(l => l.code);
     
-    // Remove first segment if it's a language code
     if (segments.length > 0 && langCodes.includes(segments[0])) {
       segments.shift();
     }
     
-    // Build new path with new language
     const newPath = '/' + newLang + (segments.length > 0 ? '/' + segments.join('/') : '');
     
     router.push(newPath);
@@ -82,11 +97,12 @@ export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
       <button
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
+        suppressHydrationWarning
         className="control-button flex items-center gap-1 px-2"
         style={{
-          backgroundColor: isOpen ? `${themeColors.primary}15` : themeColors.surface,
-          color: themeColors.text.primary,
-          borderColor: isOpen ? themeColors.primary : themeColors.border,
+          backgroundColor: isOpen ? `${colors.primary}15` : colors.surface,
+          color: colors.text.primary,
+          borderColor: isOpen ? colors.primary : colors.border,
         }}
         title={t('action.language', 'Select Language')}
         aria-label="Select language"
@@ -103,8 +119,8 @@ export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
             isRTL ? 'left-0' : 'right-0'
           }`}
           style={{
-            backgroundColor: themeColors.background,
-            border: `1px solid ${themeColors.border}`,
+            backgroundColor: colors.background,
+            border: `1px solid ${colors.border}`,
           }}
           role="menu"
           aria-label="Language selection menu"
@@ -117,8 +133,8 @@ export default function LanguageSwitcher({ lang }: LanguageSwitcherProps) {
                 isRTL ? 'text-right' : 'text-left'
               } hover:bg-surface`}
               style={{
-                color: l.code === lang ? themeColors.primary : themeColors.text.primary,
-                backgroundColor: l.code === lang ? `${themeColors.primary}10` : 'transparent',
+                color: l.code === lang ? colors.primary : colors.text.primary,
+                backgroundColor: l.code === lang ? `${colors.primary}10` : 'transparent',
               }}
               role="menuitem"
               aria-label={`Switch to ${l.name}`}

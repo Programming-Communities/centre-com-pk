@@ -7,7 +7,9 @@ import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import { 
   LayoutDashboard, FileText, Users, Settings, 
   Shield, MessageSquare, Image, FolderOpen, PlusCircle, 
-  X, LogOut
+  X, LogOut, Search, Megaphone, BarChart3, DollarSign,
+  Share2, FileCheck, Package, Wallet, Percent, Grid3x3,
+  ScrollText, CheckCircle, ArrowLeftRight
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -45,6 +47,7 @@ export default function AdminSidebar({ lang, isMobileOpen = false, onMobileClose
   const primary = themeColors?.primary || '#3b82f6';
 
   const menuItems = [
+    // MAIN
     { href: `/${lang}/admin`, label: 'Dashboard', icon: LayoutDashboard },
     { href: `/${lang}/admin/posts`, label: 'Posts', icon: FileText },
     { href: `/${lang}/admin/posts/new`, label: 'Add New', icon: PlusCircle },
@@ -53,6 +56,31 @@ export default function AdminSidebar({ lang, isMobileOpen = false, onMobileClose
     { href: `/${lang}/admin/comments`, label: 'Comments', icon: MessageSquare },
     { href: `/${lang}/admin/users`, label: 'Users', icon: Users },
     { href: `/${lang}/admin/dashboard/roles`, label: 'Roles', icon: Shield },
+    
+    // TOOLS & SEO
+    { href: `/${lang}/admin/tools-manager`, label: 'Tools Manager', icon: Grid3x3 },
+    { href: `/${lang}/admin/seo-manager`, label: 'SEO Manager', icon: Search },
+    
+    // ADS & ANALYTICS
+    { href: `/${lang}/admin/dashboard/ads`, label: 'Ad Manager', icon: Megaphone },
+    { href: `/${lang}/admin/dashboard/analytics`, label: 'Analytics', icon: BarChart3 },
+    
+    // REVENUE
+    { href: `/${lang}/admin/dashboard/sales`, label: 'Revenue', icon: DollarSign },
+    { href: `/${lang}/admin/dashboard/packages`, label: 'Packages', icon: Package },
+    { href: `/${lang}/admin/dashboard/transactions`, label: 'Transactions', icon: ArrowLeftRight },
+    
+    // AFFILIATES & KYC
+    { href: `/${lang}/admin/dashboard/affiliates`, label: 'Affiliates', icon: Share2 },
+    { href: `/${lang}/admin/dashboard/kyc`, label: 'KYC Verification', icon: FileCheck },
+    
+    // OTHER
+    { href: `/${lang}/admin/dashboard/commissions`, label: 'Commissions', icon: Percent },
+    { href: `/${lang}/admin/dashboard/payouts`, label: 'Payouts', icon: Wallet },
+    { href: `/${lang}/admin/dashboard/content-settings`, label: 'Content Settings', icon: ScrollText },
+    { href: `/${lang}/admin/approvals`, label: 'Approvals', icon: CheckCircle },
+    
+    // SETTINGS (LAST)
     { href: `/${lang}/admin/dashboard/settings`, label: 'Settings', icon: Settings },
   ];
 
@@ -135,7 +163,7 @@ export default function AdminSidebar({ lang, isMobileOpen = false, onMobileClose
           })}
         </nav>
 
-        {/* LOGOUT ONLY */}
+        {/* LOGOUT */}
         <div style={{ padding: '10px', borderTop: `1px solid ${border}`, flexShrink: 0 }}>
           <button onClick={handleLogout}
             style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: 500, color: '#ef4444', backgroundColor: 'transparent', border: 'none', cursor: 'pointer' }}>

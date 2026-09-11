@@ -1,6 +1,7 @@
+'use client';
 // components/tools/ResponsiveToolWrapper/ResponsiveToolWrapper.client.tsx
-"use client";
 
+import { useState, useEffect } from 'react';
 import AdRail from "./AdRail";
 import AdBanner from "./AdBanner";
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
@@ -24,8 +25,8 @@ export default function ResponsiveToolWrapper({
   children, 
   showAds = true,
   adConfig = {
-    leftRail: false,    // ✅ CHANGED: false karo
-    rightRail: false,   // ✅ CHANGED: false karo
+    leftRail: false,
+    rightRail: false,
     topBanner: true,
     bottomBanner: true,
     railSize: { width: 160, height: 600 },
@@ -34,14 +35,27 @@ export default function ResponsiveToolWrapper({
   className = ""
 }: ResponsiveToolWrapperProps) {
   const { themeColors } = useTheme();
+  
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  const colors = mounted ? themeColors : {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+  };
 
   return (
-    <div 
+    <div suppressHydrationWarning 
       className={`responsive-tool-wrapper ${className}`}
-      style={{ backgroundColor: themeColors.background }}
+      style={{ backgroundColor: colors.background }}
     >
       <div className="responsive-tool-container">
-        {/* Left Rail Ad - Desktop only */}
         {showAds && adConfig.leftRail && (
           <div className="left-rail-ad desktop-only">
             <AdRail 
@@ -52,7 +66,6 @@ export default function ResponsiveToolWrapper({
           </div>
         )}
 
-        {/* Right Rail Ad - Desktop only */}
         {showAds && adConfig.rightRail && (
           <div className="right-rail-ad desktop-only">
             <AdRail 
@@ -63,9 +76,7 @@ export default function ResponsiveToolWrapper({
           </div>
         )}
 
-        {/* Main Content Container */}
         <div className="tool-content-wrapper">
-          {/* Top Banner Ad */}
           {showAds && adConfig.topBanner && (
             <div className="top-banner-ad">
               <AdBanner 
@@ -76,19 +87,17 @@ export default function ResponsiveToolWrapper({
             </div>
           )}
 
-          {/* Main Content */}
           <div 
             className="tool-main-content"
             style={{ 
-              backgroundColor: themeColors.surface,
-              color: themeColors.text.primary,
-              border: `1px solid ${themeColors.border}`
+              backgroundColor: colors.surface,
+              color: colors.text.primary,
+              border: `1px solid ${colors.border}`
             }}
           >
             {children}
           </div>
 
-          {/* Bottom Banner Ad */}
           {showAds && adConfig.bottomBanner && (
             <div className="bottom-banner-ad">
               <AdBanner 

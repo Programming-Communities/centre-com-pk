@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { useTheme } from "@/components/theme/contexts/ThemeContext";
+import { useState, useEffect } from "react";
 import { CheckCircle, Mail, Phone, Globe } from "lucide-react";
 
 const AD_SPACES = [
@@ -12,9 +11,13 @@ const AD_SPACES = [
 ];
 
 export default function AdvertiseClient({ lang }: { lang: string }) {
-  const { themeColors, isDarkMode } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({ companyName: "", contactEmail: "", phone: "", adSpace: "header", message: "" });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,9 +25,23 @@ export default function AdvertiseClient({ lang }: { lang: string }) {
     setSubmitted(true);
   };
 
+  if (!mounted) {
+    return (
+      <div
+        suppressHydrationWarning
+        className="min-h-screen py-12 px-4"
+        style={{ backgroundColor: "#ffffff" }}
+      />
+    );
+  }
+
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "var(--background)" }}>
+      <div
+        suppressHydrationWarning
+        className="min-h-screen flex items-center justify-center p-4"
+        style={{ backgroundColor: "var(--background)" }}
+      >
         <div className="text-center max-w-md p-8 rounded-xl" style={{ backgroundColor: "var(--surface)" }}>
           <CheckCircle className="w-16 h-16 mx-auto mb-4" style={{ color: "var(--success)" }} />
           <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>Request Sent!</h1>
@@ -35,7 +52,11 @@ export default function AdvertiseClient({ lang }: { lang: string }) {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4" style={{ backgroundColor: "var(--background)" }}>
+    <div
+      suppressHydrationWarning
+      className="min-h-screen py-12 px-4"
+      style={{ backgroundColor: "var(--background)" }}
+    >
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-3xl lg:text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>📢 Advertise on Centre.com.pk</h1>

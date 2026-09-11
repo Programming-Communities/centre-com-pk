@@ -1,0 +1,114 @@
+{
+  "en": {
+    "title": "Discount Calculator",
+    "description": "Calculate discount price and savings",
+    "keywords": [
+      "discount calculator",
+      "free discount calculator",
+      "online discount calculator"
+    ],
+    "faqs": [
+      {
+        "question": "What is Discount Calculator?",
+        "answer": "Discount Calculator is a free online tool."
+      },
+      {
+        "question": "How to use Discount Calculator?",
+        "answer": "Enter input and click the button."
+      }
+    ],
+    "labels": {
+      "input": "Input",
+      "output": "Output",
+      "calculate": "Calculate",
+      "copy": "Copy",
+      "copied": "Copied!",
+      "clear": "Clear",
+      "result": "Result"
+    }
+  },
+  "ur": {
+    "title": "Discount Calculator",
+    "description": "Calculate discount price and savings",
+    "keywords": [
+      "discount calculator",
+      "مفت discount calculator",
+      "آن لائن discount calculator"
+    ],
+    "faqs": [
+      {
+        "question": "Discount Calculator کیا ہے؟",
+        "answer": "Discount Calculator ایک مفت آن لائن ٹول ہے۔"
+      },
+      {
+        "question": "Discount Calculator کیسے استعمال کریں؟",
+        "answer": "اپنا ان پٹ درج کریں اور بٹن دبائیں۔"
+      }
+    ],
+    "labels": {
+      "input": "ان پٹ",
+      "output": "آؤٹ پٹ",
+      "calculate": "حساب کریں",
+      "copy": "کاپی",
+      "copied": "کاپی ہو گیا!",
+      "clear": "صاف کریں",
+      "result": "نتیجہ"
+    }
+  },
+  "hi": {
+    "title": "Discount Calculator",
+    "description": "Calculate discount price and savings",
+    "keywords": [
+      "discount calculator",
+      "मुफ्त discount calculator",
+      "ऑनलाइन discount calculator"
+    ],
+    "faqs": [
+      {
+        "question": "Discount Calculator क्या है?",
+        "answer": "Discount Calculator एक मुफ्त ऑनलाइन टूल है।"
+      },
+      {
+        "question": "Discount Calculator का उपयोग कैसे करें?",
+        "answer": "इनपुट दर्ज करें और बटन दबाएं।"
+      }
+    ],
+    "labels": {
+      "input": "इनपुट",
+      "output": "आउटपुट",
+      "calculate": "गणना करें",
+      "copy": "कॉपी",
+      "copied": "कॉपी हो गया!",
+      "clear": "साफ करें",
+      "result": "परिणाम"
+    }
+  },
+  "ar": {
+    "title": "Discount Calculator",
+    "description": "Calculate discount price and savings",
+    "keywords": [
+      "discount calculator",
+      "discount calculator مجاني",
+      "discount calculator عبر الإنترنت"
+    ],
+    "faqs": [
+      {
+        "question": "ما هو Discount Calculator؟",
+        "answer": "Discount Calculator أداة مجانية عبر الإنترنت."
+      },
+      {
+        "question": "كيفية استخدام Discount Calculator؟",
+        "answer": "أدخل البيانات وانقر على الزر."
+      }
+    ],
+    "labels": {
+      "input": "المدخل",
+      "output": "المخرج",
+      "calculate": "احسب",
+      "copy": "نسخ",
+      "copied": "تم النسخ!",
+      "clear": "مسح",
+      "result": "النتيجة"
+    }
+  }
+}

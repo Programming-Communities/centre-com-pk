@@ -65,6 +65,22 @@ export default function BMICalculatorTool() {
 
   const { t } = useTranslation({ namespace: 'tools', category: 'calculators' });
   const { themeColors, fontFamily } = useTheme();
+  
+  // ✅ HYDration FIX
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // ✅ Safe colors (light theme during SSR)
+  const colors = mounted ? themeColors : {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+  };
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [age, setAge] = useState('');
@@ -271,12 +287,12 @@ export default function BMICalculatorTool() {
   };
 
   const getBMIColor = (bmiValue: number) => {
-    if (bmiValue < 16) return themeColors.primary;
+    if (bmiValue < 16) return colors.primary;
     else if (bmiValue < 18.5) return '#60A5FA';
-    else if (bmiValue < 25) return themeColors.success;
-    else if (bmiValue < 30) return themeColors.warning;
+    else if (bmiValue < 25) return colors.success;
+    else if (bmiValue < 30) return colors.warning;
     else if (bmiValue < 35) return '#F97316';
-    else return themeColors.error;
+    else return colors.error;
   };
 
   const exportToPDF = () => {
@@ -328,10 +344,10 @@ export default function BMICalculatorTool() {
   // Simple chart rendering functions
   const renderSimpleBarChart = () => {
     return (
-      <div className="space-y-2">
+      <div suppressHydrationWarning className="space-y-2">
         {BMICategories.map((cat, index) => (
           <div key={index} className="flex items-center gap-3">
-            <div className="w-24 text-sm truncate" style={{ color: themeColors.text.secondary }}>
+            <div className="w-24 text-sm truncate" style={{ color: colors.text.secondary }}>
               {getTranslatedCategory(cat.categoryKey)}
             </div>
             <div className="flex-1">
@@ -374,7 +390,7 @@ export default function BMICalculatorTool() {
           );
         })}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-24 h-24 rounded-full" style={{ backgroundColor: themeColors.background }} />
+          <div className="w-24 h-24 rounded-full" style={{ backgroundColor: colors.background }} />
         </div>
       </div>
     );
@@ -384,7 +400,7 @@ export default function BMICalculatorTool() {
     if (history.length < 2) {
       return (
         <div className="h-48 flex items-center justify-center">
-          <p className="text-sm opacity-70" style={{ color: themeColors.text.secondary }}>
+          <p className="text-sm opacity-70" style={{ color: colors.text.secondary }}>
             {t('not_enough_data', 'Not enough data for trend chart')}
           </p>
         </div>
@@ -407,7 +423,7 @@ export default function BMICalculatorTool() {
               return `${i === 0 ? 'M' : 'L'} ${x}% ${y}%`;
             }).join(' ')}
             fill="none"
-            stroke={themeColors.primary}
+            stroke={colors.primary}
             strokeWidth="2"
           />
           {points.map((p, i) => {
@@ -419,7 +435,7 @@ export default function BMICalculatorTool() {
                 cx={`${x}%`}
                 cy={`${y}%`}
                 r="4"
-                fill={themeColors.primary}
+                fill={colors.primary}
               />
             );
           })}
@@ -432,8 +448,8 @@ export default function BMICalculatorTool() {
     <div 
       className="min-h-screen bg-background text-text-primary transition-all duration-300"
       style={{ 
-        backgroundColor: themeColors.background,
-        color: themeColors.text.primary,
+        backgroundColor: colors.background,
+        color: colors.text.primary,
         fontFamily: fontFamily
       }}
     >
@@ -444,25 +460,25 @@ export default function BMICalculatorTool() {
         
         {/* Tool Header */}
         <div className="text-center mb-6 sm:mb-8 lg:mb-12">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 lg:mb-4" style={{ color: themeColors.text.primary }}>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 lg:mb-4" style={{ color: colors.text.primary }}>
             {t('title', 'BMI Calculator')}
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg opacity-80" style={{ color: themeColors.text.secondary }}>
+          <p className="text-sm sm:text-base lg:text-lg opacity-80" style={{ color: colors.text.secondary }}>
             {t('description', 'Calculate your Body Mass Index with advanced health analytics')}
           </p>
           
           {/* Upgrade Banner for Free Users */}
           {!isProUser && (
             <div className="mt-4 sm:mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg" 
-                 style={{ backgroundColor: themeColors.primary + '20', border: `1px solid ${themeColors.primary}` }}>
-              <Crown className="h-4 w-4" style={{ color: themeColors.primary }} />
-              <span className="text-sm" style={{ color: themeColors.primary }}>
+                 style={{ backgroundColor: colors.primary + '20', border: `1px solid ${colors.primary}` }}>
+              <Crown className="h-4 w-4" style={{ color: colors.primary }} />
+              <span className="text-sm" style={{ color: colors.primary }}>
                 <span className="font-semibold">{t('upgrade_to_pro', 'Upgrade to Pro')}</span> {t('for_advanced_analytics', 'for advanced health analytics')}
               </span>
               <button 
                 onClick={() => setIsProUser(true)}
                 className="ml-2 px-3 py-1 rounded text-sm font-semibold"
-                style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+                style={{ backgroundColor: colors.primary, color: '#ffffff' }}
               >
                 {t('try_pro_free', 'Try Pro Free')}
               </button>
@@ -476,9 +492,9 @@ export default function BMICalculatorTool() {
             onClick={() => setActiveTab('calculator')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${activeTab === 'calculator' ? '' : 'opacity-70 hover:opacity-100'}`}
             style={{
-              backgroundColor: activeTab === 'calculator' ? themeColors.primary : themeColors.surface,
-              color: activeTab === 'calculator' ? '#ffffff' : themeColors.text.secondary,
-              border: activeTab === 'calculator' ? 'none' : `1px solid ${themeColors.border}`
+              backgroundColor: activeTab === 'calculator' ? colors.primary : colors.surface,
+              color: activeTab === 'calculator' ? '#ffffff' : colors.text.secondary,
+              border: activeTab === 'calculator' ? 'none' : `1px solid ${colors.border}`
             }}
           >
             <Calculator className="h-4 w-4" />
@@ -490,9 +506,9 @@ export default function BMICalculatorTool() {
             disabled={!bmi}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${!bmi ? 'opacity-50 cursor-not-allowed' : activeTab === 'charts' ? '' : 'opacity-70 hover:opacity-100'}`}
             style={{
-              backgroundColor: activeTab === 'charts' ? themeColors.primary : themeColors.surface,
-              color: activeTab === 'charts' ? '#ffffff' : themeColors.text.secondary,
-              border: activeTab === 'charts' ? 'none' : `1px solid ${themeColors.border}`
+              backgroundColor: activeTab === 'charts' ? colors.primary : colors.surface,
+              color: activeTab === 'charts' ? '#ffffff' : colors.text.secondary,
+              border: activeTab === 'charts' ? 'none' : `1px solid ${colors.border}`
             }}
           >
             <BarChart3 className="h-4 w-4" />
@@ -505,9 +521,9 @@ export default function BMICalculatorTool() {
             disabled={!bmi}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${!bmi ? 'opacity-50 cursor-not-allowed' : activeTab === 'recommendations' ? '' : 'opacity-70 hover:opacity-100'}`}
             style={{
-              backgroundColor: activeTab === 'recommendations' ? themeColors.primary : themeColors.surface,
-              color: activeTab === 'recommendations' ? '#ffffff' : themeColors.text.secondary,
-              border: activeTab === 'recommendations' ? 'none' : `1px solid ${themeColors.border}`
+              backgroundColor: activeTab === 'recommendations' ? colors.primary : colors.surface,
+              color: activeTab === 'recommendations' ? '#ffffff' : colors.text.secondary,
+              border: activeTab === 'recommendations' ? 'none' : `1px solid ${colors.border}`
             }}
           >
             <Heart className="h-4 w-4" />
@@ -519,9 +535,9 @@ export default function BMICalculatorTool() {
             onClick={() => setActiveTab('history')}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${activeTab === 'history' ? '' : 'opacity-70 hover:opacity-100'}`}
             style={{
-              backgroundColor: activeTab === 'history' ? themeColors.primary : themeColors.surface,
-              color: activeTab === 'history' ? '#ffffff' : themeColors.text.secondary,
-              border: activeTab === 'history' ? 'none' : `1px solid ${themeColors.border}`
+              backgroundColor: activeTab === 'history' ? colors.primary : colors.surface,
+              color: activeTab === 'history' ? '#ffffff' : colors.text.secondary,
+              border: activeTab === 'history' ? 'none' : `1px solid ${colors.border}`
             }}
           >
             <HistoryIcon className="h-4 w-4" />
@@ -534,24 +550,24 @@ export default function BMICalculatorTool() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Left Column - Input */}
             <div className="lg:col-span-2">
-              <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: themeColors.text.primary }}>
+              <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6" style={{ color: colors.text.primary }}>
                   {t('enter_details', 'Enter Your Details')}
                 </h2>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   {/* Unit System */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                       {t('unit_system', 'Unit System')}
                     </label>
-                    <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: themeColors.border }}>
+                    <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: colors.border }}>
                       <button
                         onClick={() => setUnit('metric')}
                         className={`flex-1 py-2 text-sm font-medium transition-colors ${unit === 'metric' ? '' : 'opacity-70'}`}
                         style={{
-                          backgroundColor: unit === 'metric' ? themeColors.primary : themeColors.background,
-                          color: unit === 'metric' ? '#ffffff' : themeColors.text.primary
+                          backgroundColor: unit === 'metric' ? colors.primary : colors.background,
+                          color: unit === 'metric' ? '#ffffff' : colors.text.primary
                         }}
                       >
                         {t('metric', 'Metric (cm, kg)')}
@@ -560,8 +576,8 @@ export default function BMICalculatorTool() {
                         onClick={() => setUnit('imperial')}
                         className={`flex-1 py-2 text-sm font-medium transition-colors ${unit === 'imperial' ? '' : 'opacity-70'}`}
                         style={{
-                          backgroundColor: unit === 'imperial' ? themeColors.primary : themeColors.background,
-                          color: unit === 'imperial' ? '#ffffff' : themeColors.text.primary
+                          backgroundColor: unit === 'imperial' ? colors.primary : colors.background,
+                          color: unit === 'imperial' ? '#ffffff' : colors.text.primary
                         }}
                       >
                         {t('imperial', 'Imperial (ft-in, lbs)')}
@@ -571,16 +587,16 @@ export default function BMICalculatorTool() {
 
                   {/* Gender */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                       {t('gender', 'Gender')}
                     </label>
-                    <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: themeColors.border }}>
+                    <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: colors.border }}>
                       <button
                         onClick={() => setGender('male')}
                         className={`flex-1 py-2 text-sm font-medium transition-colors ${gender === 'male' ? '' : 'opacity-70'}`}
                         style={{
-                          backgroundColor: gender === 'male' ? themeColors.primary : themeColors.background,
-                          color: gender === 'male' ? '#ffffff' : themeColors.text.primary
+                          backgroundColor: gender === 'male' ? colors.primary : colors.background,
+                          color: gender === 'male' ? '#ffffff' : colors.text.primary
                         }}
                       >
                         {t('male', 'Male')}
@@ -589,8 +605,8 @@ export default function BMICalculatorTool() {
                         onClick={() => setGender('female')}
                         className={`flex-1 py-2 text-sm font-medium transition-colors ${gender === 'female' ? '' : 'opacity-70'}`}
                         style={{
-                          backgroundColor: gender === 'female' ? themeColors.primary : themeColors.background,
-                          color: gender === 'female' ? '#ffffff' : themeColors.text.primary
+                          backgroundColor: gender === 'female' ? colors.primary : colors.background,
+                          color: gender === 'female' ? '#ffffff' : colors.text.primary
                         }}
                       >
                         {t('female', 'Female')}
@@ -600,7 +616,7 @@ export default function BMICalculatorTool() {
 
                   {/* Height Input */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                       {t('height', 'Height')} {unit === 'metric' ? '(cm)' : '(feet-inches)'}
                     </label>
                     {unit === 'metric' ? (
@@ -611,9 +627,9 @@ export default function BMICalculatorTool() {
                         placeholder={t('eg_170', 'e.g., 170')}
                         className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                         style={{
-                          borderColor: themeColors.border,
-                          backgroundColor: themeColors.background,
-                          color: themeColors.text.primary,
+                          borderColor: colors.border,
+                          backgroundColor: colors.background,
+                          color: colors.text.primary,
                         }}
                         min="50"
                         max="300"
@@ -627,9 +643,9 @@ export default function BMICalculatorTool() {
                           placeholder={t('feet', 'Feet')}
                           className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                           style={{
-                            borderColor: themeColors.border,
-                            backgroundColor: themeColors.background,
-                            color: themeColors.text.primary,
+                            borderColor: colors.border,
+                            backgroundColor: colors.background,
+                            color: colors.text.primary,
                           }}
                           min="3"
                           max="8"
@@ -641,9 +657,9 @@ export default function BMICalculatorTool() {
                           placeholder={t('inches', 'Inches')}
                           className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                           style={{
-                            borderColor: themeColors.border,
-                            backgroundColor: themeColors.background,
-                            color: themeColors.text.primary,
+                            borderColor: colors.border,
+                            backgroundColor: colors.background,
+                            color: colors.text.primary,
                           }}
                           min="0"
                           max="11"
@@ -654,7 +670,7 @@ export default function BMICalculatorTool() {
 
                   {/* Weight Input */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                       {t('weight', 'Weight')} {unit === 'metric' ? '(kg)' : '(lbs)'}
                     </label>
                     <input
@@ -664,9 +680,9 @@ export default function BMICalculatorTool() {
                       placeholder={unit === 'metric' ? t('eg_70', 'e.g., 70') : t('eg_154', 'e.g., 154')}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                       style={{
-                        borderColor: themeColors.border,
-                        backgroundColor: themeColors.background,
-                        color: themeColors.text.primary,
+                        borderColor: colors.border,
+                        backgroundColor: colors.background,
+                        color: colors.text.primary,
                       }}
                       min="20"
                       max="300"
@@ -675,7 +691,7 @@ export default function BMICalculatorTool() {
 
                   {/* Age Input */}
                   <div>
-                    <label className="block text-sm font-medium mb-2" style={{ color: themeColors.text.secondary }}>
+                    <label className="block text-sm font-medium mb-2" style={{ color: colors.text.secondary }}>
                       {t('age', 'Age (years)')}
                     </label>
                     <input
@@ -685,9 +701,9 @@ export default function BMICalculatorTool() {
                       placeholder={t('eg_30', 'e.g., 30')}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
                       style={{
-                        borderColor: themeColors.border,
-                        backgroundColor: themeColors.background,
-                        color: themeColors.text.primary,
+                        borderColor: colors.border,
+                        backgroundColor: colors.background,
+                        color: colors.text.primary,
                       }}
                       min="2"
                       max="120"
@@ -699,7 +715,7 @@ export default function BMICalculatorTool() {
                     <button
                       onClick={() => setShowAdvanced(!showAdvanced)}
                       className="flex items-center gap-2 text-sm font-medium hover:opacity-80 transition-opacity"
-                      style={{ color: themeColors.primary }}
+                      style={{ color: colors.primary }}
                     >
                       <Activity className="h-4 w-4" />
                       {showAdvanced ? t('hide_advanced', 'Hide Advanced Options') : t('show_advanced', 'Show Advanced Options (Pro)')}
@@ -710,19 +726,19 @@ export default function BMICalculatorTool() {
 
                 {/* Advanced Options (Pro Features) */}
                 {showAdvanced && isProUser && (
-                  <div className="mt-6 p-4 rounded-lg border" style={{ backgroundColor: themeColors.background, borderColor: themeColors.border }}>
-                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: themeColors.text.primary }}>
-                      <Crown className="h-4 w-4" style={{ color: themeColors.primary }} />
+                  <div className="mt-6 p-4 rounded-lg border" style={{ backgroundColor: colors.background, borderColor: colors.border }}>
+                    <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: colors.text.primary }}>
+                      <Crown className="h-4 w-4" style={{ color: colors.primary }} />
                       {t('advanced_metrics', 'Advanced Health Metrics')}
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-medium mb-1" style={{ color: themeColors.text.secondary }}>
+                        <label className="block text-xs font-medium mb-1" style={{ color: colors.text.secondary }}>
                           {t('activity_level', 'Activity Level')}
                         </label>
                         <select 
                           className="w-full px-3 py-2 border rounded-lg text-sm" 
-                          style={{ borderColor: themeColors.border, backgroundColor: themeColors.background, color: themeColors.text.primary }}
+                          style={{ borderColor: colors.border, backgroundColor: colors.background, color: colors.text.primary }}
                         >
                           <option>{t('sedentary', 'Sedentary (little exercise)')}</option>
                           <option>{t('lightly_active', 'Lightly active (1-3 days/week)')}</option>
@@ -732,12 +748,12 @@ export default function BMICalculatorTool() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1" style={{ color: themeColors.text.secondary }}>
+                        <label className="block text-xs font-medium mb-1" style={{ color: colors.text.secondary }}>
                           {t('goal', 'Goal')}
                         </label>
                         <select 
                           className="w-full px-3 py-2 border rounded-lg text-sm" 
-                          style={{ borderColor: themeColors.border, backgroundColor: themeColors.background, color: themeColors.text.primary }}
+                          style={{ borderColor: colors.border, backgroundColor: colors.background, color: colors.text.primary }}
                         >
                           <option>{t('maintain_weight', 'Maintain weight')}</option>
                           <option>{t('mild_weight_loss', 'Mild weight loss (0.25 kg/week)')}</option>
@@ -757,7 +773,7 @@ export default function BMICalculatorTool() {
                     disabled={!height || !weight}
                     className="flex-1 py-3 px-4 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
                     style={{ 
-                      backgroundColor: themeColors.primary,
+                      backgroundColor: colors.primary,
                       color: '#ffffff'
                     }}
                   >
@@ -768,8 +784,8 @@ export default function BMICalculatorTool() {
                     onClick={resetCalculator}
                     className="py-3 px-4 border rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 hover:opacity-80"
                     style={{ 
-                      borderColor: themeColors.border,
-                      color: themeColors.text.secondary
+                      borderColor: colors.border,
+                      color: colors.text.secondary
                     }}
                   >
                     <RotateCcw className="h-5 w-5" />
@@ -782,7 +798,7 @@ export default function BMICalculatorTool() {
             {/* Right Column - Results */}
             <div className="space-y-4 sm:space-y-6">
               {/* BMI Result Card */}
-              <div className="rounded-xl border p-4 sm:p-6 text-center" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+              <div className="rounded-xl border p-4 sm:p-6 text-center" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                 {bmi ? (
                   <>
                     <div className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3" style={{ color: getBMIColor(bmi) }}>
@@ -791,7 +807,7 @@ export default function BMICalculatorTool() {
                     <div className="text-lg sm:text-xl font-semibold mb-2" style={{ color: getBMIColor(bmi) }}>
                       {getTranslatedCategory(category)}
                     </div>
-                    <div className="text-sm opacity-80 mb-4 sm:mb-6" style={{ color: themeColors.text.secondary }}>
+                    <div className="text-sm opacity-80 mb-4 sm:mb-6" style={{ color: colors.text.secondary }}>
                       {t('body_mass_index', 'Body Mass Index')}
                     </div>
                     
@@ -800,7 +816,7 @@ export default function BMICalculatorTool() {
                         <div className="font-medium mb-1" style={{ color: getBMIColor(bmi) }}>
                           {getTranslatedDescription(categoryDetails.descriptionKey)}
                         </div>
-                        <div className="opacity-80" style={{ color: themeColors.text.secondary }}>
+                        <div className="opacity-80" style={{ color: colors.text.secondary }}>
                           {t('risk', 'Risk')}: <span className="font-medium">{getTranslatedRisk(categoryDetails.riskKey)}</span> • {t('advice', 'Advice')}: {getTranslatedAdvice(categoryDetails.adviceKey)}
                         </div>
                       </div>
@@ -808,7 +824,7 @@ export default function BMICalculatorTool() {
 
                     {/* BMI Scale */}
                     <div className="mt-4">
-                      <div className="flex justify-between text-xs mb-1" style={{ color: themeColors.text.secondary }}>
+                      <div className="flex justify-between text-xs mb-1" style={{ color: colors.text.secondary }}>
                         <span>{t('underweight', 'Underweight')}</span>
                         <span>{t('normal', 'Normal')}</span>
                         <span>{t('overweight', 'Overweight')}</span>
@@ -818,11 +834,11 @@ export default function BMICalculatorTool() {
                         <div 
                           className="h-full"
                           style={{ 
-                            background: `linear-gradient(to right, ${themeColors.primary}, ${themeColors.success}, ${themeColors.warning}, ${themeColors.error})`
+                            background: `linear-gradient(to right, ${colors.primary}, ${colors.success}, ${colors.warning}, ${colors.error})`
                           }}
                         ></div>
                       </div>
-                      <div className="flex justify-between text-xs mt-1" style={{ color: themeColors.text.secondary }}>
+                      <div className="flex justify-between text-xs mt-1" style={{ color: colors.text.secondary }}>
                         <span>18.5</span>
                         <span>25</span>
                         <span>30</span>
@@ -835,8 +851,8 @@ export default function BMICalculatorTool() {
                         onClick={shareResults}
                         className="py-2 px-3 border rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 hover:opacity-80"
                         style={{ 
-                          borderColor: themeColors.border,
-                          color: themeColors.text.secondary
+                          borderColor: colors.border,
+                          color: colors.text.secondary
                         }}
                       >
                         <Share2 className="h-4 w-4" />
@@ -847,8 +863,8 @@ export default function BMICalculatorTool() {
                         disabled={!isProUser}
                         className="py-2 px-3 border rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80"
                         style={{ 
-                          borderColor: isProUser ? themeColors.primary : themeColors.border,
-                          color: isProUser ? themeColors.primary : themeColors.text.secondary
+                          borderColor: isProUser ? colors.primary : colors.border,
+                          color: isProUser ? colors.primary : colors.text.secondary
                         }}
                       >
                         <Download className="h-4 w-4" />
@@ -858,8 +874,8 @@ export default function BMICalculatorTool() {
                   </>
                 ) : (
                   <div className="py-8 sm:py-12">
-                    <Calculator className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: themeColors.text.secondary }} />
-                    <p className="text-sm opacity-80" style={{ color: themeColors.text.secondary }}>
+                    <Calculator className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: colors.text.secondary }} />
+                    <p className="text-sm opacity-80" style={{ color: colors.text.secondary }}>
                       {t('enter_to_calculate', 'Enter your height and weight to calculate BMI')}
                     </p>
                   </div>
@@ -868,34 +884,34 @@ export default function BMICalculatorTool() {
 
               {/* Advanced Metrics (Pro Features) */}
               {bmi && isProUser && (
-                <div className="rounded-xl border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: themeColors.text.primary }}>
-                    <Crown className="h-4 w-4" style={{ color: themeColors.primary }} />
+                <div className="rounded-xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: colors.text.primary }}>
+                    <Crown className="h-4 w-4" style={{ color: colors.primary }} />
                     {t('advanced_metrics', 'Advanced Health Metrics')}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     {bodyFat && (
-                      <div className="text-center p-2 rounded" style={{ backgroundColor: themeColors.background }}>
-                        <div className="text-xs opacity-80" style={{ color: themeColors.text.secondary }}>{t('body_fat', 'Body Fat')}</div>
-                        <div className="text-lg font-semibold" style={{ color: themeColors.primary }}>{bodyFat}%</div>
+                      <div className="text-center p-2 rounded" style={{ backgroundColor: colors.background }}>
+                        <div className="text-xs opacity-80" style={{ color: colors.text.secondary }}>{t('body_fat', 'Body Fat')}</div>
+                        <div className="text-lg font-semibold" style={{ color: colors.primary }}>{bodyFat}%</div>
                       </div>
                     )}
                     {idealWeight && (
-                      <div className="text-center p-2 rounded" style={{ backgroundColor: themeColors.background }}>
-                        <div className="text-xs opacity-80" style={{ color: themeColors.text.secondary }}>{t('ideal_weight', 'Ideal Weight')}</div>
-                        <div className="text-lg font-semibold" style={{ color: themeColors.success }}>{idealWeight.min}-{idealWeight.max} kg</div>
+                      <div className="text-center p-2 rounded" style={{ backgroundColor: colors.background }}>
+                        <div className="text-xs opacity-80" style={{ color: colors.text.secondary }}>{t('ideal_weight', 'Ideal Weight')}</div>
+                        <div className="text-lg font-semibold" style={{ color: colors.success }}>{idealWeight.min}-{idealWeight.max} kg</div>
                       </div>
                     )}
                     {dailyCalories && (
-                      <div className="text-center p-2 rounded" style={{ backgroundColor: themeColors.background }}>
-                        <div className="text-xs opacity-80" style={{ color: themeColors.text.secondary }}>{t('daily_calories', 'Daily Calories')}</div>
-                        <div className="text-lg font-semibold" style={{ color: themeColors.warning }}>{dailyCalories}</div>
+                      <div className="text-center p-2 rounded" style={{ backgroundColor: colors.background }}>
+                        <div className="text-xs opacity-80" style={{ color: colors.text.secondary }}>{t('daily_calories', 'Daily Calories')}</div>
+                        <div className="text-lg font-semibold" style={{ color: colors.warning }}>{dailyCalories}</div>
                       </div>
                     )}
                     {waterIntake && (
-                      <div className="text-center p-2 rounded" style={{ backgroundColor: themeColors.background }}>
-                        <div className="text-xs opacity-80" style={{ color: themeColors.text.secondary }}>{t('water_intake', 'Water Intake')}</div>
-                        <div className="text-lg font-semibold" style={{ color: themeColors.primary }}>{waterIntake} L</div>
+                      <div className="text-center p-2 rounded" style={{ backgroundColor: colors.background }}>
+                        <div className="text-xs opacity-80" style={{ color: colors.text.secondary }}>{t('water_intake', 'Water Intake')}</div>
+                        <div className="text-lg font-semibold" style={{ color: colors.primary }}>{waterIntake} L</div>
                       </div>
                     )}
                   </div>
@@ -904,13 +920,13 @@ export default function BMICalculatorTool() {
 
               {/* Quick History */}
               {history.length > 0 && (
-                <div className="rounded-xl border p-4" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-sm font-semibold" style={{ color: themeColors.text.primary }}>{t('recent_calculations', 'Recent Calculations')}</h3>
+                    <h3 className="text-sm font-semibold" style={{ color: colors.text.primary }}>{t('recent_calculations', 'Recent Calculations')}</h3>
                     <button
                       onClick={clearHistoryData}
                       className="text-xs opacity-70 hover:opacity-100 transition-opacity"
-                      style={{ color: themeColors.text.secondary }}
+                      style={{ color: colors.text.secondary }}
                     >
                       {t('clear', 'Clear')}
                     </button>
@@ -919,10 +935,10 @@ export default function BMICalculatorTool() {
                     {history.map((entry) => {
                       const data = entry.resultData;
                       return (
-                        <div key={entry.id} className="flex justify-between items-center p-2 rounded text-sm hover:opacity-80 transition-opacity" style={{ backgroundColor: themeColors.background }}>
+                        <div key={entry.id} className="flex justify-between items-center p-2 rounded text-sm hover:opacity-80 transition-opacity" style={{ backgroundColor: colors.background }}>
                           <div>
-                            <div style={{ color: themeColors.text.primary }}>{data.bmi} BMI</div>
-                            <div className="text-xs opacity-70" style={{ color: themeColors.text.secondary }}>
+                            <div style={{ color: colors.text.primary }}>{data.bmi} BMI</div>
+                            <div className="text-xs opacity-70" style={{ color: colors.text.secondary }}>
                               {new Date(entry.timestamp).toLocaleDateString()}
                             </div>
                           </div>
@@ -944,14 +960,14 @@ export default function BMICalculatorTool() {
             
             {/* ========== 🏥 WHO STANDARDS ========== */}
             {bmi && (
-              <div className="mt-8 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+              <div className="mt-8 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                 <WHOStandards userBMI={bmi} userCategory={category} />
               </div>
             )}
 
             {/* ========== 🏥 HEALTH RISK ASSESSMENT ========== */}
             {bmi && (
-              <div className="mt-6 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+              <div className="mt-6 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                 <HealthRiskAssessment 
                   bmi={bmi} 
                   category={category} 
@@ -963,7 +979,7 @@ export default function BMICalculatorTool() {
 
             {/* ========== 🌍 COUNTRY BMI COMPARISON ========== */}
             {bmi && (
-              <div className="mt-6 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+              <div className="mt-6 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                 <CountryBMIComparison userBMI={bmi} />
               </div>
             )}
@@ -973,12 +989,12 @@ export default function BMICalculatorTool() {
             {isProUser ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* BMI Category Chart */}
-                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.primary + '20' }}>
-                      <PieChartIcon className="h-5 w-5" style={{ color: themeColors.primary }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.primary + '20' }}>
+                      <PieChartIcon className="h-5 w-5" style={{ color: colors.primary }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('bmi_category_distribution', 'BMI Category Distribution')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('bmi_category_distribution', 'BMI Category Distribution')}</h3>
                   </div>
                   <div className="h-64 flex items-center justify-center">
                     {renderSimplePieChart()}
@@ -987,55 +1003,55 @@ export default function BMICalculatorTool() {
                     {BMICategories.map((cat, index) => (
                       <div key={index} className="flex items-center gap-2">
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: cat.color }} />
-                        <span className="text-xs truncate" style={{ color: themeColors.text.secondary }}>{getTranslatedCategory(cat.categoryKey)}</span>
+                        <span className="text-xs truncate" style={{ color: colors.text.secondary }}>{getTranslatedCategory(cat.categoryKey)}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 {/* BMI Trend Chart */}
-                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.warning + '20' }}>
-                      <TrendingUp className="h-5 w-5" style={{ color: themeColors.warning }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.warning + '20' }}>
+                      <TrendingUp className="h-5 w-5" style={{ color: colors.warning }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('bmi_progress_over_time', 'BMI Progress Over Time')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('bmi_progress_over_time', 'BMI Progress Over Time')}</h3>
                   </div>
                   {renderSimpleLineChart()}
                   {history.length > 1 && (
-                    <div className="mt-4 text-center text-sm" style={{ color: themeColors.text.secondary }}>
+                    <div className="mt-4 text-center text-sm" style={{ color: colors.text.secondary }}>
                       {t('showing_last', 'Showing last')} {Math.min(5, history.length)} {t('calculations', 'calculations')}
                     </div>
                   )}
                 </div>
 
                 {/* BMI Categories Bar Chart */}
-                <div className="lg:col-span-2 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="lg:col-span-2 rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.success + '20' }}>
-                      <BarChart3 className="h-5 w-5" style={{ color: themeColors.success }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.success + '20' }}>
+                      <BarChart3 className="h-5 w-5" style={{ color: colors.success }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('bmi_categories_comparison', 'BMI Categories Comparison')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('bmi_categories_comparison', 'BMI Categories Comparison')}</h3>
                   </div>
                   <div className="h-64">
                     {renderSimpleBarChart()}
                   </div>
-                  <div className="mt-4 text-sm text-center" style={{ color: themeColors.text.secondary }}>
+                  <div className="mt-4 text-sm text-center" style={{ color: colors.text.secondary }}>
                     {t('current_category_highlighted', 'Your current category is highlighted')}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <Crown className="h-12 w-12 mx-auto mb-4" style={{ color: themeColors.primary }} />
-                <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.text.primary }}>{t('upgrade_to_pro_charts', 'Upgrade to Pro for Advanced Charts')}</h3>
-                <p className="mb-6 opacity-80" style={{ color: themeColors.text.secondary }}>
+              <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <Crown className="h-12 w-12 mx-auto mb-4" style={{ color: colors.primary }} />
+                <h3 className="text-xl font-semibold mb-2" style={{ color: colors.text.primary }}>{t('upgrade_to_pro_charts', 'Upgrade to Pro for Advanced Charts')}</h3>
+                <p className="mb-6 opacity-80" style={{ color: colors.text.secondary }}>
                   {t('get_access_charts', 'Get access to detailed health analytics, progress tracking, and interactive charts')}
                 </p>
                 <button
                   onClick={() => setIsProUser(true)}
                   className="px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+                  style={{ backgroundColor: colors.primary, color: '#ffffff' }}
                 >
                   {t('unlock_pro', 'Unlock Pro Features - ₹199/month')}
                 </button>
@@ -1050,29 +1066,29 @@ export default function BMICalculatorTool() {
             {isProUser ? (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Diet Recommendations */}
-                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.primary + '20' }}>
-                      <Heart className="h-5 w-5" style={{ color: themeColors.primary }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.primary + '20' }}>
+                      <Heart className="h-5 w-5" style={{ color: colors.primary }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('diet_plan', 'Diet Plan')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('diet_plan', 'Diet Plan')}</h3>
                   </div>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.success }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.success }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {dailyCalories ? t('aim_for_calories', 'Aim for {calories} calories daily for weight loss').replace('{calories}', (dailyCalories - 500).toString()) : t('calculate_calories', 'Calculate calories for personalized plan')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.success }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.success }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('increase_protein', 'Increase protein intake to 1.6-2.2g per kg of body weight')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.success }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.success }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {waterIntake ? t('drink_water', 'Drink {water} liters of water daily').replace('{water}', waterIntake.toString()) : t('stay_hydrated', 'Stay hydrated with 2-3 liters of water daily')}
                       </span>
                     </li>
@@ -1080,29 +1096,29 @@ export default function BMICalculatorTool() {
                 </div>
 
                 {/* Exercise Recommendations */}
-                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.warning + '20' }}>
-                      <Activity className="h-5 w-5" style={{ color: themeColors.warning }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.warning + '20' }}>
+                      <Activity className="h-5 w-5" style={{ color: colors.warning }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('exercise_plan', 'Exercise Plan')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('exercise_plan', 'Exercise Plan')}</h3>
                   </div>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.warning }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.warning }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('aerobic_activity', '150 minutes of moderate aerobic activity weekly')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.warning }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.warning }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('strength_training', 'Strength training 2-3 times per week')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.warning }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.warning }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('flexibility_exercises', 'Include flexibility exercises daily')}
                       </span>
                     </li>
@@ -1110,29 +1126,29 @@ export default function BMICalculatorTool() {
                 </div>
 
                 {/* Health Goals */}
-                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
+                <div className="rounded-xl border p-4 sm:p-6" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: themeColors.success + '20' }}>
-                      <Target className="h-5 w-5" style={{ color: themeColors.success }} />
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: colors.success + '20' }}>
+                      <Target className="h-5 w-5" style={{ color: colors.success }} />
                     </div>
-                    <h3 className="text-lg font-semibold" style={{ color: themeColors.text.primary }}>{t('health_goals', 'Health Goals')}</h3>
+                    <h3 className="text-lg font-semibold" style={{ color: colors.text.primary }}>{t('health_goals', 'Health Goals')}</h3>
                   </div>
                   <ul className="space-y-3">
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.primary }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.primary }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {idealWeight ? t('target_weight', 'Target weight: {min}-{max} kg').replace('{min}', idealWeight.min.toString()).replace('{max}', idealWeight.max.toString()) : t('set_weight_goals', 'Set realistic weight goals')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.primary }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.primary }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('track_progress', 'Track progress weekly with measurements')}
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: themeColors.primary }}></div>
-                      <span className="text-sm" style={{ color: themeColors.text.secondary }}>
+                      <div className="w-2 h-2 rounded-full mt-2" style={{ backgroundColor: colors.primary }}></div>
+                      <span className="text-sm" style={{ color: colors.text.secondary }}>
                         {t('health_checkups', 'Schedule regular health check-ups')}
                       </span>
                     </li>
@@ -1140,16 +1156,16 @@ export default function BMICalculatorTool() {
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-                <Heart className="h-12 w-12 mx-auto mb-4" style={{ color: themeColors.primary }} />
-                <h3 className="text-xl font-semibold mb-2" style={{ color: themeColors.text.primary }}>{t('personalized_recommendations', 'Personalized Health Recommendations')}</h3>
-                <p className="mb-6 opacity-80" style={{ color: themeColors.text.secondary }}>
+              <div className="rounded-xl border p-8 text-center" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+                <Heart className="h-12 w-12 mx-auto mb-4" style={{ color: colors.primary }} />
+                <h3 className="text-xl font-semibold mb-2" style={{ color: colors.text.primary }}>{t('personalized_recommendations', 'Personalized Health Recommendations')}</h3>
+                <p className="mb-6 opacity-80" style={{ color: colors.text.secondary }}>
                   {t('get_customized_plans', 'Get customized diet plans, exercise routines, and health goals based on your BMI')}
                 </p>
                 <button
                   onClick={() => setIsProUser(true)}
                   className="px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+                  style={{ backgroundColor: colors.primary, color: '#ffffff' }}
                 >
                   {t('unlock_recommendations', 'Unlock Personalized Recommendations')}
                 </button>
@@ -1160,17 +1176,17 @@ export default function BMICalculatorTool() {
 
         {/* History Tab */}
         {activeTab === 'history' && (
-          <div className="rounded-xl border" style={{ backgroundColor: themeColors.surface, borderColor: themeColors.border }}>
-            <div className="p-4 sm:p-6 border-b" style={{ borderColor: themeColors.border }}>
+          <div className="rounded-xl border" style={{ backgroundColor: colors.surface, borderColor: colors.border }}>
+            <div className="p-4 sm:p-6 border-b" style={{ borderColor: colors.border }}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 className="text-lg sm:text-xl font-semibold" style={{ color: themeColors.text.primary }}>{t('calculation_history', 'Calculation History')}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold" style={{ color: colors.text.primary }}>{t('calculation_history', 'Calculation History')}</h2>
                 {history.length > 0 && (
                   <button
                     onClick={clearHistoryData}
                     className="px-4 py-2 border rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
                     style={{ 
-                      borderColor: themeColors.error,
-                      color: themeColors.error
+                      borderColor: colors.error,
+                      color: colors.error
                     }}
                   >
                     {t('clear_all_history', 'Clear All History')}
@@ -1183,12 +1199,12 @@ export default function BMICalculatorTool() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b" style={{ borderColor: themeColors.border }}>
-                      <th className="text-left p-4 text-sm font-medium" style={{ color: themeColors.text.secondary }}>{t('date', 'Date')}</th>
-                      <th className="text-left p-4 text-sm font-medium" style={{ color: themeColors.text.secondary }}>{t('height', 'Height')}</th>
-                      <th className="text-left p-4 text-sm font-medium" style={{ color: themeColors.text.secondary }}>{t('weight', 'Weight')}</th>
-                      <th className="text-left p-4 text-sm font-medium" style={{ color: themeColors.text.secondary }}>BMI</th>
-                      <th className="text-left p-4 text-sm font-medium" style={{ color: themeColors.text.secondary }}>{t('category', 'Category')}</th>
+                    <tr className="border-b" style={{ borderColor: colors.border }}>
+                      <th className="text-left p-4 text-sm font-medium" style={{ color: colors.text.secondary }}>{t('date', 'Date')}</th>
+                      <th className="text-left p-4 text-sm font-medium" style={{ color: colors.text.secondary }}>{t('height', 'Height')}</th>
+                      <th className="text-left p-4 text-sm font-medium" style={{ color: colors.text.secondary }}>{t('weight', 'Weight')}</th>
+                      <th className="text-left p-4 text-sm font-medium" style={{ color: colors.text.secondary }}>BMI</th>
+                      <th className="text-left p-4 text-sm font-medium" style={{ color: colors.text.secondary }}>{t('category', 'Category')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1196,14 +1212,14 @@ export default function BMICalculatorTool() {
                       const input = entry.inputData;
                       const result = entry.resultData;
                       return (
-                        <tr key={entry.id} className="border-b hover:opacity-80 transition-opacity" style={{ borderColor: themeColors.border }}>
-                          <td className="p-4 text-sm" style={{ color: themeColors.text.primary }}>
+                        <tr key={entry.id} className="border-b hover:opacity-80 transition-opacity" style={{ borderColor: colors.border }}>
+                          <td className="p-4 text-sm" style={{ color: colors.text.primary }}>
                             {new Date(entry.timestamp).toLocaleDateString()}
                           </td>
-                          <td className="p-4 text-sm" style={{ color: themeColors.text.primary }}>
+                          <td className="p-4 text-sm" style={{ color: colors.text.primary }}>
                             {input.height} {input.unit === 'metric' ? 'cm' : input.unit === 'imperial' ? 'ft-in' : ''}
                           </td>
-                          <td className="p-4 text-sm" style={{ color: themeColors.text.primary }}>
+                          <td className="p-4 text-sm" style={{ color: colors.text.primary }}>
                             {input.weight} {input.unit === 'metric' ? 'kg' : 'lbs'}
                           </td>
                           <td className="p-4">
@@ -1215,7 +1231,7 @@ export default function BMICalculatorTool() {
                               {result.bmi}
                             </span>
                           </td>
-                          <td className="p-4 text-sm" style={{ color: themeColors.text.primary }}>
+                          <td className="p-4 text-sm" style={{ color: colors.text.primary }}>
                             {getTranslatedCategory(result.category)}
                           </td>
                         </tr>
@@ -1226,9 +1242,9 @@ export default function BMICalculatorTool() {
               </div>
             ) : (
               <div className="p-8 sm:p-12 text-center">
-                <HistoryIcon className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: themeColors.text.secondary }} />
-                <p className="text-sm opacity-80 mb-2" style={{ color: themeColors.text.secondary }}>{t('no_history', 'No calculation history yet')}</p>
-                <p className="text-xs opacity-60" style={{ color: themeColors.text.secondary }}>
+                <HistoryIcon className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: colors.text.secondary }} />
+                <p className="text-sm opacity-80 mb-2" style={{ color: colors.text.secondary }}>{t('no_history', 'No calculation history yet')}</p>
+                <p className="text-xs opacity-60" style={{ color: colors.text.secondary }}>
                   {t('history_will_appear', 'Your BMI calculations will appear here')}
                 </p>
               </div>
@@ -1238,13 +1254,13 @@ export default function BMICalculatorTool() {
 
         {/* SEO Content */}
         <div className="mt-8 sm:mt-12">
-          <div className="prose prose-sm max-w-none" style={{ color: themeColors.text.secondary }}>
-            <h3 style={{ color: themeColors.text.primary }}>{t('about_bmi', 'About BMI Calculator')}</h3>
+          <div className="prose prose-sm max-w-none" style={{ color: colors.text.secondary }}>
+            <h3 style={{ color: colors.text.primary }}>{t('about_bmi', 'About BMI Calculator')}</h3>
             <p>
               {t('about_bmi_text', 'Body Mass Index (BMI) is a simple calculation using a person\'s height and weight. The formula is BMI = kg/m² where kg is a person\'s weight in kilograms and m² is their height in meters squared. BMI indicates whether a person has a healthy body weight for their height.')}
             </p>
             
-            <div style={{ color: themeColors.text.primary }} role="heading" aria-level={4}>{t('bmi_categories', 'BMI Categories')}</div>
+            <div style={{ color: colors.text.primary }} role="heading" aria-level={4}>{t('bmi_categories', 'BMI Categories')}</div>
             <ul>
               <li><strong>{t('underweight', 'Underweight')}:</strong> {t('bmi_less_than', 'BMI less than 18.5')}</li>
               <li><strong>{t('normal_weight', 'Normal weight')}:</strong> {t('bmi_18_5_to_24_9', 'BMI 18.5 to 24.9')}</li>
@@ -1252,8 +1268,8 @@ export default function BMICalculatorTool() {
               <li><strong>{t('obesity', 'Obesity')}:</strong> {t('bmi_30_or_greater', 'BMI 30 or greater')}</li>
             </ul>
 
-            <div className="bg-surface border rounded-lg p-4 mt-6" style={{ borderColor: themeColors.border }}>
-              <div style={{ color: themeColors.text.primary }} className="mt-0" role="heading" aria-level={4}>{t('important_notes', 'Important Notes')}</div>
+            <div className="bg-surface border rounded-lg p-4 mt-6" style={{ borderColor: colors.border }}>
+              <div style={{ color: colors.text.primary }} className="mt-0" role="heading" aria-level={4}>{t('important_notes', 'Important Notes')}</div>
               <p className="text-sm">
                 {t('important_notes_text', 'While BMI is a useful screening tool, it does not directly measure body fat or account for muscle mass, bone density, overall body composition, and racial and sex differences. For a comprehensive health assessment, consult with a healthcare provider.')}
               </p>

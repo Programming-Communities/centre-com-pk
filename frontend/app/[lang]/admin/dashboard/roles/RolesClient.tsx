@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
-import { Shield, Crown, User, Edit3, Users, CheckCircle, XCircle, Search, Filter } from 'lucide-react';
+import { Shield, Crown, User, Edit3, Users, CheckCircle, XCircle, Search, Filter, Mail } from 'lucide-react';
 import TableSkeleton from '@/components/skeletons/TableSkeleton';
 
 export default function RolesClient({ lang }: { lang: string }) {
@@ -44,7 +44,7 @@ export default function RolesClient({ lang }: { lang: string }) {
     user: { icon: User, color: '#10b981', bg: '#10b98115' },
   };
 
-  if (loading) return <TableSkeleton rows={8} cols={5} />;
+  if (loading) return <TableSkeleton rows={8} />;
 
   const filteredUsers = users.filter(u => {
     const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase());
@@ -58,23 +58,38 @@ export default function RolesClient({ lang }: { lang: string }) {
         <Shield size={24} color={primary} /> Roles & Permissions
       </h1>
 
-      {/* Role Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '28px' }}>
+      {/* ========== ROLE CARDS — Responsive Grid ========== */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+        gap: '10px', 
+        marginBottom: '28px' 
+      }}>
         {roles.map((role: any) => {
           const ri = roleIcons[role.name] || roleIcons.user;
           const Icon = ri.icon;
           return (
-            <div key={role.id} style={{ padding: '18px', background: surface, borderRadius: '12px', border: `1px solid ${border}`, borderLeft: `4px solid ${ri.color}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: ri.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon size={18} color={ri.color} />
+            <div key={role.id} style={{ 
+              padding: '14px', 
+              background: surface, 
+              borderRadius: '12px', 
+              border: `1px solid ${border}`, 
+              borderLeft: `4px solid ${ri.color}` 
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: ri.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={16} color={ri.color} />
                 </div>
-                <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, textTransform: 'capitalize' }}>{role.name.replace('_', ' ')}</div>
-                  <div style={{ fontSize: '11px', color: textSecondary }}>{role.description}</div>
+                <div style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: textPrimary, textTransform: 'capitalize', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {role.name.replace('_', ' ')}
+                  </div>
+                  <div style={{ fontSize: '10px', color: textSecondary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {role.description}
+                  </div>
                 </div>
               </div>
-              <div style={{ fontSize: '11px', color: ri.color, fontWeight: 600 }}>
+              <div style={{ fontSize: '10px', color: ri.color, fontWeight: 600 }}>
                 {JSON.parse(role.permissions || '[]').length} permissions
               </div>
             </div>
@@ -82,13 +97,14 @@ export default function RolesClient({ lang }: { lang: string }) {
         })}
       </div>
 
-      {/* Users Table */}
+      {/* Users Section Title */}
       <h2 style={{ fontSize: '18px', fontWeight: 700, color: textPrimary, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <Users size={20} /> User Role Assignments
       </h2>
 
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-        <div style={{ position: 'relative', flex: 1, maxWidth: '300px' }}>
+      {/* Search + Filter */}
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: '180px', maxWidth: '100%' }}>
           <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: textSecondary }} />
           <input type="text" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)}
             style={{ width: '100%', padding: '8px 12px 8px 34px', borderRadius: '8px', border: `1px solid ${border}`, backgroundColor: surface, color: textPrimary, fontSize: '13px' }} />
@@ -100,7 +116,108 @@ export default function RolesClient({ lang }: { lang: string }) {
         </select>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
+      {/* ========== MOBILE CARDS — < 640px ========== */}
+      <div className="md:hidden" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {filteredUsers.map((user: any) => {
+          const ri = roleIcons[user.role] || roleIcons.user;
+          const Icon = ri.icon;
+          return (
+            <div key={user.id} style={{ 
+              padding: '16px', 
+              background: surface, 
+              borderRadius: '12px', 
+              border: `1px solid ${border}` 
+            }}>
+              {/* Avatar + Name + Email */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                <div style={{ 
+                  width: '44px', 
+                  height: '44px', 
+                  borderRadius: '50%', 
+                  background: `linear-gradient(135deg, var(--primary), var(--secondary))`,
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  color: 'var(--text-accent)', 
+                  fontWeight: 700, 
+                  fontSize: '18px',
+                  flexShrink: 0
+                }}>
+                  {user.name?.charAt(0) || 'U'}
+                </div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px', marginBottom: '2px' }}>
+                    {user.name || 'N/A'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Mail size={12} /> {user.email}
+                  </div>
+                </div>
+              </div>
+
+              {/* Current Role Badge */}
+              <div style={{ marginBottom: '12px' }}>
+                <span style={{ 
+                  padding: '4px 12px', 
+                  borderRadius: '14px', 
+                  fontSize: '11px', 
+                  fontWeight: 600, 
+                  background: ri.bg, 
+                  color: ri.color, 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '4px' 
+                }}>
+                  <Icon size={12} /> {user.role?.replace('_', ' ')}
+                </span>
+              </div>
+
+              {/* Role Change Dropdown */}
+              <div style={{ paddingTop: '12px', borderTop: `1px solid ${border}` }}>
+                {editingUser === user.id ? (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <select defaultValue={user.role} onChange={e => updateRole(user.id, e.target.value)}
+                      style={{ 
+                        flex: 1, padding: '8px 10px', borderRadius: '8px', 
+                        border: `1px solid ${border}`, fontSize: '12px',
+                        backgroundColor: 'var(--background)', color: textPrimary
+                      }}>
+                      {roles.map((r: any) => <option key={r.id} value={r.name}>{r.name.replace('_', ' ')}</option>)}
+                    </select>
+                    <button onClick={() => setEditingUser(null)}
+                      style={{ 
+                        padding: '8px 10px', borderRadius: '8px', 
+                        border: 'none', background: `${textSecondary}20`, 
+                        color: textSecondary, cursor: 'pointer', fontSize: '11px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                      }}>
+                      <XCircle size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => setEditingUser(user.id)}
+                    style={{ 
+                      width: '100%', padding: '8px 12px', borderRadius: '8px', 
+                      border: `1px solid ${primary}`, background: 'transparent', 
+                      cursor: 'pointer', color: primary, fontSize: '12px', fontWeight: 600,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                    }}>
+                    <Edit3 size={14} /> Change Role
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {filteredUsers.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>
+            No users found
+          </div>
+        )}
+      </div>
+
+      {/* ========== DESKTOP TABLE — > 640px ========== */}
+      <div className="hidden md:block" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: `2px solid ${border}` }}>

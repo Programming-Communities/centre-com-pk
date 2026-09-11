@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
           height: '100%',
           backgroundColor: colors.bg,
           padding: '60px',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
+          fontFamily: 'sans-serif',
           position: 'relative',
         },
         children: [

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {useState, useEffect } from 'react';
 import { GraduationCap, Plus, Trash2, Calculator } from "lucide-react";
 import ResponsiveToolWrapper from "@/components/tools/ResponsiveToolWrapper/ResponsiveToolWrapper.client";
 import { useTheme } from '@/components/theme';
@@ -45,6 +45,22 @@ export default function GPACalculatorClient() {
   const [totalPoints, setTotalPoints] = useState<number>(0);
   
   const { themeColors } = useTheme();
+  
+  // ✅ HYDration FIX
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
+  // ✅ Safe colors (light theme during SSR)
+  const colors = mounted ? themeColors : {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: { primary: '#0f172a', secondary: '#334155', accent: '#ffffff' },
+    border: '#e2e8f0',
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+  };
   const params = useParams();
 const lang = (params?.lang as string) || 'en';
 
@@ -89,10 +105,10 @@ const lang = (params?.lang as string) || 'en';
   };
 
   const getGPAStatus = (gpaValue: number) => {
-    if (gpaValue >= 3.5) return { label: 'Excellent', color: themeColors.success };
-    if (gpaValue >= 3.0) return { label: 'Good', color: themeColors.primary };
-    if (gpaValue >= 2.0) return { label: 'Satisfactory', color: themeColors.warning };
-    return { label: 'Needs Improvement', color: themeColors.error };
+    if (gpaValue >= 3.5) return { label: 'Excellent', color: colors.success };
+    if (gpaValue >= 3.0) return { label: 'Good', color: colors.primary };
+    if (gpaValue >= 2.0) return { label: 'Satisfactory', color: colors.warning };
+    return { label: 'Needs Improvement', color: colors.error };
   };
 
   const gpaStatus = getGPAStatus(gpa);
@@ -109,18 +125,18 @@ const lang = (params?.lang as string) || 'en';
         <div className="grid md:grid-cols-2 gap-8">
           {/* Input Section */}
           <div className="space-y-6">
-            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: themeColors.surface }}>
+            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: colors.surface }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2" style={{ color: themeColors.text.primary }}>
-                  <GraduationCap className="h-5 w-5" style={{ color: themeColors.primary }} />
+                <h2 className="text-xl font-semibold flex items-center gap-2" style={{ color: colors.text.primary }}>
+                  <GraduationCap className="h-5 w-5" style={{ color: colors.primary }} />
                   Courses
                 </h2>
                 <button
                   onClick={addCourse}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition-colors text-sm"
                   style={{ 
-                    backgroundColor: themeColors.primary,
-                    color: themeColors.text.accent
+                    backgroundColor: colors.primary,
+                    color: colors.text.accent
                   }}
                 >
                   <Plus className="h-4 w-4" />
@@ -134,8 +150,8 @@ const lang = (params?.lang as string) || 'en';
                     key={course.id} 
                     className="p-4 rounded-lg border"
                     style={{ 
-                      backgroundColor: themeColors.background,
-                      borderColor: themeColors.border
+                      backgroundColor: colors.background,
+                      borderColor: colors.border
                     }}
                   >
                     <div className="flex items-center justify-between mb-3">
@@ -145,15 +161,15 @@ const lang = (params?.lang as string) || 'en';
                         onChange={(e) => updateCourse(course.id, 'name', e.target.value)}
                         className="flex-1 font-semibold bg-transparent border-b pb-1"
                         style={{ 
-                          color: themeColors.text.primary,
-                          borderColor: themeColors.border
+                          color: colors.text.primary,
+                          borderColor: colors.border
                         }}
                         placeholder="Course Name"
                       />
                       <button
                         onClick={() => removeCourse(course.id)}
                         className="p-1 rounded hover:opacity-80"
-                        style={{ color: themeColors.error }}
+                        style={{ color: colors.error }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -161,7 +177,7 @@ const lang = (params?.lang as string) || 'en';
                     
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs mb-1" style={{ color: themeColors.text.secondary }}>
+                        <label className="block text-xs mb-1" style={{ color: colors.text.secondary }}>
                           Credits
                         </label>
                         <select
@@ -169,9 +185,9 @@ const lang = (params?.lang as string) || 'en';
                           onChange={(e) => updateCourse(course.id, 'credits', Number(e.target.value))}
                           className="w-full px-2 py-1 text-sm rounded border"
                           style={{ 
-                            backgroundColor: themeColors.background,
-                            borderColor: themeColors.border,
-                            color: themeColors.text.primary
+                            backgroundColor: colors.background,
+                            borderColor: colors.border,
+                            color: colors.text.primary
                           }}
                         >
                           {[1, 2, 3, 4, 5].map(credit => (
@@ -181,7 +197,7 @@ const lang = (params?.lang as string) || 'en';
                       </div>
                       
                       <div>
-                        <label className="block text-xs mb-1" style={{ color: themeColors.text.secondary }}>
+                        <label className="block text-xs mb-1" style={{ color: colors.text.secondary }}>
                           Grade
                         </label>
                         <select
@@ -189,9 +205,9 @@ const lang = (params?.lang as string) || 'en';
                           onChange={(e) => updateCourse(course.id, 'grade', e.target.value)}
                           className="w-full px-2 py-1 text-sm rounded border"
                           style={{ 
-                            backgroundColor: themeColors.background,
-                            borderColor: themeColors.border,
-                            color: themeColors.text.primary
+                            backgroundColor: colors.background,
+                            borderColor: colors.border,
+                            color: colors.text.primary
                           }}
                         >
                           {grades.map(grade => (
@@ -208,8 +224,8 @@ const lang = (params?.lang as string) || 'en';
                 onClick={calculateGPA}
                 className="w-full mt-4 py-3 rounded-lg font-semibold hover:opacity-90 transition-colors flex items-center justify-center gap-2"
                 style={{ 
-                  backgroundColor: themeColors.primary,
-                  color: themeColors.text.accent
+                  backgroundColor: colors.primary,
+                  color: colors.text.accent
                 }}
               >
                 <Calculator className="h-5 w-5" />
@@ -220,8 +236,8 @@ const lang = (params?.lang as string) || 'en';
 
           {/* Results Section */}
           <div className="space-y-6">
-            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: themeColors.surface }}>
-              <h2 className="text-xl font-semibold mb-4" style={{ color: themeColors.text.primary }}>GPA Results</h2>
+            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: colors.surface }}>
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.text.primary }}>GPA Results</h2>
               
               <div className="text-center mb-6">
                 <div className="text-5xl font-bold mb-2" style={{ color: gpaStatus.color }}>
@@ -230,30 +246,30 @@ const lang = (params?.lang as string) || 'en';
                 <div className="text-lg font-semibold mb-1" style={{ color: gpaStatus.color }}>
                   {gpaStatus.label}
                 </div>
-                <div className="text-sm" style={{ color: themeColors.text.secondary }}>
+                <div className="text-sm" style={{ color: colors.text.secondary }}>
                   4.0 Scale
                 </div>
               </div>
               
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span style={{ color: themeColors.text.secondary }}>Total Courses:</span>
-                  <span className="font-semibold" style={{ color: themeColors.text.primary }}>{courses.length}</span>
+                  <span style={{ color: colors.text.secondary }}>Total Courses:</span>
+                  <span className="font-semibold" style={{ color: colors.text.primary }}>{courses.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span style={{ color: themeColors.text.secondary }}>Total Credits:</span>
-                  <span className="font-semibold" style={{ color: themeColors.text.primary }}>{totalCredits}</span>
+                  <span style={{ color: colors.text.secondary }}>Total Credits:</span>
+                  <span className="font-semibold" style={{ color: colors.text.primary }}>{totalCredits}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span style={{ color: themeColors.text.secondary }}>Total Points:</span>
-                  <span className="font-semibold" style={{ color: themeColors.text.primary }}>{totalPoints}</span>
+                  <span style={{ color: colors.text.secondary }}>Total Points:</span>
+                  <span className="font-semibold" style={{ color: colors.text.primary }}>{totalPoints}</span>
                 </div>
               </div>
             </div>
 
             {/* Grade Scale Reference */}
-            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: themeColors.surface }}>
-              <h2 className="text-xl font-semibold mb-4" style={{ color: themeColors.text.primary }}>Grade Scale (4.0)</h2>
+            <div className="p-6 rounded-lg border border-border" style={{ backgroundColor: colors.surface }}>
+              <h2 className="text-xl font-semibold mb-4" style={{ color: colors.text.primary }}>Grade Scale (4.0)</h2>
               
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {[
@@ -274,8 +290,8 @@ const lang = (params?.lang as string) || 'en';
                     key={index} 
                     className="flex justify-between items-center p-2 rounded"
                     style={{ 
-                      backgroundColor: themeColors.background,
-                      color: themeColors.text.primary
+                      backgroundColor: colors.background,
+                      color: colors.text.primary
                     }}
                   >
                     <span className="font-medium">{grade}</span>
@@ -289,12 +305,12 @@ const lang = (params?.lang as string) || 'en';
             <div 
               className="rounded-lg p-4"
               style={{ 
-                backgroundColor: `${themeColors.primary}10`,
-                border: `1px solid ${themeColors.primary}30`
+                backgroundColor: `${colors.primary}10`,
+                border: `1px solid ${colors.primary}30`
               }}
             >
-              <h3 className="font-semibold mb-2" style={{ color: themeColors.primary }}>GPA Tips</h3>
-              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: themeColors.primary }}>
+              <h3 className="font-semibold mb-2" style={{ color: colors.primary }}>GPA Tips</h3>
+              <ul className="text-sm space-y-1 list-disc list-inside" style={{ color: colors.primary }}>
                 <li>GPA is calculated as (Grade Points × Credits) ÷ Total Credits</li>
                 <li>A 4.0 GPA is considered perfect (straight A's)</li>
                 <li>Most universities require a minimum 2.0 GPA</li>

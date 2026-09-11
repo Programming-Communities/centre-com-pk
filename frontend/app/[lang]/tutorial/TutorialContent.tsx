@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { ArrowRight, PlayCircle, Download, CheckCircle, Video, BookOpen, Users } from 'lucide-react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -11,12 +12,47 @@ export default function TutorialContent() {
   const lang = params?.lang as string || 'en';
   const { themeColors, fontFamily } = useTheme();
   const { t } = useTranslation({ namespace: 'tutorial' });
+  const [mounted, setMounted] = useState(false);
 
-  // ✅ FIXED: Use flat keys instead of nested access
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ✅ FIX: Static fallback colors for server + first client render
+  const staticColors = {
+    primary: '#1d4ed8',
+    secondary: '#1e40af',
+    background: '#ffffff',
+    surface: '#f8fafc',
+    border: '#e2e8f0',
+    success: '#065f46',
+    warning: '#92400e',
+    error: '#7f1d1d',
+    textPrimary: '#0f172a',
+    textSecondary: '#334155',
+    textAccent: '#ffffff',
+  };
+
+  const colors = mounted
+    ? {
+        primary: themeColors?.primary || staticColors.primary,
+        secondary: themeColors?.secondary || staticColors.secondary,
+        background: themeColors?.background || staticColors.background,
+        surface: themeColors?.surface || staticColors.surface,
+        border: themeColors?.border || staticColors.border,
+        success: themeColors?.success || staticColors.success,
+        warning: themeColors?.warning || staticColors.warning,
+        error: themeColors?.error || staticColors.error,
+        textPrimary: themeColors?.text?.primary || staticColors.textPrimary,
+        textSecondary: themeColors?.text?.secondary || staticColors.textSecondary,
+        textAccent: themeColors?.text?.accent || staticColors.textAccent,
+      }
+    : staticColors;
+
   const tutorials = [
     {
       id: 1,
-      title: t('getting_started_title'),        // ✅ flat key
+      title: t('getting_started_title'),
       description: t('getting_started_description'),
       duration: t('getting_started_duration'),
       level: t('getting_started_level'),
@@ -94,77 +130,90 @@ export default function TutorialContent() {
     { question: t('faq_q6'), answer: t('faq_a6') }
   ];
 
-  // Helper function to get accessible colors
-  const getContrastColor = (bgColor: string) => {
-    return themeColors.text.accent;
-  };
+  const getContrastColor = () => colors.textAccent;
+
+  if (!mounted) {
+    return (
+      <main
+        suppressHydrationWarning
+        className="min-h-screen"
+        style={{ backgroundColor: staticColors.background }}
+      />
+    );
+  }
 
   return (
-    <main 
+    <main
+      suppressHydrationWarning
       className="min-h-screen"
-      style={{ 
-        backgroundColor: themeColors.background,
+      style={{
+        backgroundColor: colors.background,
         fontFamily: fontFamily
       }}
     >
       {/* Hero Section */}
-      <div 
+      <div
+        suppressHydrationWarning
         className="relative overflow-hidden"
-        style={{ 
-          background: `linear-gradient(to right, ${themeColors.primary}, ${themeColors.secondary})`
+        style={{
+          background: `linear-gradient(to right, ${colors.primary}, ${colors.secondary})`
         }}
       >
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
-            <h1 
+            <h1
               className="text-4xl md:text-6xl font-bold mb-6"
-              style={{ color: themeColors.text.accent }}
+              suppressHydrationWarning
+              style={{ color: colors.textAccent }}
             >
-              {t('hero_title')}  {/* ✅ flat key */}
+              {t('hero_title')}
             </h1>
-            <p 
+            <p
               className="text-xl max-w-3xl mx-auto mb-10 opacity-90"
-              style={{ color: themeColors.text.accent }}
+              suppressHydrationWarning
+              style={{ color: colors.textAccent }}
             >
-              {t('hero_description')}  {/* ✅ flat key */}
+              {t('hero_description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href={`/${lang}/tutorial#tutorials`}
                 className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg transition-colors md:py-4 md:text-lg md:px-10"
-                style={{ 
-                  color: themeColors.primary,
-                  backgroundColor: themeColors.surface
+                suppressHydrationWarning
+                style={{
+                  color: colors.primary,
+                  backgroundColor: colors.surface
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = themeColors.background;
+                  e.currentTarget.style.backgroundColor = colors.background;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = themeColors.surface;
+                  e.currentTarget.style.backgroundColor = colors.surface;
                 }}
               >
-                {t('hero_browse_button')}  {/* ✅ flat key */}
+                {t('hero_browse_button')}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
               <a
                 href={`/${lang}/tutorial#featured-video`}
                 className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg border-2 transition-colors md:py-4 md:text-lg md:px-10"
-                style={{ 
-                  borderColor: themeColors.surface,
-                  color: themeColors.text.accent
+                suppressHydrationWarning
+                style={{
+                  borderColor: colors.surface,
+                  color: colors.textAccent
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = themeColors.surface;
-                  e.currentTarget.style.color = themeColors.primary;
+                  e.currentTarget.style.backgroundColor = colors.surface;
+                  e.currentTarget.style.color = colors.primary;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = themeColors.text.accent;
+                  e.currentTarget.style.color = colors.textAccent;
                 }}
               >
                 <PlayCircle className="mr-2 h-5 w-5" />
-                {t('hero_watch_button')}  {/* ✅ flat key */}
+                {t('hero_watch_button')}
               </a>
             </div>
           </div>
@@ -174,47 +223,53 @@ export default function TutorialContent() {
       {/* Featured Video */}
       <div id="featured-video" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 
+          <h2
             className="text-3xl font-bold mb-4"
-            style={{ color: themeColors.text.primary }}
+            suppressHydrationWarning
+            style={{ color: colors.textPrimary }}
           >
-            {t('featured_section_title')}  {/* ✅ flat key */}
+            {t('featured_section_title')}
           </h2>
-          <p 
+          <p
             className="text-lg"
-            style={{ color: themeColors.text.secondary }}
+            suppressHydrationWarning
+            style={{ color: colors.textSecondary }}
           >
-            {t('featured_section_description')}  {/* ✅ flat key */}
+            {t('featured_section_description')}
           </p>
         </div>
-        
-        <div 
+
+        <div
           className="rounded-2xl shadow-xl overflow-hidden"
-          style={{ 
-            backgroundColor: themeColors.surface,
-            borderColor: themeColors.border
+          suppressHydrationWarning
+          style={{
+            backgroundColor: colors.surface,
+            borderColor: colors.border
           }}
         >
-          <div 
+          <div
             className="aspect-video relative"
-            style={{ backgroundColor: themeColors.background }}
+            suppressHydrationWarning
+            style={{ backgroundColor: colors.background }}
           >
             <div className="absolute inset-0 flex items-center justify-center">
-              <button 
+              <button
                 className="rounded-full p-6 hover:scale-110 transition-transform"
-                style={{ backgroundColor: themeColors.surface }}
+                suppressHydrationWarning
+                style={{ backgroundColor: colors.surface }}
               >
-                <PlayCircle 
-                  className="w-16 h-16" 
-                  style={{ color: themeColors.primary }}
+                <PlayCircle
+                  className="w-16 h-16"
+                  style={{ color: colors.primary }}
                 />
               </button>
             </div>
-            <div 
+            <div
               className="absolute bottom-4 left-4 text-white px-3 py-1 rounded"
-              style={{ 
-                backgroundColor: `${themeColors.text.primary}CC`,
-                color: themeColors.surface
+              suppressHydrationWarning
+              style={{
+                backgroundColor: `${colors.textPrimary}CC`,
+                color: colors.surface
               }}
             >
               {featuredVideo.duration}
@@ -222,29 +277,32 @@ export default function TutorialContent() {
           </div>
           <div className="p-8">
             <div className="flex items-center justify-between mb-4">
-              <h3 
+              <h3
                 className="text-2xl font-bold"
-                style={{ color: themeColors.text.primary }}
+                suppressHydrationWarning
+                style={{ color: colors.textPrimary }}
               >
                 {featuredVideo.title}
               </h3>
-              <span 
+              <span
                 className="text-sm font-medium px-3 py-1 rounded"
-                style={{ 
-                  backgroundColor: `${themeColors.primary}20`,
-                  color: themeColors.primary
+                suppressHydrationWarning
+                style={{
+                  backgroundColor: `${colors.primary}20`,
+                  color: colors.primary
                 }}
               >
                 Featured
               </span>
             </div>
-            <p 
+            <p
               className="mb-6"
-              style={{ color: themeColors.text.secondary }}
+              suppressHydrationWarning
+              style={{ color: colors.textSecondary }}
             >
               {featuredVideo.description}
             </p>
-            <div className="flex items-center justify-between text-sm" style={{ color: themeColors.text.secondary }}>
+            <div className="flex items-center justify-between text-sm" suppressHydrationWarning style={{ color: colors.textSecondary }}>
               <span>👁️ {featuredVideo.views}</span>
               <span>📅 {featuredVideo.uploadDate}</span>
             </div>
@@ -255,49 +313,54 @@ export default function TutorialContent() {
       {/* Tutorials Grid */}
       <div id="tutorials" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 
+          <h2
             className="text-3xl font-bold mb-4"
-            style={{ color: themeColors.text.primary }}
+            suppressHydrationWarning
+            style={{ color: colors.textPrimary }}
           >
-            {t('tutorials_section_title')}  {/* ✅ flat key */}
+            {t('tutorials_section_title')}
           </h2>
-          <p 
+          <p
             className="text-lg max-w-3xl mx-auto"
-            style={{ color: themeColors.text.secondary }}
+            suppressHydrationWarning
+            style={{ color: colors.textSecondary }}
           >
-            {t('tutorials_section_description')}  {/* ✅ flat key */}
+            {t('tutorials_section_description')}
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {tutorials.map((tutorial) => {
-            let badgeColor = themeColors.success;
-            if (tutorial.level === t('levels_intermediate')) badgeColor = themeColors.warning;
-            if (tutorial.level === t('levels_advanced')) badgeColor = themeColors.error;
+            let badgeColor = colors.success;
+            if (tutorial.level === t('levels_intermediate')) badgeColor = colors.warning;
+            if (tutorial.level === t('levels_advanced')) badgeColor = colors.error;
 
             return (
               <div
                 key={tutorial.id}
                 className="rounded-xl overflow-hidden transition-shadow hover:shadow-xl border"
-                style={{ 
-                  backgroundColor: themeColors.surface,
-                  borderColor: themeColors.border
+                suppressHydrationWarning
+                style={{
+                  backgroundColor: colors.surface,
+                  borderColor: colors.border
                 }}
               >
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <div 
+                    <div
                       className="p-3 rounded-lg"
-                      style={{ 
-                        backgroundColor: `${themeColors.primary}10`,
-                        color: themeColors.primary
+                      suppressHydrationWarning
+                      style={{
+                        backgroundColor: `${colors.primary}10`,
+                        color: colors.primary
                       }}
                     >
                       {tutorial.icon}
                     </div>
-                    <span 
+                    <span
                       className="px-3 py-1 rounded-full text-xs font-medium"
-                      style={{ 
+                      suppressHydrationWarning
+                      style={{
                         backgroundColor: `${badgeColor}20`,
                         color: badgeColor
                       }}
@@ -305,35 +368,39 @@ export default function TutorialContent() {
                       {tutorial.level}
                     </span>
                   </div>
-                  
+
                   <div className="mb-2">
-                    <span 
+                    <span
                       className="text-sm font-medium px-3 py-1 rounded"
-                      style={{ 
-                        backgroundColor: `${themeColors.primary}10`,
-                        color: themeColors.primary
+                      suppressHydrationWarning
+                      style={{
+                        backgroundColor: `${colors.primary}10`,
+                        color: colors.primary
                       }}
                     >
                       {tutorial.category}
                     </span>
                   </div>
-                  
-                  <h3 
+
+                  <h3
                     className="text-xl font-bold mb-3"
-                    style={{ color: themeColors.text.primary }}
+                    suppressHydrationWarning
+                    style={{ color: colors.textPrimary }}
                   >
                     {tutorial.title}
                   </h3>
-                  <p 
+                  <p
                     className="mb-6"
-                    style={{ color: themeColors.text.secondary }}
+                    suppressHydrationWarning
+                    style={{ color: colors.textSecondary }}
                   >
                     {tutorial.description}
                   </p>
-                  
-                  <div 
+
+                  <div
                     className="flex items-center justify-between text-sm mb-6"
-                    style={{ color: themeColors.text.secondary }}
+                    suppressHydrationWarning
+                    style={{ color: colors.textSecondary }}
                   >
                     <div className="flex items-center gap-4">
                       <span className="flex items-center gap-1">
@@ -345,13 +412,14 @@ export default function TutorialContent() {
                       </span>
                     </div>
                   </div>
-                  
+
                   <Link
                     href={`/${lang}/tutorial/${tutorial.id}`}
                     className="inline-flex items-center justify-center w-full py-3 px-4 border border-transparent rounded-lg font-medium transition-colors"
-                    style={{ 
-                      backgroundColor: themeColors.primary,
-                      color: getContrastColor(themeColors.primary)
+                    suppressHydrationWarning
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: getContrastColor()
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.opacity = '0.9';
@@ -371,28 +439,31 @@ export default function TutorialContent() {
       </div>
 
       {/* CTA Section */}
-      <div className="py-16" style={{ backgroundColor: themeColors.background }}>
+      <div className="py-16" suppressHydrationWarning style={{ backgroundColor: colors.background }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 
+            <h2
               className="text-3xl font-bold mb-6"
-              style={{ color: themeColors.text.primary }}
+              suppressHydrationWarning
+              style={{ color: colors.textPrimary }}
             >
-              {t('cta_title')}  {/* ✅ flat key */}
+              {t('cta_title')}
             </h2>
-            <p 
+            <p
               className="text-lg max-w-2xl mx-auto mb-10"
-              style={{ color: themeColors.text.secondary }}
+              suppressHydrationWarning
+              style={{ color: colors.textSecondary }}
             >
-              {t('cta_description')}  {/* ✅ flat key */}
+              {t('cta_description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href={`/${lang}/contact`}
                 className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg transition-colors md:py-4 md:text-lg md:px-10"
-                style={{ 
-                  backgroundColor: themeColors.primary,
-                  color: getContrastColor(themeColors.primary)
+                suppressHydrationWarning
+                style={{
+                  backgroundColor: colors.primary,
+                  color: getContrastColor()
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.opacity = '0.9';
@@ -401,23 +472,24 @@ export default function TutorialContent() {
                   e.currentTarget.style.opacity = '1';
                 }}
               >
-                {t('cta_contact_button')}  {/* ✅ flat key */}
+                {t('cta_contact_button')}
               </Link>
               <Link
                 href={`/${lang}/suggest-tutorial`}
                 className="inline-flex items-center justify-center px-8 py-3 text-base font-medium rounded-lg border-2 transition-colors md:py-4 md:text-lg md:px-10"
-                style={{ 
-                  borderColor: themeColors.primary,
-                  color: themeColors.primary
+                suppressHydrationWarning
+                style={{
+                  borderColor: colors.primary,
+                  color: colors.primary
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = `${themeColors.primary}10`;
+                  e.currentTarget.style.backgroundColor = `${colors.primary}10`;
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                {t('cta_suggest_button')}  {/* ✅ flat key */}
+                {t('cta_suggest_button')}
               </Link>
             </div>
           </div>
@@ -426,29 +498,32 @@ export default function TutorialContent() {
 
       {/* FAQ Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 
+        <h2
           className="text-3xl font-bold text-center mb-12"
-          style={{ color: themeColors.text.primary }}
+          suppressHydrationWarning
+          style={{ color: colors.textPrimary }}
         >
-          {t('faq_title')}  {/* ✅ flat key */}
+          {t('faq_title')}
         </h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {faqs.map((faq, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="p-6 rounded-lg border"
-              style={{ 
-                backgroundColor: themeColors.surface,
-                borderColor: themeColors.border
+              suppressHydrationWarning
+              style={{
+                backgroundColor: colors.surface,
+                borderColor: colors.border
               }}
             >
-              <h3 
+              <h3
                 className="text-lg font-semibold mb-3"
-                style={{ color: themeColors.text.primary }}
+                suppressHydrationWarning
+                style={{ color: colors.textPrimary }}
               >
                 {faq.question}
               </h3>
-              <p style={{ color: themeColors.text.secondary }}>{faq.answer}</p>
+              <p suppressHydrationWarning style={{ color: colors.textSecondary }}>{faq.answer}</p>
             </div>
           ))}
         </div>
