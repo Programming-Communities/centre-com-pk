@@ -1,0 +1,564 @@
+=== tailwind.config.js ===
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      screens: {
+        // ========== BASE (0px+) ==========
+        'all': '0px',
+        
+        // ========== LEGACY/OLD PHONES (0-279px) ==========
+        'mini': '160px',
+        'nano': '200px',
+        'pico': '240px',
+        
+        // ========== SMALL PHONES (280-359px) ==========
+        'fold': '280px',
+        'watch': '320px',
+        'moto': '340px',
+        
+        // ========== ANDROID SMALL (360-374px) ==========
+        'android-xs': '360px',
+        
+        // ========== iPHONE SE & MEDIUM (375-389px) ==========
+        'iphone-se': '375px',
+        'android-sm': '375px',
+        
+        // ========== iPHONE 12-16 SERIES (390-413px) ==========
+        'iphone-12': '390px',
+        'pixel': '393px',
+        'android-md': '414px',
+        
+        // ========== LARGE PHONES (414-479px) ==========
+        'iphone-plus': '430px',
+        'android-lg': '440px',
+        'phablet': '460px',
+        
+        // ========== PHONE LANDSCAPE (480-639px) ==========
+        'mobile-landscape': '480px',
+        'sm-landscape': '520px',
+        'surface-duo': '540px',
+        'md-landscape': '568px',
+        'lg-landscape': '600px',
+        'kindle': '600px',
+        
+        // ========== SMALL TABLETS (640-767px) ==========
+        'tablet-xs': '640px',
+        'nexus': '712px',
+        
+        // ========== MEDIUM TABLETS (768-833px) ==========
+        'ipad-mini': '768px',
+        'ipad': '768px',
+        'tablet': '768px',
+        'ipad-air': '820px',
+        'ipad-pro-11': '834px',
+        
+        // ========== LARGE TABLETS & FOLDABLES (896-1023px) ==========
+        'fold-open': '896px',
+        'tablet-lg': '900px',
+        'surface': '912px',
+        
+        // ========== iPAD PRO & SMALL LAPTOPS (1024-1279px) ==========
+        'ipad-pro-129': '1024px',
+        'desktop-sm': '1024px',
+        'laptop-xs': '1080px',
+        'surface-pro': '1152px',
+        'desktop': '1200px',
+        'laptop-sm': '1280px',
+        
+        // ========== STANDARD LAPTOPS (1280-1439px) ==========
+        'laptop': '1366px',
+        'laptop-md': '1400px',
+        
+        // ========== LARGE LAPTOPS (1440-1679px) ==========
+        'laptop-lg': '1440px',
+        'macbook-16': '1536px',
+        'desktop-md': '1600px',
+        
+        // ========== HD+ DESKTOPS (1680-1919px) ==========
+        'desktop-hd': '1680px',
+        'desktop-lg': '1800px',
+        
+        // ========== FULL HD DESKTOPS (1920-2047px) ==========
+        'desktop-fhd': '1920px',
+        
+        // ========== 2K DISPLAYS (2048-2559px) ==========
+        'desktop-2k': '2048px',
+        'imac-4k': '2160px',
+        
+        // ========== 4K DISPLAYS (2560-3439px) ==========
+        'desktop-4k': '2560px',
+        'imac-5k': '2880px',
+        'cinema-2k': '3200px',
+        
+        // ========== ULTRAWIDE (3440-3839px) ==========
+        'ultrawide': '3440px',
+        
+        // ========== 4K+ CINEMA (3840-7679px) ==========
+        'cinema': '3840px',
+        'pro-xdr': '4096px',
+        'desktop-5k': '5120px',
+        'desktop-6k': '5760px',
+        
+        // ========== 8K+ DISPLAYS (7680px+) ==========
+        'desktop-8k': '7680px',
+        'desktop-10k': '8192px',
+      },
+      colors: {
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        success: 'var(--success)',
+        warning: 'var(--warning)',
+        error: 'var(--error)',
+        border: 'var(--border)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-accent': 'var(--text-accent)',
+      },
+      backgroundColor: {
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+      },
+      textColor: {
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-accent': 'var(--text-accent)',
+      },
+      borderColor: {
+        border: 'var(--border)',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+      },
+      boxShadow: {
+        'theme': 'var(--shadow)',
+      },
+      fontFamily: {
+        sans: ['var(--font-family)', 'system-ui', 'sans-serif'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'slide-down': 'slideDown 0.3s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        slideDown: {
+          '0%': { transform: 'translateY(-20px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+      zIndex: {
+        '1000': '1000',
+        '1001': '1001',
+        '1002': '1002',
+      }
+    },
+  },
+  plugins: [],
+}
+=== proxy.ts ===
+import { NextRequest, NextResponse } from 'next/server';
+
+export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  
+  // ✅ Fix double language prefix
+  if (pathname.match(/^\/(en|ur|hi|ar)\/(en|ur|hi|ar)\//)) {
+    const newPath = pathname.replace(/^\/(en|ur|hi|ar)\/(en|ur|hi|ar)\//, '/$2/');
+    const url = request.nextUrl.clone();
+    url.pathname = newPath;
+    return NextResponse.redirect(url);
+  }
+  
+  // ✅ ENGLISH DEFAULT — rewrite /tools, /blog, etc. to /en/... internally
+  if (pathname.startsWith('/tools') || 
+      pathname.startsWith('/blog') || 
+      pathname.startsWith('/about') ||
+      pathname.startsWith('/contact') ||
+      pathname.startsWith('/privacy-policy') ||
+      pathname.startsWith('/terms') ||
+      pathname.startsWith('/pricing') ||
+      pathname.startsWith('/search') ||
+      pathname.startsWith('/tutorial') ||
+      pathname.startsWith('/auth') ||
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/dashboard')) {
+    
+    const url = request.nextUrl.clone();
+    url.pathname = `/en${pathname}`;
+    return NextResponse.rewrite(url);
+  }
+  
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    '/:lang(en|ur|hi|ar)/:lang(en|ur|hi|ar)/:path*',
+    '/tools/:path*',
+    '/blog/:path*',
+    '/about',
+    '/contact',
+    '/privacy-policy',
+    '/terms',
+    '/pricing',
+    '/search',
+    '/tutorial',
+    '/auth/:path*',
+    '/admin/:path*',
+    '/dashboard/:path*',
+  ],
+};=== next.config.js ===
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'standalone',
+  typescript: { ignoreBuildErrors: true },
+  images: { unoptimized: true },
+  
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
+
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      'date-fns',
+      'lodash',
+    ],
+  },
+
+  async headers() {
+    return [
+      {
+        source: '/_next/static/css/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400' },
+          { key: 'CDN-Cache-Control', value: 'public, max-age=7200' },
+        ],
+      },
+    ];
+  },
+
+  async rewrites() {
+    return [
+      {
+        source: '/',
+        destination: '/en',
+      },
+      {
+        source: '/tools/:path*',
+        destination: '/en/tools/:path*',
+      },
+      {
+        source: '/blog/:path*',
+        destination: '/en/blog/:path*',
+      },
+      {
+        source: '/about',
+        destination: '/en/about',
+      },
+      {
+        source: '/contact',
+        destination: '/en/contact',
+      },
+      {
+        source: '/privacy-policy',
+        destination: '/en/privacy-policy',
+      },
+      {
+        source: '/terms',
+        destination: '/en/terms',
+      },
+      {
+        source: '/pricing',
+        destination: '/en/pricing',
+      },
+      {
+        source: '/search',
+        destination: '/en/search',
+      },
+      {
+        source: '/tutorial',
+        destination: '/en/tutorial',
+      },
+      {
+        source: '/auth/:path*',
+        destination: '/en/auth/:path*',
+      },
+      {
+        source: '/admin/:path*',
+        destination: '/en/admin/:path*',
+      },
+      {
+        source: '/dashboard/:path*',
+        destination: '/en/dashboard/:path*',
+      },
+      { source: '/:path*.sql', destination: '/_blocked' },
+      { source: '/:path*.sql.gz', destination: '/_blocked' },
+      { source: '/:path*.db', destination: '/_blocked' },
+      { source: '/:path*.env', destination: '/_blocked' },
+      { source: '/:path*.backup', destination: '/_blocked' },
+    ];
+  },
+
+  async redirects() {
+    return [
+      { source: '/en', destination: '/', permanent: true },
+      { source: '/en/:path*', destination: '/:path*', permanent: true },
+      
+      {
+        source: '/',
+        has: [{ type: 'host', value: 'centre.com.pk' }],
+        destination: 'https://www.centre.com.pk',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'centre.com.pk' }],
+        destination: 'https://www.centre.com.pk/:path*',
+        permanent: true,
+      },
+      
+      {
+        source: '/:lang(ur|hi|ar)/:path*',
+        has: [{ type: 'host', value: 'centre.com.pk' }],
+        destination: 'https://www.centre.com.pk/:lang/:path*',
+        permanent: true,
+      },
+      
+      { source: '/ur/ur/:path*', destination: '/ur/:path*', permanent: true },
+      { source: '/hi/hi/:path*', destination: '/hi/:path*', permanent: true },
+      { source: '/ar/ar/:path*', destination: '/ar/:path*', permanent: true },
+      
+      {
+        source: '/sitemap-:lang.xml',
+        has: [{ type: 'host', value: 'centre.com.pk' }],
+        destination: 'https://www.centre.com.pk/sitemap.xml',
+        permanent: true,
+      },
+      { source: '/sitemap-:lang.xml/:path*', destination: '/sitemap.xml', permanent: true },
+
+      // ✅ NAYE REDIRECTS — GALAT URLs FIX
+      // Special characters → Clean URLs
+      { source: '/&/:path*', destination: '/:path*', permanent: true },
+      { source: '/%26/:path*', destination: '/:path*', permanent: true },
+      { source: '/&', destination: '/', permanent: true },
+      { source: '/%26', destination: '/', permanent: true },
+      
+      // Wrong prefixes → Correct URLs
+      { source: '/about/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/advertise/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/contact/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/privacy-policy/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/search/tools/:path*', destination: '/tools/:path*', permanent: true },
+      { source: '/signup/tools/:path*', destination: '/tools/:path*', permanent: true },
+      
+      // Wrong blog prefixes
+      { source: '/advertise/blog/:path*', destination: '/blog/:path*', permanent: true },
+      { source: '/about/blog/:path*', destination: '/blog/:path*', permanent: true },
+      
+      // Manifest.json wrong path
+      { source: '/manifest.json/:path*', destination: '/:path*', permanent: true },
+      
+      // Double prefix fixes
+      { source: '/ur/en/:path*', destination: '/ur/:path*', permanent: true },
+      { source: '/hi/en/:path*', destination: '/hi/:path*', permanent: true },
+      { source: '/ar/en/:path*', destination: '/ar/:path*', permanent: true },
+      { source: '/en/en/:path*', destination: '/en/:path*', permanent: true },
+      
+      // Trailing slash fixes
+      { source: '/en/:path*/', destination: '/en/:path*', permanent: true },
+      { source: '/ur/:path*/', destination: '/ur/:path*', permanent: true },
+      { source: '/hi/:path*/', destination: '/hi/:path*', permanent: true },
+      { source: '/ar/:path*/', destination: '/ar/:path*', permanent: true },
+    ];
+  },
+};
+
+module.exports = nextConfig;
+=== tsconfig.json ===
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    "target": "ES2017"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
+=== package.json ===
+{
+  "name": "centre-com-pk",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "analyze": "ANALYZE=true npm run build",
+    "postinstall": "echo '✅ Dependencies installed'",
+    "cf:build": "next build --no-lint",
+    "cf:deploy": "npx wrangler pages deploy .vercel/output/static --project-name=centre-com-pk",
+    "cf:full": "npm run cf:build && npm run cf:deploy"
+  },
+  "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.1",
+    "@hookform/resolvers": "^5.2.2",
+    "@lexical/clipboard": "^0.45.0",
+    "@lexical/code": "^0.45.0",
+    "@lexical/dragon": "^0.45.0",
+    "@lexical/file": "^0.45.0",
+    "@lexical/hashtag": "^0.45.0",
+    "@lexical/link": "^0.45.0",
+    "@lexical/list": "^0.45.0",
+    "@lexical/offset": "^0.45.0",
+    "@lexical/overflow": "^0.45.0",
+    "@lexical/plain-text": "^0.45.0",
+    "@lexical/react": "^0.45.0",
+    "@lexical/rich-text": "^0.45.0",
+    "@lexical/selection": "^0.45.0",
+    "@lexical/table": "^0.45.0",
+    "@lexical/text": "^0.45.0",
+    "@lexical/utils": "^0.45.0",
+    "@lexical/yjs": "^0.45.0",
+    "@stripe/stripe-js": "^9.7.0",
+    "@vercel/og": "^0.8.6",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.10.0",
+    "critters": "^0.0.23",
+    "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
+    "drizzle-kit": "^0.31.10",
+    "drizzle-orm": "^0.45.2",
+    "html2canvas": "^1.4.1",
+    "ioredis": "^5.10.1",
+    "jose": "^6.2.3",
+    "jsonwebtoken": "^9.0.3",
+    "lexical": "^0.45.0",
+    "lodash": "^4.17.23",
+    "lucide-react": "^0.555.0",
+    "next": "^16.3.0",
+    "next-auth": "^5.0.0-beta.30",
+    "next-pwa": "^2.0.2",
+    "nodemailer": "^9.0.5",
+    "pg": "^8.21.0",
+    "qrcode.react": "^4.2.0",
+    "quill": "^2.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.72.1",
+    "react-icons": "^5.5.0",
+    "react-infinite-scroll-component": "^6.1.1",
+    "react-quill": "^2.0.0",
+    "stripe": "^22.2.0",
+    "svix": "^1.95.1",
+    "web-vitals": "^4.2.4",
+    "workbox-webpack-plugin": "^4.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.6",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/glob": "^8.1.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.23",
+    "@types/mime-types": "^3.0.1",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^20.19.41",
+    "@types/nodemailer": "^8.0.1",
+    "@types/pg": "^8.20.0",
+    "@types/quill": "^2.0.14",
+    "@types/react": "^18.3.29",
+    "@types/react-dom": "^18.3.5",
+    "axios": "^1.13.4",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.6",
+    "lighthouse": "^13.4.1",
+    "tailwindcss": "^4.1.17",
+    "typescript": "^5.9.3",
+    "webpack-bundle-analyzer": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": {
+    "production": [
+      "chrome >= 95",
+      "firefox >= 95",
+      "safari >= 15.4",
+      "edge >= 95"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

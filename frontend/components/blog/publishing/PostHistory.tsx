@@ -1,5 +1,6 @@
 'use client';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { useState, useEffect } from 'react';
 import { History, Clock, CheckCircle, Edit3 } from 'lucide-react';
 
 interface HistoryEntry {
@@ -14,36 +15,49 @@ interface PostHistoryProps {
 }
 
 export default function PostHistory({ history }: PostHistoryProps) {
-  const { themeColors, isDarkMode } = useTheme();
+  const { themeColors } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
-  const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
-  const textSecondary = themeColors?.text?.secondary || (isDarkMode ? '#94a3b8' : '#64748b');
-  const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
-  const primary = themeColors?.primary || '#3b82f6';
+  useEffect(() => { setMounted(true); }, []);
+
+  const staticColors = {
+    surface: '#ffffff',
+    textPrimary: '#0f172a',
+    textSecondary: '#64748b',
+    border: '#e2e8f0',
+    primary: '#3b82f6',
+  };
+
+  const colors = mounted ? {
+    surface: themeColors?.surface || staticColors.surface,
+    textPrimary: themeColors?.text?.primary || staticColors.textPrimary,
+    textSecondary: themeColors?.text?.secondary || staticColors.textSecondary,
+    border: themeColors?.border || staticColors.border,
+    primary: themeColors?.primary || staticColors.primary,
+  } : staticColors;
 
   if (history.length === 0) {
     return (
-      <div style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${border}`, backgroundColor: surface, textAlign: 'center' }}>
-        <History size={24} style={{ color: textSecondary, margin: '0 auto 8px', display: 'block' }} />
-        <p style={{ fontSize: '13px', color: textSecondary }}>No history yet</p>
+      <div suppressHydrationWarning style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${colors.border}`, backgroundColor: colors.surface, textAlign: 'center' }}>
+        <History size={24} style={{ color: colors.textSecondary, margin: '0 auto 8px', display: 'block' }} />
+        <p style={{ fontSize: '13px', color: colors.textSecondary }}>No history yet</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${border}`, backgroundColor: surface }}>
-      <h4 style={{ fontSize: '14px', fontWeight: 600, color: textPrimary, marginBottom: '12px' }}>
-        <History size={14} style={{ display: 'inline', marginRight: '6px', color: primary }} />
+    <div suppressHydrationWarning style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${colors.border}`, backgroundColor: colors.surface }}>
+      <h4 suppressHydrationWarning style={{ fontSize: '14px', fontWeight: 600, color: colors.textPrimary, marginBottom: '12px' }}>
+        <History size={14} style={{ display: 'inline', marginRight: '6px', color: colors.primary }} />
         Revision History
       </h4>
       <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
         {history.map((entry) => (
-          <div key={entry.version} style={{ display: 'flex', gap: '12px', padding: '8px 0', borderBottom: `1px solid ${border}20` }}>
-            <span style={{ fontWeight: 600, color: primary, fontSize: '12px' }}>v{entry.version}</span>
-            <span style={{ fontSize: '12px', color: textSecondary }}>{new Date(entry.date).toLocaleString()}</span>
-            <span style={{ fontSize: '12px', color: textSecondary, flex: 1 }}>{entry.changes}</span>
-            <span style={{ fontSize: '11px', color: textSecondary }}>by {entry.user}</span>
+          <div key={entry.version} suppressHydrationWarning style={{ display: 'flex', gap: '12px', padding: '8px 0', borderBottom: `1px solid ${colors.border}20` }}>
+            <span style={{ fontWeight: 600, color: colors.primary, fontSize: '12px' }}>v{entry.version}</span>
+            <span suppressHydrationWarning style={{ fontSize: '12px', color: colors.textSecondary }}>{mounted ? new Date(entry.date).toLocaleString() : entry.date}</span>
+            <span suppressHydrationWarning style={{ fontSize: '12px', color: colors.textSecondary, flex: 1 }}>{entry.changes}</span>
+            <span suppressHydrationWarning style={{ fontSize: '11px', color: colors.textSecondary }}>by {entry.user}</span>
           </div>
         ))}
       </div>

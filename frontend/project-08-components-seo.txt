@@ -1,0 +1,2507 @@
+=== SEO COMPONENTS ===
+
+=== components/seo/Breadcrumbs.tsx ===
+// components/seo/Breadcrumbs.tsx — FIXED v2.0
+// ✅ FIXED: Removed duplicate inline JSON-LD schema
+// Schema is now handled ONLY by lib/seo/generateBreadcrumbs.ts
+
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslation';
+import { ChevronRight, Home } from 'lucide-react';
+
+interface LocalBreadcrumbItem {
+  name: string;
+  url: string;
+  icon?: string;
+}
+
+interface BreadcrumbsProps {
+  items?: LocalBreadcrumbItem[];
+  showHome?: boolean;
+  className?: string;
+  separator?: React.ReactNode;
+}
+
+export default function Breadcrumbs({
+  items,
+  showHome = true,
+  className = '',
+  separator = <ChevronRight className="w-4 h-4 mx-2 text-text-secondary shrink-0" />,
+}: BreadcrumbsProps) {
+  const pathname = usePathname();
+  const params = useParams();
+  const lang = params?.lang as string || 'en';
+  const { t } = useTranslation({ namespace: 'common' });
+  
+  const breadcrumbItems = items || generateBreadcrumbsFromPathname(pathname, lang, t, showHome);
+  
+  if (breadcrumbItems.length === 0) {
+    return null;
+  }
+  
+  return (
+    <nav className={`breadcrumbs ${className}`} aria-label={t('aria.breadcrumb', 'Breadcrumb')}>
+      <ol className="flex flex-wrap items-center text-sm">
+        {breadcrumbItems.map((item, index) => {
+          const isLast = index === breadcrumbItems.length - 1;
+          
+          return (
+            <li key={item.url} className="flex items-center">
+              {!isLast ? (
+                <>
+                  <Link
+                    href={item.url}
+                    className="text-text-secondary hover:text-primary transition-colors duration-200"
+                    aria-label={item.name}
+                  >
+                    {item.icon === 'home' ? (
+                      <Home className="w-4 h-4" />
+                    ) : (
+                      item.name
+                    )}
+                  </Link>
+                  {separator}
+                </>
+              ) : (
+                <span 
+                  className="text-primary font-medium truncate max-w-xs md:max-w-md lg:max-w-lg"
+                  aria-current="page"
+                >
+                  {item.name}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+      {/* ✅ FIXED: Removed inline JSON-LD — now handled by generateBreadcrumbs.ts */}
+    </nav>
+  );
+}
+
+function generateBreadcrumbsFromPathname(
+  pathname: string, 
+  lang: string, 
+  t: (key: string, fallback?: string) => string,
+  showHome: boolean
+): LocalBreadcrumbItem[] {
+  const items: LocalBreadcrumbItem[] = [];
+  
+  if (showHome) {
+    items.push({
+      name: t('home', 'Home'),
+      url: `/${lang}`,
+      icon: 'home',
+    });
+  }
+  
+  const segments = pathname.split('/').filter(segment => segment.length > 0 && segment !== lang);
+  
+  let accumulatedPath = `/${lang}`;
+  segments.forEach((segment) => {
+    accumulatedPath += `/${segment}`;
+    
+    let name = segment;
+    
+    if (segment === 'tools') {
+      name = t('tools', 'Tools');
+    } else if (segment === 'calculators') {
+      name = t('calculators', 'Calculators');
+    } else if (segment === 'code-tools') {
+      name = t('code_tools', 'Code Tools');
+    } else if (segment === 'image-tools') {
+      name = t('image_tools', 'Image Tools');
+    } else if (segment === 'pdf-tools') {
+      name = t('pdf_tools', 'PDF Tools');
+    } else if (segment === 'security-tools') {
+      name = t('security_tools', 'Security Tools');
+    } else if (segment === 'text-tools') {
+      name = t('text_tools', 'Text Tools');
+    } else if (segment === 'design-tools') {
+      name = t('design_tools', 'Design Tools');
+    } else {
+      name = segment.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+    
+    items.push({ name, url: accumulatedPath });
+  });
+  
+  return items;
+}
+
+=== components/seo/ClientShareSection.tsx ===
+'use client';
+
+import { 
+  Share2, 
+  Link as LinkIcon, 
+  Copy,
+  Facebook,
+  Twitter,
+  Linkedin,
+  MessageSquare,
+  Mail,
+  Check
+} from 'lucide-react';
+import { useState } from 'react';
+
+interface ClientShareSectionProps {
+  title: string;
+  description: string;
+  category: string;
+  tool: string;
+}
+
+export default function ClientShareSection({ 
+  title, 
+  description,
+  category,
+  tool
+}: ClientShareSectionProps) {
+  const [copied, setCopied] = useState(false);
+  
+  // Generate share URL WITHOUT theme parameter
+  const shareUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://www.centre.com.pk'}/tools/${category}/${tool}`;
+  
+  const handleCopy = async () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const socialPlatforms = [
+    {
+      name: 'Facebook',
+      icon: Facebook,
+      color: '#1877F2',
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+    },
+    {
+      name: 'Twitter',
+      icon: Twitter,
+      color: '#1DA1F2',
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out this ${title} tool!`)}`
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      color: '#0A66C2',
+      url: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(title)}`
+    },
+    {
+      name: 'WhatsApp',
+      icon: MessageSquare,
+      color: '#25D366',
+      url: `https://wa.me/?text=${encodeURIComponent(`Check out this ${title}: ${shareUrl}`)}`
+    },
+    {
+      name: 'Email',
+      icon: Mail,
+      color: '#6B7280',
+      url: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`Check out this tool: ${shareUrl}`)}`
+    }
+  ];
+
+  return (
+    <div className="bg-linear-to-r from-primary/10 to-secondary/10 border border-border rounded-xl p-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="md:w-2/3">
+          <h3 className="text-lg font-bold text-text-primary mb-2 flex items-center gap-2">
+            <Share2 className="h-5 w-5" />
+            Share This Tool
+          </h3>
+          <p className="text-text-secondary mb-4">
+            Share this {title.split('-')[0]} tool with others!
+          </p>
+          
+          {/* Share URL Box */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex-1 bg-surface border border-border rounded-lg p-3 flex items-center gap-2">
+              <LinkIcon className="h-4 w-4 text-text-secondary" />
+              <input
+                type="text"
+                readOnly
+                value={shareUrl}
+                className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm"
+              />
+              <button
+                onClick={handleCopy}
+                className="p-2 rounded-lg hover:bg-border transition-colors"
+                title="Copy URL"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4 text-text-secondary hover:text-primary" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Social Media Buttons */}
+        <div className="md:w-1/3">
+          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {socialPlatforms.map((platform) => (
+              <a
+                key={platform.name}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 p-3 rounded-lg hover:opacity-90 transition-opacity text-white"
+                style={{ backgroundColor: platform.color }}
+              >
+                <platform.icon className="h-4 w-4" />
+                <span className="hidden md:inline text-sm">{platform.name}</span>
+              </a>
+            ))}
+            
+            <button
+              onClick={handleCopy}
+              className="flex items-center justify-center gap-2 p-3 rounded-lg bg-primary hover:bg-primary/90 text-white transition-colors col-span-3 md:col-span-2 lg:col-span-3"
+            >
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+              <span className="text-sm">
+                {copied ? 'Copied!' : 'Copy Link'}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-border">
+        <p className="text-sm text-text-secondary">
+          <span className="font-medium text-primary">Clean Sharing:</span>{' '}
+          Share this tool with others using clean, SEO-friendly URLs.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+=== components/seo/FAQs.tsx ===
+'use client';
+
+import { useState, useMemo } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslation';
+import { FAQ } from '@/lib/seo/types';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { Search, ChevronDown, HelpCircle, MessageCircle, Star } from 'lucide-react';
+import Link from 'next/link';
+
+interface FAQsProps {
+  faqs?: FAQ[];
+  title?: string;
+  subtitle?: string;
+  className?: string;
+  defaultOpen?: number | null;
+  showSchema?: boolean;
+  enableSearch?: boolean;
+}
+
+export default function FAQs({
+  faqs = [],
+  title: customTitle,
+  subtitle: customSubtitle,
+  className = '',
+  defaultOpen = null,
+  showSchema = true,
+  enableSearch = true,
+}: FAQsProps) {
+  const params = useParams();
+  const lang = params?.lang as string || 'en';
+  const { t } = useTranslation({ namespace: 'common' });
+  const { themeColors } = useTheme();
+  const [openIndex, setOpenIndex] = useState<number | null>(defaultOpen);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const titleText = customTitle || t('frequently_asked_questions', 'Frequently Asked Questions');
+  const subtitleText = customSubtitle || t('find_answers', 'Find answers to common questions about our tools');
+  
+  const filteredFaqs = useMemo(() => {
+    if (!faqs || faqs.length === 0) return [];
+    if (!searchQuery.trim()) return faqs;
+    
+    const query = searchQuery.toLowerCase();
+    return faqs.filter(
+      (faq) =>
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query)
+    );
+  }, [faqs, searchQuery]);
+  
+  if (!faqs || faqs.length === 0) {
+    return null;
+  }
+  
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+  
+  const hasResults = filteredFaqs.length > 0;
+  
+  return (
+    <section className={`faq-section py-12 ${className}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center mb-4">
+            <div 
+              className="rounded-full p-3"
+              style={{ backgroundColor: `${themeColors.primary}15` }}
+            >
+              <HelpCircle className="w-6 h-6" style={{ color: themeColors.primary }} />
+            </div>
+          </div>
+          <h2 
+            className="text-3xl md:text-4xl font-bold mb-4"
+            style={{ color: themeColors.text.primary }}
+          >
+            {titleText}
+          </h2>
+          <p 
+            className="text-lg max-w-2xl mx-auto"
+            style={{ color: themeColors.text.secondary }}
+          >
+            {subtitleText}
+          </p>
+        </div>
+        
+        {enableSearch && faqs.length > 5 && (
+          <div className="mb-8">
+            <div className="relative max-w-md mx-auto">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5" style={{ color: themeColors.text.secondary }} />
+              </div>
+              <input
+                type="text"
+                placeholder={t('search_questions', 'Search questions...')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition-all"
+                style={{
+                  backgroundColor: themeColors.surface,
+                  borderColor: themeColors.border,
+                  color: themeColors.text.primary,
+                  '--tw-ring-color': themeColors.primary,
+                } as React.CSSProperties}
+              />
+            </div>
+          </div>
+        )}
+        
+        {searchQuery && (
+          <div className="text-center mb-6">
+            <p className="text-sm" style={{ color: themeColors.text.secondary }}>
+              {t('found_results', 'Found {count} questions')}
+              {!hasResults && ` — ${t('try_different_search', 'try a different search term')}`}
+            </p>
+          </div>
+        )}
+        
+        <div className="space-y-4">
+          {hasResults ? (
+            filteredFaqs.map((faq: FAQ, index: number) => {
+              const originalIndex = faqs.findIndex(f => f.question === faq.question);
+              const isOpen = openIndex === originalIndex;
+              
+              return (
+                <div
+                  key={originalIndex}
+                  className="rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+                  style={{ 
+                    border: `1px solid ${themeColors.border}`,
+                    backgroundColor: themeColors.surface,
+                  }}
+                >
+                  <button
+                    className="w-full flex items-center justify-between p-5 md:p-6 text-left transition-all duration-200 hover:bg-opacity-50 group"
+                    style={{ 
+                      backgroundColor: 'transparent',
+                      color: themeColors.text.primary
+                    }}
+                    onClick={() => toggleFAQ(originalIndex)}
+                    aria-expanded={isOpen}
+                  >
+                    <div className="flex items-start gap-3 pr-4">
+                      <div 
+                        className="shrink-0 mt-1 transition-transform duration-200"
+                        style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                      >
+                        <ChevronDown className="w-5 h-5" style={{ color: themeColors.primary }} />
+                      </div>
+                      <h3 
+                        className="text-base md:text-lg font-semibold leading-relaxed"
+                        style={{ color: themeColors.text.primary }}
+                      >
+                        {faq.question}
+                      </h3>
+                    </div>
+                  </button>
+                  
+                  {isOpen && (
+                    <div className="p-5 md:p-6 pt-0 border-t" style={{ borderColor: themeColors.border }}>
+                      <p 
+                        className="text-text-secondary leading-relaxed"
+                        style={{ color: themeColors.text.secondary }}
+                      >
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center py-12">
+              <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" style={{ color: themeColors.text.secondary }} />
+              <p className="text-lg" style={{ color: themeColors.text.secondary }}>
+                {t('no_matching_questions', 'No matching questions found.')}
+              </p>
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-4 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                style={{
+                  backgroundColor: `${themeColors.primary}10`,
+                  color: themeColors.primary,
+                }}
+              >
+                {t('clear_search', 'Clear Search')}
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div 
+          className="mt-12 p-6 rounded-xl text-center"
+          style={{
+            backgroundColor: `${themeColors.primary}5`,
+            border: `1px solid ${themeColors.primary}20`,
+          }}
+        >
+          <div className="inline-flex items-center justify-center mb-3">
+            <Star className="w-5 h-5 mr-2" style={{ color: themeColors.primary }} />
+          </div>
+          <h3 className="text-lg font-semibold mb-2" style={{ color: themeColors.text.primary }}>
+            {t('still_have_questions', 'Still have questions?')}
+          </h3>
+          <p className="text-sm mb-4" style={{ color: themeColors.text.secondary }}>
+            {t('cant_find', 'Can\'t find what you\'re looking for? Our support team is here to help.')}
+          </p>
+          <Link
+            href={`/${lang}/contact`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition-all hover:scale-105"
+            style={{
+              backgroundColor: themeColors.primary,
+              color: themeColors.text.accent,
+            }}
+          >
+            <MessageCircle className="w-4 h-4" />
+            {t('contact_support', 'Contact Support')}
+          </Link>
+        </div>
+      </div>
+      
+      {showSchema && faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: faqs.map((faq: FAQ, index: number) => ({
+                '@type': 'Question',
+                position: index + 1,
+                name: faq.question,
+                acceptedAnswer: {
+                  '@type': 'Answer',
+                  text: faq.answer,
+                },
+              })),
+            }),
+          }}
+        />
+      )}
+    </section>
+  );
+}
+
+=== components/seo/InternalLinks.tsx ===
+// components/seo/InternalLinks.tsx — FIXED v2.0
+// ✅ FIXED: Added double-prefix safety in getLocalizedUrl
+
+'use client';
+
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslation';
+import { InternalLinksProps, InternalLink } from './types';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { ArrowRight } from 'lucide-react';
+
+export default function InternalLinks({
+  links,
+  title,
+  description,
+  maxLinks = 6,
+  showCategory = true,
+  className = '',
+  columns = 3,
+}: InternalLinksProps) {
+  const params = useParams();
+  const lang = params?.lang as string || 'en';
+  const { t } = useTranslation({ namespace: 'common' });
+  const { themeColors } = useTheme();
+  
+  const titleText = title || t('internal_links.title', 'Related Tools You Might Like');
+  const descriptionText = description || t('internal_links.description', 'Explore these related tools to enhance your productivity');
+  
+  if (!links || links.length === 0) {
+    return null;
+  }
+  
+  const displayedLinks = links.slice(0, maxLinks);
+  
+  const gridClasses: Record<number, string> = {
+    1: 'grid-cols-1',
+    2: 'grid-cols-1 sm:grid-cols-2',
+    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
+  };
+  
+  // ✅ FIXED: Added double-prefix protection
+  const getLocalizedUrl = (url: string): string => {
+    // Already has correct language prefix
+    if (url.match(/^\/(en|ur|ar|hi)\//)) {
+      return url;
+    }
+    // Fix accidental double prefix like /tools
+    const doublePrefixMatch = url.match(/^\/(en|ur|ar|hi)\/(en|ur|ar|hi)\/(.*)/);
+    if (doublePrefixMatch) {
+      return `/${doublePrefixMatch[1]}/${doublePrefixMatch[3]}`;
+    }
+    // Add current language prefix
+    if (url.startsWith('/')) {
+      return `/${lang}${url}`;
+    }
+    return url;
+  };
+  
+  return (
+    <section className={`internal-links-section ${className}`}>
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center mb-10">
+          <h2 
+            className="text-2xl md:text-3xl font-bold mb-3"
+            style={{ color: themeColors.text.primary }}
+          >
+            {titleText}
+          </h2>
+          {descriptionText && (
+            <p 
+              className="max-w-2xl mx-auto"
+              style={{ color: themeColors.text.secondary }}
+            >
+              {descriptionText}
+            </p>
+          )}
+        </div>
+        
+        <div className={`grid ${gridClasses[columns] || 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'} gap-6`}>
+          {displayedLinks.map((link: InternalLink, index: number) => (
+            <Link
+              key={index}
+              href={getLocalizedUrl(link.url)}
+              className="group rounded-xl p-5 hover:shadow-lg transition-all duration-300 block"
+              style={{ 
+                backgroundColor: themeColors.surface,
+                border: `1px solid ${themeColors.border}`,
+              }}
+            >
+              <div className="flex flex-col h-full">
+                <div className="grow">
+                  <h3 
+                    className="text-lg font-semibold mb-2 group-hover:opacity-80 transition-colors"
+                    style={{ color: themeColors.text.primary }}
+                  >
+                    {link.title}
+                  </h3>
+                  <p 
+                    className="text-sm mb-3 line-clamp-2"
+                    style={{ color: themeColors.text.secondary }}
+                  >
+                    {link.description}
+                  </p>
+                </div>
+                
+                <div className="mt-4 pt-4 flex items-center justify-between" style={{ borderTop: `1px solid ${themeColors.border}` }}>
+                  {showCategory && link.category && (
+                    <span 
+                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
+                      style={{ 
+                        backgroundColor: `${themeColors.primary}10`,
+                        color: themeColors.primary
+                      }}
+                    >
+                      {link.category.replace('-', ' ')}
+                    </span>
+                  )}
+                  <span className="text-primary group-hover:translate-x-1 transition-transform">
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        
+        {links.length > maxLinks && (
+          <div className="text-center mt-10">
+            <Link
+              href={`/${lang}/tools`}
+              className="inline-flex items-center px-6 py-3 border text-base font-medium rounded-md hover:opacity-90 transition-colors"
+              style={{ 
+                backgroundColor: themeColors.primary,
+                color: themeColors.text.accent,
+                borderColor: themeColors.primary
+              }}
+            >
+              {t('internal_links.view_all', 'View All Tools')}
+              <ArrowRight className="ml-2 -mr-1 w-5 h-5" style={{ color: themeColors.text.accent }} />
+            </Link>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+=== components/seo/MetaTags.tsx ===
+// components/seo/MetaTags.tsx — FIXED v2.0
+// ⚠️ WARNING: This component was injecting DUPLICATE title, meta, and hreflang tags
+// because it used next/head <Head> which conflicts with App Router's generateMetadata().
+// 
+// SOLUTION: This component is now DEPRECATED. All meta tags are handled by:
+// - app/[lang]/layout.tsx (generateMetadata)
+// - lib/seo/generateMetadata.ts (generateToolMetadata, generateBlogPostMetadata, etc.)
+//
+// If you need dynamic client-side meta updates, use:
+//   document.title = 'New Title';
+//   document.querySelector('meta[name="description"]')?.setAttribute('content', '...');
+//
+// DO NOT use next/head in App Router for SEO tags.
+
+'use client';
+
+interface MetaTagsProps {
+  title?: string;
+  description?: string;
+}
+
+export default function MetaTags({ title, description }: MetaTagsProps) {
+  // Only update document.title client-side if needed
+  if (typeof window !== 'undefined' && title) {
+    document.title = title.includes('Centre.com.pk') ? title : `${title} | Centre.com.pk`;
+  }
+  
+  // Return nothing — all SEO tags come from generateMetadata()
+  return null;
+}
+
+// // components/seo/MetaTags.tsx
+// 'use client';
+
+// import Head from 'next/head';
+// import { useMemo } from 'react';
+// import {
+//   SITE_URL,
+//   SITE_NAME,
+//   SITE_DESCRIPTION,
+//   SITE_KEYWORDS,
+//   SITE_AUTHOR,
+//   SITE_TWITTER_HANDLE,
+//   CATEGORY_NAMES,
+//   CATEGORY_DESCRIPTIONS
+// } from '@/lib/seo/constants';
+
+// interface MetaTagsProps {
+//   title?: string;
+//   description?: string;
+//   keywords?: string | string[];
+//   image?: string;
+//   url?: string;
+//   type?: 'website' | 'article' | 'tool';
+//   noIndex?: boolean;
+//   publishedTime?: string;
+//   modifiedTime?: string;
+//   author?: string;
+//   section?: string;
+//   tags?: string[];
+//   toolName?: string;
+//   toolCategory?: string;
+//   isToolPage?: boolean;
+// }
+
+// export default function MetaTags({
+//   title,
+//   description,
+//   keywords,
+//   image,
+//   url,
+//   type = 'website',
+//   noIndex = false,
+//   publishedTime,
+//   modifiedTime,
+//   author = SITE_AUTHOR,
+//   section = 'Technology',
+//   tags = [],
+//   toolName,
+//   toolCategory,
+//   isToolPage = false
+// }: MetaTagsProps): React.ReactElement {
+//   // Generate full title
+//   const fullTitle = useMemo(() => {
+//     if (title) {
+//       return title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+//     }
+//     return SITE_NAME;
+//   }, [title]);
+
+//   // Generate full description
+//   const fullDescription = useMemo(() => {
+//     if (description) return description;
+//     if (toolCategory && CATEGORY_DESCRIPTIONS[toolCategory]) {
+//       return CATEGORY_DESCRIPTIONS[toolCategory];
+//     }
+//     return SITE_DESCRIPTION;
+//   }, [description, toolCategory]);
+
+//   // Generate keywords
+//   const fullKeywords = useMemo(() => {
+//     if (Array.isArray(keywords)) {
+//       return keywords.join(', ');
+//     }
+//     if (typeof keywords === 'string') {
+//       return keywords;
+//     }
+//     if (toolCategory && CATEGORY_NAMES[toolCategory]) {
+//       return `${CATEGORY_NAMES[toolCategory]}, online tools, free tools, ${SITE_KEYWORDS}`;
+//     }
+//     return SITE_KEYWORDS;
+//   }, [keywords, toolCategory]);
+
+//   // Generate OG image URL
+//   const ogImageUrl = useMemo(() => {
+//     if (image && image.startsWith('http')) return image;
+    
+//     const imageUrl = new URL('/api/og-image', SITE_URL);
+    
+//     // Add title and description
+//     imageUrl.searchParams.set('title', fullTitle);
+//     imageUrl.searchParams.set('description', fullDescription);
+    
+//     // Add theme (will be handled client-side)
+//     if (typeof window !== 'undefined') {
+//       const urlParams = new URLSearchParams(window.location.search);
+//       const theme = urlParams.get('theme') || 'professional-blue';
+//       imageUrl.searchParams.set('theme', theme);
+//     } else {
+//       imageUrl.searchParams.set('theme', 'professional-blue');
+//     }
+    
+//     // Add tool-specific data
+//     if (toolName) {
+//       imageUrl.searchParams.set('toolName', toolName);
+//     }
+//     if (toolCategory) {
+//       imageUrl.searchParams.set('category', toolCategory);
+//     }
+    
+//     return imageUrl.toString();
+//   }, [image, fullTitle, fullDescription, toolName, toolCategory]);
+
+//   // Generate canonical URL
+//   const canonicalUrl = useMemo(() => {
+//     if (url) {
+//       return url.startsWith('http') ? url : `${SITE_URL}${url}`;
+//     }
+//     if (typeof window !== 'undefined') {
+//       return window.location.href.split('?')[0]; // Remove query params for canonical
+//     }
+//     return SITE_URL;
+//   }, [url]);
+
+//   // Generate robots content
+//   const robotsContent = useMemo(() => {
+//     if (noIndex) {
+//       return 'noindex, nofollow, noarchive, nosnippet, notranslate, noimageindex';
+//     }
+//     return 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+//   }, [noIndex]);
+
+//   // Get current theme for sharing
+//   const currentTheme = useMemo(() => {
+//     if (typeof window === 'undefined') return 'professional-blue';
+    
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const theme = urlParams.get('theme');
+//     const savedTheme = localStorage.getItem('theme');
+    
+//     return theme || savedTheme || 'professional-blue';
+//   }, []);
+
+//   // Generate share URL with theme
+//   const shareUrl = useMemo(() => {
+//     const baseUrl = canonicalUrl;
+//     const urlObj = new URL(baseUrl);
+    
+//     // Add theme parameter for sharing
+//     urlObj.searchParams.set('theme', currentTheme);
+    
+//     return urlObj.toString();
+//   }, [canonicalUrl, currentTheme]);
+
+//   return (
+//     <Head>
+//       {/* Primary Meta Tags */}
+//       <title>{fullTitle}</title>
+//       <meta name="title" content={fullTitle} />
+//       <meta name="description" content={fullDescription} />
+//       <meta name="keywords" content={fullKeywords} />
+//       <meta name="author" content={author} />
+//       <meta name="robots" content={robotsContent} />
+      
+//       {/* Language and Content Info */}
+//       <meta name="language" content="en" />
+//       <meta name="revisit-after" content="7 days" />
+//       <meta name="rating" content="General" />
+//       <meta name="distribution" content="Global" />
+//       <meta name="generator" content="Next.js" />
+//       <meta name="copyright" content={`© ${new Date().getFullYear()} ${SITE_NAME}. All rights reserved.`} />
+      
+//       {/* Open Graph / Facebook */}
+//       <meta property="og:type" content={type} />
+//       <meta property="og:url" content={shareUrl} />
+//       <meta property="og:title" content={fullTitle} />
+//       <meta property="og:description" content={fullDescription} />
+//       <meta property="og:image" content={ogImageUrl} />
+//       <meta property="og:image:width" content="1200" />
+//       <meta property="og:image:height" content="630" />
+//       <meta property="og:image:alt" content={fullTitle} />
+//       <meta property="og:image:type" content="image/svg+xml" />
+//       <meta property="og:site_name" content={SITE_NAME} />
+//       <meta property="og:locale" content="en_US" />
+      
+//       {/* Twitter Card */}
+//       <meta name="twitter:card" content="summary_large_image" />
+//       <meta name="twitter:url" content={shareUrl} />
+//       <meta name="twitter:title" content={fullTitle} />
+//       <meta name="twitter:description" content={fullDescription} />
+//       <meta name="twitter:image" content={ogImageUrl} />
+//       <meta name="twitter:image:alt" content={fullTitle} />
+//       <meta name="twitter:creator" content={SITE_TWITTER_HANDLE} />
+//       <meta name="twitter:site" content={SITE_TWITTER_HANDLE} />
+      
+//       {/* Article-specific meta tags */}
+//       {type === 'article' && publishedTime && (
+//         <meta property="article:published_time" content={publishedTime} />
+//       )}
+//       {type === 'article' && modifiedTime && (
+//         <meta property="article:modified_time" content={modifiedTime} />
+//       )}
+//       {type === 'article' && author && (
+//         <meta property="article:author" content={author} />
+//       )}
+//       {type === 'article' && section && (
+//         <meta property="article:section" content={section} />
+//       )}
+//       {type === 'article' && tags.length > 0 && (
+//         tags.map((tag, index) => (
+//           <meta key={`tag-${index}`} property="article:tag" content={tag} />
+//         ))
+//       )}
+      
+//       {/* Tool-specific meta tags */}
+//       {isToolPage && toolName && (
+//         <>
+//           <meta property="og:type" content="product" />
+//           <meta property="product:brand" content={SITE_NAME} />
+//           <meta property="product:availability" content="in stock" />
+//           <meta property="product:condition" content="new" />
+//           <meta property="product:price:amount" content="0" />
+//           <meta property="product:price:currency" content="USD" />
+//         </>
+//       )}
+      
+//       {/* Additional SEO Meta Tags */}
+//       <meta name="application-name" content={SITE_NAME} />
+//       <meta name="apple-mobile-web-app-title" content={SITE_NAME} />
+//       <meta name="theme-color" content="#2563EB" />
+//       <meta name="msapplication-TileColor" content="#2563EB" />
+      
+//       {/* Canonical URL */}
+//       <link rel="canonical" href={canonicalUrl} />
+      
+//       {/* Alternate Languages (if any) */}
+//       <link rel="alternate" href={canonicalUrl} hrefLang="en" />
+//       <link rel="alternate" href={canonicalUrl} hrefLang="x-default" />
+      
+//       {/* Preload OG image for better performance */}
+//       <link
+//         rel="preload"
+//         href={ogImageUrl}
+//         as="image"
+//         type="image/svg+xml"
+//         crossOrigin="anonymous"
+//       />
+//     </Head>
+//   );
+// }
+
+=== components/seo/PerformanceScripts.tsx ===
+// components/seo/PerformanceScripts.tsx - FIXED VERSION
+'use client';
+
+import { useEffect } from 'react';
+
+export default function PerformanceScripts() {
+  useEffect(() => {
+    // Preconnect to critical origins
+    const preconnect = (url: string) => {
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = url;
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    };
+
+    // Preconnect to Google Fonts
+    preconnect('https://fonts.googleapis.com');
+    preconnect('https://fonts.gstatic.com');
+
+    // Lazy load non-critical images
+    const lazyLoadImages = () => {
+      const images = document.querySelectorAll('img[data-src]');
+      
+      const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target as HTMLImageElement;
+            
+            // FIXED: Use proper type checking
+            if (img.hasAttribute('data-src')) {
+              const dataSrc = img.getAttribute('data-src');
+              if (dataSrc) {
+                img.src = dataSrc;
+                img.removeAttribute('data-src');
+              }
+            }
+            
+            imageObserver.unobserve(img);
+          }
+        });
+      }, {
+        rootMargin: '50px 0px 50px 0px',
+      });
+      
+      images.forEach(img => imageObserver.observe(img));
+    };
+
+    // Prefetch likely next pages
+    const prefetchPages = () => {
+      const links = ['/tools', '/tools/calculators', '/tools/image-tools'];
+      
+      links.forEach(link => {
+        const prefetchLink = document.createElement('link');
+        prefetchLink.rel = 'prefetch';
+        prefetchLink.href = link;
+        prefetchLink.as = 'document';
+        document.head.appendChild(prefetchLink);
+      });
+    };
+
+    // Load non-critical resources after user interaction
+    const loadLazyResources = () => {
+      // Load analytics after user interaction
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => {
+          // Load non-critical scripts here
+          console.log('Loading lazy resources...');
+        });
+      }
+    };
+
+    // Add event listener for user interaction
+    const handleUserInteraction = () => {
+      loadLazyResources();
+      
+      // Remove event listeners
+      document.removeEventListener('scroll', handleUserInteraction);
+      document.removeEventListener('mousemove', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('click', handleUserInteraction);
+    };
+
+    // Run immediate optimizations
+    lazyLoadImages();
+    prefetchPages();
+
+    // Add event listeners for delayed optimizations
+    document.addEventListener('scroll', handleUserInteraction, { once: true, passive: true });
+    document.addEventListener('mousemove', handleUserInteraction, { once: true, passive: true });
+    document.addEventListener('touchstart', handleUserInteraction, { once: true, passive: true });
+    document.addEventListener('click', handleUserInteraction, { once: true });
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('scroll', handleUserInteraction);
+      document.removeEventListener('mousemove', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('click', handleUserInteraction);
+    };
+  }, []);
+
+  return null;
+}
+
+=== components/seo/RankingDashboard.tsx ===
+// components/seo/RankingDashboard.tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { getToolCompetitorData, ToolCompetitorData } from '@/lib/seo/competitorData';
+
+interface RankingDashboardProps {
+  toolData: {
+    slug: string;
+    title: string;
+  };
+}
+
+export default function RankingDashboard({ toolData }: RankingDashboardProps) {
+  const [data, setData] = useState<ToolCompetitorData | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const toolCompetitorData = getToolCompetitorData(toolData.slug);
+    setData(toolCompetitorData);
+    setLoading(false);
+  }, [toolData.slug]);
+  
+  if (loading) {
+    return (
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {[1,2,3,4].map(i => (
+              <div key={i} className="h-20 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+          <div className="h-40 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!data) {
+    return (
+      <div className="bg-surface rounded-xl p-6 border border-border text-center">
+        <p className="text-text-secondary">No ranking data available for this tool.</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="bg-surface rounded-xl p-6 border border-border">
+      {/* Title */}
+      <h2 className="text-xl font-bold mb-4">
+        Google Ranking Analysis for {toolData.title}
+      </h2>
+      
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="text-center p-3 bg-primary/10 rounded-lg">
+          <div className="text-2xl font-bold">{data.seoScore}/100</div>
+          <div className="text-sm">SEO Score</div>
+          <div className="text-xs text-green-600 mt-1">Excellent</div>
+        </div>
+        <div className="text-center p-3 bg-primary/10 rounded-lg">
+          <div className="text-2xl font-bold">{data.keywordsTracked}</div>
+          <div className="text-sm">Keywords Tracked</div>
+        </div>
+        <div className="text-center p-3 bg-primary/10 rounded-lg">
+          <div className="text-2xl font-bold">{data.keywordsOnFirstPage}</div>
+          <div className="text-sm">on first page</div>
+        </div>
+        <div className="text-center p-3 bg-primary/10 rounded-lg">
+          <div className="text-2xl font-bold">{data.estimatedTraffic.toLocaleString()}</div>
+          <div className="text-sm">visitors/month</div>
+        </div>
+      </div>
+      
+      {/* Keyword Positions Table */}
+      <h3 className="text-lg font-semibold mb-3">Keyword Positions</h3>
+      <div className="overflow-x-auto mb-6">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b">
+              <th className="text-left p-2">Keyword</th>
+              <th className="text-center p-2">Position</th>
+              <th className="text-center p-2">Difficulty</th>
+              <th className="text-left p-2">Top Competitor</th>
+              <th className="text-left p-2">Action Needed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.keywords.map((kw, idx) => (
+              <tr key={idx} className="border-b">
+                <td className="p-2 font-medium">{kw.keyword}</td>
+                <td className="p-2 text-center">
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    kw.position <= 3 ? 'bg-green-500/20 text-green-600' :
+                    kw.position <= 10 ? 'bg-yellow-500/20 text-yellow-600' :
+                    'bg-gray-500/20 text-gray-600'
+                  }`}>
+                    #{kw.position}
+                  </span>
+                </td>
+                <td className="p-2 text-center">
+                  <div className="flex items-center gap-1">
+                    <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary rounded-full" style={{ width: `${kw.difficulty}%` }} />
+                    </div>
+                    <span className="text-xs">{kw.difficulty}/100</span>
+                  </div>
+                </td>
+                <td className="p-2">{kw.topCompetitor}</td>
+                <td className="p-2 text-primary text-sm">{kw.actionNeeded}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Improvement Suggestions */}
+      <h3 className="text-lg font-semibold mb-3">Improvement Suggestions</h3>
+      <ul className="space-y-2 mb-6">
+        {data.improvementSuggestions.map((suggestion, idx) => (
+          <li key={idx} className="flex items-start gap-2">
+            <span className="text-primary font-bold">{idx + 1}</span>
+            <span>{suggestion}</span>
+          </li>
+        ))}
+      </ul>
+      
+      {/* DYNAMIC COMPETITOR COMPARISON TABLE */}
+      <h3 className="text-lg font-semibold mb-3">Why Our Tool is Better Than Paid Alternatives</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border-collapse">
+          <thead>
+            <tr className="bg-primary/10">
+              <th className="p-3 text-left">Feature</th>
+              <th className="p-3 text-center">Our Tool</th>
+              {data.competitors.map((comp, idx) => (
+                <th key={idx} className="p-3 text-center">{comp.name}</th>
+              ))}
+             </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b">
+              <td className="p-3 font-medium">Free to Use</td>
+              <td className="p-3 text-center text-green-600">✅ Yes</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  {comp.features.free === true && '✅ Yes'}
+                  {comp.features.free === 'limited' && '⚠️ Limited'}
+                  {comp.features.free === false && '❌ Paid'}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b">
+              <td className="p-3 font-medium">No Registration</td>
+              <td className="p-3 text-center text-green-600">✅ Yes</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  {comp.features.noRegistration ? '✅ Yes' : '❌ Required'}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b">
+              <td className="p-3 font-medium">Privacy First</td>
+              <td className="p-3 text-center text-green-600">✅ 100%</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  {comp.features.privacy ? '✅ Yes' : '⚠️ Data Stored'}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b">
+              <td className="p-3 font-medium">Multi-Language Support</td>
+              <td className="p-3 text-center text-green-600">✅ Urdu/Hindi/Arabic</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  {comp.features.multiLanguage ? '✅ Yes' : '❌ None'}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b">
+              <td className="p-3 font-medium">RTL Support</td>
+              <td className="p-3 text-center text-green-600">✅ Yes</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  {comp.features.rtlSupport ? '✅ Yes' : '❌ No'}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b">
+              <td className="p-3 font-medium">Page Speed</td>
+              <td className="p-3 text-center text-green-600">✅ 92/100</td>
+              {data.competitors.map((comp, idx) => (
+                <td key={idx} className="p-3 text-center">
+                  ⚠️ {comp.features.pageSpeed}/100
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      {/* Save Money Banner */}
+      <div className="mt-4 p-3 bg-green-50 rounded-lg text-center">
+        <p className="text-green-700 font-semibold">
+          💰 Save $10-20/month by using our free tool!
+        </p>
+      </div>
+    </div>
+  );
+}
+
+=== components/seo/RankingFactors.tsx ===
+// components/seo/RankingFactors.tsx
+'use client';
+
+import { useEffect, useRef } from 'react';
+import { RankingFactorsProps } from './types';
+
+export default function RankingFactors({
+  pageUrl,
+  trackEngagement = true,
+  trackScroll = true,
+  trackClicks = true,
+  trackTime = true,
+}: RankingFactorsProps) {
+  const pageLoadTime = useRef<number>(Date.now());
+  const scrollDepth = useRef<number>(0);
+  const timeOnPage = useRef<number>(0);
+  const clickCount = useRef<number>(0);
+
+  useEffect(() => {
+    if (!trackEngagement) return;
+
+    // Track page load performance
+    const trackPerformance = () => {
+      if (window.performance && window.performance.timing) {
+        const { navigationStart, loadEventEnd } = window.performance.timing;
+        const loadTime = loadEventEnd - navigationStart;
+        
+        // Send to analytics (you would replace with your actual analytics)
+        console.log('Page Load Time:', loadTime, 'ms');
+        
+        // Core Web Vitals tracking
+        if (window.performance.getEntriesByType) {
+          const paintEntries = window.performance.getEntriesByType('paint');
+          paintEntries.forEach(entry => {
+            if (entry.name === 'first-contentful-paint') {
+              console.log('FCP:', entry.startTime, 'ms');
+            }
+          });
+        }
+      }
+    };
+
+    // Track scroll depth
+    const trackScrollDepth = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      
+      const currentDepth = Math.round((scrollTop + clientHeight) / scrollHeight * 100);
+      if (currentDepth > scrollDepth.current) {
+        scrollDepth.current = currentDepth;
+        
+        // Log depth milestones
+        if ([25, 50, 75, 90, 100].includes(currentDepth)) {
+          console.log(`Scroll Depth: ${currentDepth}%`);
+          
+          // Send to analytics
+          if (typeof window.gtag !== 'undefined') {
+            window.gtag('event', 'scroll_depth', {
+              event_category: 'engagement',
+              event_label: pageUrl || window.location.pathname,
+              value: currentDepth,
+            });
+          }
+        }
+      }
+    };
+
+    // Track time on page
+    const startTimeTracking = () => {
+      const interval = setInterval(() => {
+        timeOnPage.current += 1;
+        
+        // Log time milestones (every 30 seconds)
+        if (timeOnPage.current % 30 === 0) {
+          console.log(`Time on page: ${timeOnPage.current} seconds`);
+          
+          // Send to analytics
+          if (typeof window.gtag !== 'undefined') {
+            window.gtag('event', 'time_on_page', {
+              event_category: 'engagement',
+              event_label: pageUrl || window.location.pathname,
+              value: timeOnPage.current,
+            });
+          }
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    };
+
+    // Track clicks
+    const trackClickEvents = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      const clickableElement = target.closest('a, button, [role="button"]');
+      
+      if (clickableElement) {
+        clickCount.current += 1;
+        
+        // Get element info
+        const tagName = clickableElement.tagName.toLowerCase();
+        const text = clickableElement.textContent?.trim().substring(0, 50) || '';
+        const href = clickableElement.getAttribute('href') || '';
+        
+        console.log(`Click #${clickCount.current}: ${tagName} - ${text}`);
+        
+        // Send to analytics
+        if (typeof window.gtag !== 'undefined') {
+          window.gtag('event', 'click', {
+            event_category: 'engagement',
+            event_label: `${tagName}: ${text}`,
+            value: clickCount.current,
+          });
+        }
+      }
+    };
+
+    // Track beforeunload for final metrics
+    const trackUnload = () => {
+      const totalTime = Math.round((Date.now() - pageLoadTime.current) / 1000);
+      
+      console.log('Page Session Summary:', {
+        totalTime,
+        maxScrollDepth: scrollDepth.current,
+        totalClicks: clickCount.current,
+        url: pageUrl || window.location.href,
+      });
+      
+      // Send final analytics
+      if (typeof window.gtag !== 'undefined') {
+        window.gtag('event', 'page_session', {
+          event_category: 'engagement',
+          event_label: pageUrl || window.location.pathname,
+          total_time: totalTime,
+          scroll_depth: scrollDepth.current,
+          click_count: clickCount.current,
+        });
+      }
+    };
+
+    // Initialize tracking
+    trackPerformance();
+    
+    // Set up event listeners
+    if (trackScroll) {
+      window.addEventListener('scroll', trackScrollDepth, { passive: true });
+    }
+    
+    if (trackClicks) {
+      document.addEventListener('click', trackClickEvents);
+    }
+    
+    if (trackTime) {
+      const timeInterval = startTimeTracking();
+    }
+    
+    window.addEventListener('beforeunload', trackUnload);
+    
+    // LCP (Largest Contentful Paint) tracking
+    if ('PerformanceObserver' in window) {
+      try {
+        const lcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          console.log('LCP:', lastEntry.startTime, 'ms');
+        });
+        
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      } catch (error) {
+        console.log('LCP tracking not supported');
+      }
+    }
+    
+    // CLS (Cumulative Layout Shift) tracking
+    if ('PerformanceObserver' in window) {
+      try {
+        let clsValue = 0;
+        const clsEntries: any[] = [];
+        
+        const clsObserver = new PerformanceObserver((entryList) => {
+          for (const entry of entryList.getEntries()) {
+            if (!(entry as any).hadRecentInput) {
+              clsValue += (entry as any).value;
+              clsEntries.push(entry);
+            }
+          }
+          
+          console.log('Current CLS value:', clsValue);
+        });
+        
+        clsObserver.observe({ type: 'layout-shift', buffered: true });
+        
+        // Report final CLS on visibility change
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+            console.log('Final CLS:', clsValue);
+            
+            // Send to analytics
+            if (typeof window.gtag !== 'undefined') {
+              window.gtag('event', 'web_vitals', {
+                event_category: 'Core Web Vitals',
+                event_label: pageUrl || window.location.pathname,
+                value: Math.round(clsValue * 1000),
+                non_interaction: true,
+              });
+            }
+          }
+        });
+      } catch (error) {
+        console.log('CLS tracking not supported');
+      }
+    }
+    
+    // Cleanup
+    return () => {
+      if (trackScroll) {
+        window.removeEventListener('scroll', trackScrollDepth);
+      }
+      
+      if (trackClicks) {
+        document.removeEventListener('click', trackClickEvents);
+      }
+      
+      window.removeEventListener('beforeunload', trackUnload);
+      trackUnload(); // Final report
+    };
+  }, [trackEngagement, trackScroll, trackClicks, trackTime, pageUrl]);
+
+  return null;
+}
+
+// Declare gtag for TypeScript
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
+
+=== components/seo/SchemaScript.tsx ===
+// components/seo/SchemaScript.tsx
+'use client';
+
+import { SchemaScriptProps } from './types';
+
+export default function SchemaScript({
+  schema,
+  type = 'application/ld+json',
+  className = '',
+}: SchemaScriptProps) {
+  if (!schema) {
+    return null;
+  }
+
+  // Handle array of schemas
+  const schemas = Array.isArray(schema) ? schema : [schema];
+  
+  return (
+    <div className={`schema-scripts ${className}`}>
+      {schemas.map((schemaData, index) => {
+        // Skip empty schemas
+        if (!schemaData || Object.keys(schemaData).length === 0) {
+          return null;
+        }
+
+        return (
+          <script
+            key={index}
+            type={type}
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(schemaData, null, 2),
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+// Predefined schema components
+export function WebsiteSchema() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Centre.com.pk',
+    alternateName: 'Free Online Tools',
+    url: 'https://www.centre.com.pk',
+    description: 'Free online tools for developers, designers, students, and professionals. Calculators, converters, formatters, and more!',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://www.centre.com.pk/search?q=',
+      'query-input': 'required name=q',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Centre.com.pk',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.centre.com.pk/logo.png',
+        width: 512,
+        height: 512,
+      },
+    },
+  };
+
+  return <SchemaScript schema={schema} />;
+}
+
+export function OrganizationSchema() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Centre.com.pk',
+    url: 'https://www.centre.com.pk',
+    logo: 'https://www.centre.com.pk/logo.png',
+    sameAs: [
+      'https://twitter.com/centerspk',
+      'https://facebook.com/centerspk',
+      'https://linkedin.com/company/centerspk',
+      'https://instagram.com/centerspk',
+    ],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: 'support@centre.com.pk',
+      availableLanguage: ['English', 'Urdu'],
+    },
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'PK',
+    },
+  };
+
+  return <SchemaScript schema={schema} />;
+}
+
+export function LocalBusinessSchema() {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: 'Centre.com.pk',
+    description: 'Free online tools and utilities provider',
+    url: 'https://www.centre.com.pk',
+    telephone: '+92-XXX-XXXXXXX',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Online',
+      addressLocality: 'Lahore',
+      addressRegion: 'Punjab',
+      postalCode: '54000',
+      addressCountry: 'PK',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: '31.5497',
+      longitude: '74.3436',
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      opens: '00:00',
+      closes: '23:59',
+    },
+    priceRange: '$$',
+  };
+
+  return <SchemaScript schema={schema} />;
+}
+
+// ✅ FIXED: Added lang parameter for proper multilingual URLs
+export function SoftwareApplicationSchema(slug: string, category: string, title: string, description: string, lang: string = 'en') {
+  const url = `https://www.centre.com.pk/${lang}/tools/${category}/${slug}`;
+  
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: title,
+    description: description,
+    url: url,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      ratingCount: '1000',
+      bestRating: '5',
+      worstRating: '1',
+    },
+    author: {
+      '@type': 'Organization',
+      name: 'Centre.com.pk',
+    },
+  };
+
+  return <SchemaScript schema={schema} />;
+}
+
+// // components/seo/SchemaScript.tsx
+// 'use client';
+
+// import { SchemaScriptProps } from './types';
+
+// export default function SchemaScript({
+//   schema,
+//   type = 'application/ld+json',
+//   className = '',
+// }: SchemaScriptProps) {
+//   if (!schema) {
+//     return null;
+//   }
+
+//   // Handle array of schemas
+//   const schemas = Array.isArray(schema) ? schema : [schema];
+  
+//   return (
+//     <div className={`schema-scripts ${className}`}>
+//       {schemas.map((schemaData, index) => {
+//         // Skip empty schemas
+//         if (!schemaData || Object.keys(schemaData).length === 0) {
+//           return null;
+//         }
+
+//         return (
+//           <script
+//             key={index}
+//             type={type}
+//             dangerouslySetInnerHTML={{
+//               __html: JSON.stringify(schemaData, null, 2),
+//             }}
+//           />
+//         );
+//       })}
+//     </div>
+//   );
+// }
+
+// // Predefined schema components
+// export function WebsiteSchema() {
+//   const schema = {
+//     '@context': 'https://schema.org',
+//     '@type': 'WebSite',
+//     name: 'Centre.com.pk',
+//     alternateName: 'Free Online Tools',
+//     url: 'https://www.centre.com.pk',
+//     description: 'Free online tools for developers, designers, students, and professionals. Calculators, converters, formatters, and more!',
+//     potentialAction: {
+//       '@type': 'SearchAction',
+//       target: 'https://www.centre.com.pk/search?q=',
+//       'query-input': 'required name=q',
+//     },
+//     publisher: {
+//       '@type': 'Organization',
+//       name: 'Centre.com.pk',
+//       logo: {
+//         '@type': 'ImageObject',
+//         url: 'https://www.centre.com.pk/logo.png',
+//         width: 512,
+//         height: 512,
+//       },
+//     },
+//   };
+
+//   return <SchemaScript schema={schema} />;
+// }
+
+// export function OrganizationSchema() {
+//   const schema = {
+//     '@context': 'https://schema.org',
+//     '@type': 'Organization',
+//     name: 'Centre.com.pk',
+//     url: 'https://www.centre.com.pk',
+//     logo: 'https://www.centre.com.pk/logo.png',
+//     sameAs: [
+//       'https://twitter.com/centerspk',
+//       'https://facebook.com/centerspk',
+//       'https://linkedin.com/company/centerspk',
+//       'https://instagram.com/centerspk',
+//     ],
+//     contactPoint: {
+//       '@type': 'ContactPoint',
+//       contactType: 'customer support',
+//       email: 'support@centre.com.pk',
+//       availableLanguage: ['English', 'Urdu'],
+//     },
+//     address: {
+//       '@type': 'PostalAddress',
+//       addressCountry: 'PK',
+//     },
+//   };
+
+//   return <SchemaScript schema={schema} />;
+// }
+
+// export function LocalBusinessSchema() {
+//   const schema = {
+//     '@context': 'https://schema.org',
+//     '@type': 'LocalBusiness',
+//     name: 'Centre.com.pk',
+//     description: 'Free online tools and utilities provider',
+//     url: 'https://www.centre.com.pk',
+//     telephone: '+92-XXX-XXXXXXX',
+//     address: {
+//       '@type': 'PostalAddress',
+//       streetAddress: 'Online',
+//       addressLocality: 'Lahore',
+//       addressRegion: 'Punjab',
+//       postalCode: '54000',
+//       addressCountry: 'PK',
+//     },
+//     geo: {
+//       '@type': 'GeoCoordinates',
+//       latitude: '31.5497',
+//       longitude: '74.3436',
+//     },
+//     openingHoursSpecification: {
+//       '@type': 'OpeningHoursSpecification',
+//       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+//       opens: '00:00',
+//       closes: '23:59',
+//     },
+//     priceRange: '$$',
+//   };
+
+//   return <SchemaScript schema={schema} />;
+// }
+
+// export function SoftwareApplicationSchema(slug: string, category: string, title: string, description: string) {
+//   const url = `https://www.centre.com.pk/tools/${category}/${slug}`;
+  
+//   const schema = {
+//     '@context': 'https://schema.org',
+//     '@type': 'SoftwareApplication',
+//     name: title,
+//     description: description,
+//     url: url,
+//     applicationCategory: 'UtilitiesApplication',
+//     operatingSystem: 'Any',
+//     offers: {
+//       '@type': 'Offer',
+//       price: '0',
+//       priceCurrency: 'USD',
+//     },
+//     aggregateRating: {
+//       '@type': 'AggregateRating',
+//       ratingValue: '4.8',
+//       ratingCount: '1000',
+//       bestRating: '5',
+//       worstRating: '1',
+//     },
+//     author: {
+//       '@type': 'Organization',
+//       name: 'Centre.com.pk',
+//     },
+//   };
+
+//   return <SchemaScript schema={schema} />;
+// }
+
+=== components/seo/ShareButtons.tsx ===
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useTranslation } from '@/hooks/useTranslation';
+import { 
+  Share2, 
+  Facebook, 
+  Twitter, 
+  Linkedin, 
+  Instagram,
+  Youtube,
+  MessageCircle,
+  Mail,
+  Copy,
+  Check
+} from 'lucide-react';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.centre.com.pk';
+
+interface ShareButtonsProps {
+  title?: string;
+  description?: string;
+  url?: string;
+  compact?: boolean;
+}
+
+export default function ShareButtons({ 
+  title: customTitle,
+  description: customDescription,
+  url: customUrl,
+  compact = false
+}: ShareButtonsProps) {
+  const params = useParams();
+  const lang = params?.lang as string || 'en';
+  const { t } = useTranslation({ namespace: 'common' });
+  const [copied, setCopied] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Auto-detect page info
+  const detectPageInfo = () => {
+    const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+    const path = pathname.toLowerCase();
+    
+    if (path.includes('/tools/')) {
+      const pathParts = path.split('/').filter(Boolean);
+      
+      if (pathParts.length >= 3 && pathParts[1] === 'tools') {
+        const category = pathParts[2];
+        const toolSlug = pathParts[3] || '';
+        
+        // Convert slug to readable name
+        const toolName = toolSlug
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        
+        const categoryNames: Record<string, string> = {
+          'calculators': t('calculators', 'Calculator'),
+          'code-tools': t('code_tools', 'Code Tool'),
+          'image-tools': t('image_tools', 'Image Tool'),
+          'pdf-tools': t('pdf_tools', 'PDF Tool'),
+          'text-tools': t('text_tools', 'Text Tool'),
+          'security-tools': t('security_tools', 'Security Tool'),
+          'design-tools': t('design_tools', 'Design Tool'),
+        };
+        
+        const categoryName = categoryNames[category] || 'Tool';
+        
+        return {
+          title: customTitle || `${toolName} - Free Online ${categoryName} | Centre.com.pk`,
+          description: customDescription || `Use our free ${toolName.toLowerCase()} online. No registration required.`,
+          url: customUrl || pathname,
+        };
+      }
+    }
+    
+    return {
+      title: customTitle || 'Centre.com.pk - Free Online Tools',
+      description: customDescription || 'Professional online tools for everyone.',
+      url: customUrl || pathname,
+    };
+  };
+  
+  const pageInfo = detectPageInfo();
+  const finalTitle = pageInfo.title;
+  const finalDescription = pageInfo.description;
+  let finalUrl = pageInfo.url;
+  
+  if (finalUrl.startsWith('http')) {
+    const urlObj = new URL(finalUrl);
+    finalUrl = urlObj.pathname + urlObj.search;
+  }
+  
+  if (!finalUrl.startsWith('/')) {
+    finalUrl = '/' + finalUrl;
+  }
+  
+  const fullShareUrl = `${SITE_URL}${finalUrl}`;
+  const encodedTitle = encodeURIComponent(finalTitle);
+  const encodedUrl = encodeURIComponent(fullShareUrl);
+  const encodedDescription = encodeURIComponent(finalDescription);
+  
+  const socialLinks = {
+    whatsapp: `https://wa.me/?text=${encodedTitle}%0A%0A${encodedUrl}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}&hashtags=CentersPK`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    instagram: `https://instagram.com/centre.com.pk`,
+    youtube: `https://youtube.com/@centre.com.pk`,
+    email: `mailto:?subject=${encodedTitle}&body=${encodedDescription}%0A%0A${fullShareUrl}`
+  };
+  
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(fullShareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch (err) {
+      const textArea = document.createElement('textarea');
+      textArea.value = fullShareUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
+  
+  const openSocialPopup = (url: string, platform: string) => {
+    const width = 600;
+    const height = 500;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    
+    window.open(
+      url,
+      `${platform}Share`,
+      `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=${width}, height=${height}, top=${top}, left=${left}`
+    );
+  };
+  
+  if (compact) {
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="inline-flex items-center gap-2 bg-surface border border-border text-text-primary px-4 py-2 rounded-lg hover:bg-surface/80 transition-all"
+          aria-label={t('share_title', 'Share')}
+        >
+          <Share2 className="h-4 w-4" />
+          <span>{t('share_title', 'Share')}</span>
+        </button>
+        
+        {isOpen && (
+          <div className="absolute top-full left-0 mt-2 bg-surface border border-border rounded-lg shadow-lg z-50 p-2 min-w-[200px]">
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => openSocialPopup(socialLinks.whatsapp, 'WhatsApp')}
+                className="p-3 rounded-lg bg-green-500 hover:bg-green-600 text-white flex items-center justify-center"
+                title={t('share_on', 'Share on WhatsApp')}
+              >
+                <MessageCircle className="h-5 w-5" />
+              </button>
+              
+              <button
+                onClick={() => openSocialPopup(socialLinks.facebook, 'Facebook')}
+                className="p-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center"
+                title={t('share_on', 'Share on Facebook')}
+              >
+                <Facebook className="h-5 w-5" />
+              </button>
+              
+              <button
+                onClick={() => openSocialPopup(socialLinks.twitter, 'Twitter')}
+                className="p-3 rounded-lg bg-blue-400 hover:bg-blue-500 text-white flex items-center justify-center"
+                title={t('share_on', 'Share on Twitter')}
+              >
+                <Twitter className="h-5 w-5" />
+              </button>
+              
+              <button
+                onClick={copyToClipboard}
+                className="p-3 rounded-lg bg-purple-600 hover:bg-purple-700 text-white flex items-center justify-center col-span-3"
+                title={t('copy_link', 'Copy link')}
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-5 w-5 mr-2" />
+                    <span>{t('copied', 'Copied!')}</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-5 w-5 mr-2" />
+                    <span>{t('copy', 'Copy Link')}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+  
+  return (
+    <div className="share-section">
+      <div className="p-4 bg-surface rounded-lg border border-border">
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-bold text-text-primary flex items-center justify-center gap-2">
+            <Share2 className="h-5 w-5" />
+            {t('share_title', 'Share This Tool')}
+          </h3>
+          <p className="text-sm text-text-secondary mt-1">
+            {t('share_description', 'Spread the word about this amazing tool!')}
+          </p>
+        </div>
+        
+        <div className="flex flex-wrap gap-2 justify-center">
+          <button
+            onClick={() => openSocialPopup(socialLinks.whatsapp, 'WhatsApp')}
+            className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <MessageCircle className="h-5 w-5" />
+            <span className="font-medium">{t('whatsapp', 'WhatsApp')}</span>
+          </button>
+          
+          <button
+            onClick={() => openSocialPopup(socialLinks.facebook, 'Facebook')}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Facebook className="h-5 w-5" />
+            <span className="font-medium">{t('facebook', 'Facebook')}</span>
+          </button>
+          
+          <button
+            onClick={() => openSocialPopup(socialLinks.twitter, 'Twitter')}
+            className="inline-flex items-center gap-2 bg-blue-400 hover:bg-blue-500 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Twitter className="h-5 w-5" />
+            <span className="font-medium">{t('twitter', 'Twitter')}</span>
+          </button>
+          
+          <button
+            onClick={() => openSocialPopup(socialLinks.linkedin, 'LinkedIn')}
+            className="inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Linkedin className="h-5 w-5" />
+            <span className="font-medium">{t('linkedin', 'LinkedIn')}</span>
+          </button>
+          
+          <a
+            href={socialLinks.instagram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Instagram className="h-5 w-5" />
+            <span className="font-medium">{t('instagram', 'Instagram')}</span>
+          </a>
+          
+          <a
+            href={socialLinks.youtube}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Youtube className="h-5 w-5" />
+            <span className="font-medium">{t('youtube', 'YouTube')}</span>
+          </a>
+          
+          <button
+            onClick={() => window.location.href = socialLinks.email}
+            className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[120px] justify-center"
+          >
+            <Mail className="h-5 w-5" />
+            <span className="font-medium">{t('email', 'Email')}</span>
+          </button>
+        </div>
+        
+        <div className="mt-4 flex justify-center">
+          <button
+            onClick={copyToClipboard}
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm min-w-[200px] justify-center"
+          >
+            {copied ? (
+              <>
+                <Check className="h-5 w-5" />
+                <span className="font-medium">{t('copied', 'Link Copied!')}</span>
+              </>
+            ) : (
+              <>
+                <Copy className="h-5 w-5" />
+                <span className="font-medium">{t('copy_link', 'Copy Link')}</span>
+              </>
+            )}
+          </button>
+        </div>
+        
+        <div className="mt-4 text-center">
+          <p className="text-xs text-text-secondary">
+            {t('share_url', 'Share URL')}: <span className="font-semibold text-primary">{t('clean_seo_friendly', 'Clean & SEO-friendly')}</span>
+          </p>
+          <div className="mt-1 text-xs text-text-secondary opacity-75">
+            <code className="break-all bg-surface/50 px-2 py-1 rounded">
+              {fullShareUrl}
+            </code>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+=== components/seo/ToolSEO.tsx ===
+'use client';
+
+// ToolSEO - COMPLETELY DISABLED
+// All extra content (Key Features, How It Works, Why Choose Our Tool)
+// removed from tool pages per client request.
+// Only tool interface remains.
+
+export default function ToolSEO({ toolData, showFAQs = true }: any) {
+  // Return nothing — all extra content removed
+  return null;
+}
+
+// 'use client';
+
+// import { useTheme } from '@/components/theme';
+// import { BarChart3, TrendingUp, Users, Clock, Target, Award, Zap, CheckCircle } from 'lucide-react';
+
+// interface ToolSEOProps {
+//   toolData: {
+//     title: string;
+//     description: string;
+//     category: string;
+//   };
+//   showFAQs?: boolean;
+// }
+
+// export default function ToolSEO({ toolData, showFAQs = true }: ToolSEOProps) {
+//   const { themeColors } = useTheme();
+  
+//   return (
+//     <div className="space-y-6">
+//       {/* Main SEO Content Block */}
+//       <div 
+//         className="rounded-xl p-6"
+//         style={{ 
+//           backgroundColor: themeColors.surface,
+//           border: `1px solid ${themeColors.border}`
+//         }}
+//       >
+//         {/* ✅ FIXED: Removed hardcoded "Calculate Your Exact Age Online" */}
+//         <h2 className="text-xl font-bold mb-4" style={{ color: themeColors.text.primary }}>
+//           {toolData.title}
+//         </h2>
+        
+//         <p className="text-base leading-relaxed" style={{ color: themeColors.text.secondary }}>
+//           {toolData.description}
+//         </p>
+//       </div>
+      
+//       {/* Features Grid */}
+//       <div 
+//         className="rounded-xl p-6"
+//         style={{ 
+//           backgroundColor: themeColors.surface,
+//           border: `1px solid ${themeColors.border}`
+//         }}
+//       >
+//         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: themeColors.text.primary }}>
+//           <Zap className="h-5 w-5" style={{ color: themeColors.primary }} />
+//           Key Features
+//         </h3>
+        
+//         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+//           {[
+//             { label: '100% Free', icon: <CheckCircle className="h-4 w-4" />, color: themeColors.success },
+//             { label: 'No Registration', icon: <CheckCircle className="h-4 w-4" />, color: themeColors.success },
+//             { label: 'Privacy First', icon: <Shield className="h-4 w-4" />, color: themeColors.primary },
+//             { label: 'Multi-Language', icon: <Globe className="h-4 w-4" />, color: themeColors.primary },
+//             { label: 'RTL Support', icon: <Languages className="h-4 w-4" />, color: themeColors.primary },
+//             { label: 'Fast & Accurate', icon: <Zap className="h-4 w-4" />, color: themeColors.warning }
+//           ].map((feature, idx) => (
+//             <div 
+//               key={idx} 
+//               className="flex items-center gap-2 p-2 rounded-lg"
+//               style={{ backgroundColor: `${themeColors.background}80` }}
+//             >
+//               <span style={{ color: feature.color }}>{feature.icon}</span>
+//               <span className="text-sm" style={{ color: themeColors.text.primary }}>{feature.label}</span>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+      
+//       {/* How It Works */}
+//       <div 
+//         className="rounded-xl p-6"
+//         style={{ 
+//           backgroundColor: themeColors.surface,
+//           border: `1px solid ${themeColors.border}`
+//         }}
+//       >
+//         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: themeColors.text.primary }}>
+//           <Target className="h-5 w-5" style={{ color: themeColors.primary }} />
+//           How It Works
+//         </h3>
+        
+//         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//           {[
+//             { step: 1, title: 'Enter Input', description: 'Provide your data or upload files' },
+//             { step: 2, title: 'Process', description: 'Click the action button' },
+//             { step: 3, title: 'Get Results', description: 'View or download your results instantly' }
+//           ].map((step) => (
+//             <div 
+//               key={step.step} 
+//               className="text-center p-4 rounded-lg"
+//               style={{ backgroundColor: `${themeColors.background}80` }}
+//             >
+//               <div 
+//                 className="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2"
+//                 style={{ backgroundColor: themeColors.primary, color: '#ffffff' }}
+//               >
+//                 {step.step}
+//               </div>
+//               <h4 className="font-semibold mb-1" style={{ color: themeColors.text.primary }}>{step.title}</h4>
+//               <p className="text-sm" style={{ color: themeColors.text.secondary }}>{step.description}</p>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+      
+//       {/* Why Choose Us */}
+//       <div 
+//         className="rounded-xl p-6"
+//         style={{ 
+//           backgroundColor: `${themeColors.primary}10`,
+//           border: `1px solid ${themeColors.primary}30`
+//         }}
+//       >
+//         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2" style={{ color: themeColors.primary }}>
+//           <Award className="h-5 w-5" />
+//           Why Choose Our Tool?
+//         </h3>
+        
+//         <div className="space-y-3">
+//           {[
+//             '🏆 Most accurate results with advanced algorithms',
+//             '⚡ Lightning-fast processing with zero server delay',
+//             '🔒 100% private - all processing done in your browser',
+//             '🌍 Multi-language support (English, Urdu, Hindi, Arabic)',
+//             '📊 Detailed output with export and sharing options'
+//           ].map((reason, idx) => (
+//             <div key={idx} className="flex items-start gap-2">
+//               <span className="text-lg">✅</span>
+//               <span className="text-sm" style={{ color: themeColors.text.primary }}>{reason}</span>
+//             </div>
+//           ))}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// // Helper components for icons
+// function Shield(props: React.SVGProps<SVGSVGElement>) {
+//   return (
+//     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+//     </svg>
+//   );
+// }
+
+// function Globe(props: React.SVGProps<SVGSVGElement>) {
+//   return (
+//     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <circle cx="12" cy="12" r="10" />
+//       <line x1="2" y1="12" x2="22" y2="12" />
+//       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+//     </svg>
+//   );
+// }
+
+// function Languages(props: React.SVGProps<SVGSVGElement>) {
+//   return (
+//     <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+//       <path d="M5 8h10" />
+//       <path d="M2 4h14" />
+//       <path d="M7 12h8" />
+//       <path d="M4 16h10" />
+//       <path d="M9 20h6" />
+//       <path d="M16 4l2 6 2-6" />
+//       <path d="M20 10h-4" />
+//     </svg>
+//   );
+// }
+
+=== components/seo/VideoTutorial.tsx ===
+// components/seo/VideoTutorial.tsx
+// ═══════════════════════════════════════════════════════════
+// 🚫 COMPONENT DISABLED — Video tutorial removed
+// Future mein enable karne ke liye return null hatao
+// ═══════════════════════════════════════════════════════════
+
+'use client';
+
+export default function VideoTutorial({ toolData, lang }: any) {
+  // Return nothing — video tutorial removed
+  return null;
+}
+
+=== components/seo/index.ts ===
+// components/seo/index.ts - FIXED VERSION
+// Export all SEO components
+export { default as MetaTags } from './MetaTags';
+export { default as Breadcrumbs } from './Breadcrumbs';
+export { default as FAQs } from './FAQs';
+export { default as InternalLinks } from './InternalLinks';
+export { default as SchemaScript } from './SchemaScript';
+export { default as RankingFactors } from './RankingFactors';
+export { default as ShareButtons } from './ShareButtons';
+export { default as ToolSEO } from './ToolSEO';
+
+export { default as PerformanceScripts } from './PerformanceScripts';
+
+// Export schema functions from SchemaScript.tsx
+export { 
+  WebsiteSchema, 
+  OrganizationSchema, 
+  LocalBusinessSchema, 
+  SoftwareApplicationSchema 
+} from './SchemaScript';
+
+// Export WordPress SEO components (placeholder)
+// Add WordPress components here when ready
+
+// Export all types with proper imports
+export type { 
+  MetaTagsProps,
+  BreadcrumbsProps,
+  FAQsProps,
+  InternalLinksProps,
+  SchemaScriptProps,
+  RankingFactorsProps,
+  ShareButtonsProps,
+  ToolSEOProps,
+  PerformanceScriptsProps,
+  FAQ,
+  BreadcrumbItem,
+  InternalLink,
+  ToolSEOData
+} from './types';
+
+=== components/seo/types.ts ===
+// components/seo/types.ts - PROFESSIONAL COMPLETE VERSION
+import type { 
+  FAQ as LibFAQ, 
+  BreadcrumbItem as LibBreadcrumbItem, 
+  InternalLink as LibInternalLink, 
+  ToolSEOData as LibToolSEOData 
+} from '@/lib/seo/types';
+
+// Re-export lib types with original names
+export type FAQ = LibFAQ;
+export type BreadcrumbItem = LibBreadcrumbItem;
+export type InternalLink = LibInternalLink;
+export type ToolSEOData = LibToolSEOData;
+
+// Component-specific types
+export interface MetaTagsProps {
+  title?: string;
+  description?: string;
+  keywords?: string | string[];
+  image?: string;
+  url?: string;
+  type?: 'website' | 'article' | 'tool';
+  noIndex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
+  author?: string;
+  section?: string;
+  tags?: string[];
+  toolName?: string;
+  toolCategory?: string;
+  isToolPage?: boolean;
+}
+
+export interface BreadcrumbsProps {
+  items?: BreadcrumbItem[];
+  showHome?: boolean;
+  className?: string;
+  separator?: React.ReactNode;
+}
+
+export interface FAQsProps {
+  faqs?: FAQ[];
+  title?: string;
+  className?: string;
+  defaultOpen?: number;
+  showSchema?: boolean;
+}
+
+export interface InternalLinksProps {
+  links?: InternalLink[];
+  title?: string;
+  description?: string;
+  maxLinks?: number;
+  showCategory?: boolean;
+  className?: string;
+  columns?: 1 | 2 | 3 | 4;
+}
+
+export interface SchemaScriptProps {
+  schema?: Record<string, any>;
+  type?: 'application/ld+json' | 'application/json';
+  className?: string;
+}
+
+export interface RankingFactorsProps {
+  pageUrl?: string;
+  trackEngagement?: boolean;
+  trackScroll?: boolean;
+  trackClicks?: boolean;
+  trackTime?: boolean;
+}
+
+export interface ShareButtonsProps {
+  title?: string;
+  description?: string;
+  url?: string;
+  customTheme?: string;
+}
+
+export interface PerformanceScriptsProps {
+  googleAnalyticsId?: string;
+  googleTagManagerId?: string;
+  facebookPixelId?: string;
+  hotjarId?: string;
+}
+
+export interface ToolSEOProps {
+  toolData: ToolSEOData;
+  theme?: string;
+  showMetaTags?: boolean;
+  showBreadcrumbs?: boolean;
+  showFAQs?: boolean;
+  showInternalLinks?: boolean;
+  showSchema?: boolean;
+  showRankingFactors?: boolean;
+}

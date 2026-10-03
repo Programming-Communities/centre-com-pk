@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import { ChevronRight, ChevronLeft, Settings } from 'lucide-react';
 
@@ -9,18 +9,31 @@ interface RightSidebarProps {
 }
 
 export default function RightSidebar({ children, title = 'Settings' }: RightSidebarProps) {
-  const { themeColors, isDarkMode } = useTheme();
+  const { themeColors } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
-  const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
-  const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
-  const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
-  const primary = themeColors?.primary || '#3b82f6';
+  useEffect(() => { setMounted(true); }, []);
+
+  const staticColors = {
+    surface: '#ffffff',
+    textPrimary: '#0f172a',
+    border: '#e2e8f0',
+    primary: '#3b82f6',
+  };
+
+  const colors = mounted ? {
+    surface: themeColors?.surface || staticColors.surface,
+    textPrimary: themeColors?.text?.primary || staticColors.textPrimary,
+    border: themeColors?.border || staticColors.border,
+    primary: themeColors?.primary || staticColors.primary,
+  } : staticColors;
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div suppressHydrationWarning style={{ position: 'relative' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        suppressHydrationWarning
         style={{
           position: 'fixed',
           right: isOpen ? '340px' : '0',
@@ -30,10 +43,10 @@ export default function RightSidebar({ children, title = 'Settings' }: RightSide
           width: '28px',
           height: '56px',
           borderRadius: '8px 0 0 8px',
-          border: `1px solid ${border}`,
+          border: `1px solid ${colors.border}`,
           borderRight: 'none',
-          backgroundColor: surface,
-          color: textPrimary,
+          backgroundColor: colors.surface,
+          color: colors.textPrimary,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
@@ -45,22 +58,22 @@ export default function RightSidebar({ children, title = 'Settings' }: RightSide
         {isOpen ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </button>
 
-      <div style={{
+      <div suppressHydrationWarning style={{
         position: 'fixed',
         right: isOpen ? '0' : '-340px',
         top: 0,
         bottom: 0,
         width: '340px',
-        backgroundColor: surface,
-        borderLeft: `1px solid ${border}`,
+        backgroundColor: colors.surface,
+        borderLeft: `1px solid ${colors.border}`,
         zIndex: 99,
         padding: '20px 16px',
         overflowY: 'auto',
         transition: 'right 0.3s ease',
         boxShadow: '-4px 0 20px rgba(0,0,0,0.05)',
       }}>
-        <h2 style={{ fontSize: '16px', fontWeight: 700, color: textPrimary, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Settings size={18} style={{ color: primary }} />
+        <h2 suppressHydrationWarning style={{ fontSize: '16px', fontWeight: 700, color: colors.textPrimary, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Settings size={18} style={{ color: colors.primary }} />
           {title}
         </h2>
         {children}

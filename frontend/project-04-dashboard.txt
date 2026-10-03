@@ -1,0 +1,3243 @@
+=== DASHBOARD FILES ===
+
+=== app/[lang]/dashboard/DashboardClient.tsx ===
+'use client';
+import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { 
+  FileText, Bookmark, MessageCircle, Crown, Megaphone, DollarSign, 
+  Plus, ShoppingBag, Link2, Globe, Zap, Bell, TrendingUp, Eye, MousePointer,
+  Clock, CheckCircle, Activity, BarChart3, ArrowRight
+} from 'lucide-react';
+
+export default function DashboardClient() {
+  const { lang } = useParams() as { lang: string };
+  const { themeColors, isDarkMode, fontFamily } = useTheme();
+  const [user, setUser] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ documents: 0, bookmarks: 0, comments: 0, ads: 0, earnings: 0 });
+  const [recentDocs, setRecentDocs] = useState<any[]>([]);
+  const [recentAds, setRecentAds] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [chartData, setChartData] = useState<any>({ ads: [], earnings: [] });
+  const isRTL = lang === 'ur' || lang === 'ar';
+
+  useEffect(() => {
+    setMounted(true);
+    const token = localStorage.getItem('auth_token');
+    const data = localStorage.getItem('user_data');
+    if (token && data) {
+      try {
+        const u = JSON.parse(data);
+        setUser(u);
+        fetchAllData(u.id || u.email);
+      } catch(e) {}
+    } else {
+      window.location.href = `/${lang}/auth/signin`;
+    }
+  }, [lang]);
+
+  const fetchAllData = async (userId: string | number) => {
+    try {
+      // Fetch all in parallel
+      const [docsRes, bookmarksRes, commentsRes, adsRes] = await Promise.all([
+        fetch(`/api/dashboard?user_id=${userId}`).then(r => r.json()).catch(() => ({ documents: [] })),
+        fetch(`/api/user/bookmarks?user_id=${userId}`).then(r => r.json()).catch(() => ({ bookmarks: [] })),
+        fetch(`/api/admin/comments`).then(r => r.json()).catch(() => ({ comments: [] })),
+        fetch(`/api/admin/ads?user_id=${userId}`).then(r => r.json()).catch(() => ({ ads: [] })),
+      ]);
+
+      const docs = docsRes.documents || [];
+      const bookmarks = bookmarksRes.bookmarks || [];
+      const userComments = (commentsRes.comments || []).filter((c: any) => c.user_id == userId);
+      const ads = adsRes.ads || [];
+
+      setStats({
+        documents: docs.length,
+        bookmarks: bookmarks.length,
+        comments: userComments.length,
+        ads: ads.length,
+        earnings: 0,
+      });
+
+      setRecentDocs(docs.slice(0, 3));
+      setRecentAds(ads.slice(0, 3));
+
+      // Generate activity feed
+      const activityFeed: any[] = [];
+      
+      docs.slice(0, 2).forEach((doc: any) => {
+        activityFeed.push({
+          id: `doc-${doc.id}`,
+          icon: FileText,
+          color: '#3b82f6',
+          text: `Document "${doc.title}" ${doc.updated_at ? 'updated' : 'created'}`,
+          time: doc.updated_at || doc.created_at,
+        });
+      });
+
+      userComments.slice(0, 2).forEach((comment: any) => {
+        activityFeed.push({
+          id: `comment-${comment.id}`,
+          icon: MessageCircle,
+          color: '#10b981',
+          text: `Comment ${comment.status === 'approved' ? 'approved' : 'pending'}`,
+          time: comment.created_at,
+        });
+      });
+
+      ads.slice(0, 2).forEach((ad: any) => {
+        activityFeed.push({
+          id: `ad-${ad.id}`,
+          icon: Megaphone,
+          color: '#ec4899',
+          text: `Ad "${ad.title}" — ${ad.status}`,
+          time: ad.created_at,
+        });
+      });
+
+      // Sort by time
+      activityFeed.sort((a, b) => new Date(b.time || 0).getTime() - new Date(a.time || 0).getTime());
+      setActivities(activityFeed.slice(0, 5));
+
+      // Chart data (last 7 days)
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toISOString().split('T')[0];
+      });
+
+      setChartData({
+        ads: last7Days.map(day => ({
+          date: day,
+          count: ads.filter((a: any) => a.created_at?.startsWith(day)).length,
+        })),
+        earnings: last7Days.map(day => ({
+          date: day,
+          amount: 0,
+        })),
+      });
+
+    } catch (e) {
+      console.error('Failed to fetch data:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!mounted || !user) return null;
+
+  const bg = themeColors.background || (isDarkMode ? '#0f172a' : '#f8fafc');
+  const surface = themeColors.surface || (isDarkMode ? '#1e293b' : '#ffffff');
+  const textPrimary = themeColors.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
+  const textSecondary = themeColors.text?.secondary || (isDarkMode ? '#94a3b8' : '#64748b');
+  const border = themeColors.border || (isDarkMode ? '#334155' : '#e2e8f0');
+  const primary = themeColors.primary || '#3b82f6';
+
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+
+  const labels: Record<string, any> = {
+    en: { 
+      welcome: 'Welcome back', plan: 'Plan', documents: 'Documents', bookmarks: 'Bookmarks', 
+      comments: 'Comments', ads: 'My Ads', affiliate: 'Affiliate', free: 'FREE', unlimited: 'UNLIMITED', 
+      admin: 'ADMIN', newDoc: 'New Document', buyPlan: 'Buy Package', submitAd: 'Submit Ad', 
+      affLink: 'Affiliate Link', viewSite: 'View Site', recent: 'Recent Documents', 
+      noDocs: 'No documents yet', createFirst: 'Create First Document', quickActions: 'Quick Actions',
+      recentActivity: 'Recent Activity', adsPerformance: 'Ads Performance', noActivity: 'No recent activity',
+      overview: 'Overview', viewAll: 'View All', notifications: 'Notifications',
+    },
+    ur: { 
+      welcome: 'واپس خوش آمدید', plan: 'پلان', documents: 'دستاویزات', bookmarks: 'بک مارکس', 
+      comments: 'تبصرے', ads: 'اشتہارات', affiliate: 'افیلیٹ', free: 'مفت', unlimited: 'لا محدود', 
+      admin: 'ایڈمن', newDoc: 'نیا', buyPlan: 'پلان خریدیں', submitAd: 'اشتہار', 
+      affLink: 'افیلیٹ لنک', viewSite: 'سائٹ', recent: 'حالیہ', noDocs: 'کوئی نہیں', 
+      createFirst: 'پہلا بنائیں', quickActions: 'فوری ایکشن', recentActivity: 'حالیہ سرگرمی',
+      adsPerformance: 'اشتہارات کی کارکردگی', noActivity: 'کوئی سرگرمی نہیں', 
+      overview: 'جائزہ', viewAll: 'سب دیکھیں', notifications: 'اطلاعات',
+    },
+    hi: { 
+      welcome: 'वापसी पर स्वागत', plan: 'प्लान', documents: 'दस्तावेज़', bookmarks: 'बुकमार्क', 
+      comments: 'टिप्पणियाँ', ads: 'विज्ञापन', affiliate: 'सहबद्ध', free: 'मुफ्त', unlimited: 'असीमित', 
+      admin: 'एडमिन', newDoc: 'नया', buyPlan: 'प्लान', submitAd: 'विज्ञापन', 
+      affLink: 'लिंक', viewSite: 'साइट', recent: 'हालिया', noDocs: 'कोई नहीं', 
+      createFirst: 'पहला', quickActions: 'त्वरित कार्रवाई', recentActivity: 'हाल की गतिविधि',
+      adsPerformance: 'विज्ञापन प्रदर्शन', noActivity: 'कोई गतिविधि नहीं', 
+      overview: 'अवलोकन', viewAll: 'सभी देखें', notifications: 'सूचनाएं',
+    },
+    ar: { 
+      welcome: 'مرحباً', plan: 'الخطة', documents: 'مستندات', bookmarks: 'إشارات', 
+      comments: 'تعليقات', ads: 'إعلانات', affiliate: 'عمولة', free: 'مجاني', unlimited: 'غير محدود', 
+      admin: 'مدير', newDoc: 'جديد', buyPlan: 'شراء', submitAd: 'إعلان', 
+      affLink: 'رابط', viewSite: 'الموقع', recent: 'حديثاً', noDocs: 'لا يوجد', 
+      createFirst: 'أنشئ', quickActions: 'إجراءات', recentActivity: 'النشاط الأخير',
+      adsPerformance: 'أداء الإعلانات', noActivity: 'لا يوجد نشاط', 
+      overview: 'نظرة عامة', viewAll: 'عرض الكل', notifications: 'الإشعارات',
+    },
+  };
+  const l = labels[lang] || labels.en;
+
+  // Helper: time ago
+  const timeAgo = (date: string) => {
+    if (!date) return '';
+    const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', padding: '16px 12px', backgroundColor: bg, fontFamily, direction: isRTL ? 'rtl' : 'ltr' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+        {/* ========== HEADER ========== */}
+        <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+          <div>
+            <h1 style={{ fontSize: 'clamp(18px, 4vw, 28px)', fontWeight: 800, color: textPrimary, margin: '0 0 4px' }}>
+              {l.welcome}, {user?.name || 'User'}! 👋
+            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+              <span style={{ padding: '3px 10px', borderRadius: '14px', fontSize: '10px', fontWeight: 700, background: isAdmin ? '#f59e0b20' : '#3b82f620', color: isAdmin ? '#f59e0b' : primary }}>
+                {isAdmin ? '👑 ' + l.unlimited + ' ' + l.plan : '📦 ' + (user?.plan || 'FREE').toUpperCase() + ' ' + l.plan}
+              </span>
+              {isAdmin && (
+                <span style={{ padding: '3px 10px', borderRadius: '14px', fontSize: '10px', fontWeight: 700, background: '#ef444420', color: '#ef4444' }}>
+                  🔴 {l.admin}
+                </span>
+              )}
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button style={{ padding: '7px 12px', background: surface, color: textSecondary, borderRadius: '8px', border: `1px solid ${border}`, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', position: 'relative' }}>
+              <Bell size={14} />
+              <span style={{ position: 'absolute', top: '4px', right: '4px', width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} />
+            </button>
+            <Link href={`/${lang}`} style={{ padding: '7px 14px', background: surface, color: primary, borderRadius: '8px', textDecoration: 'none', fontWeight: 600, fontSize: '12px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Globe size={13} /> {l.viewSite}
+            </Link>
+          </div>
+        </div>
+
+        {/* ========== STATS CARDS (6) ========== */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '24px' }}>
+          {[
+            { icon: FileText, value: stats.documents, label: l.documents, color: '#3b82f6' },
+            { icon: Bookmark, value: stats.bookmarks, label: l.bookmarks, color: '#8b5cf6' },
+            { icon: MessageCircle, value: stats.comments, label: l.comments, color: '#10b981' },
+           { 
+  icon: Crown, 
+  value: isAdmin ? '∞' : (user?.plan || 'FREE').toUpperCase(), 
+  label: isAdmin ? 'UNLIMITED' : l.plan, 
+  color: '#f59e0b' 
+},
+            { icon: Megaphone, value: stats.ads, label: l.ads, color: '#ec4899' },
+            { icon: DollarSign, value: `$${stats.earnings}`, label: l.affiliate, color: '#14b8a6' },
+          ].map((stat, i) => (
+            <div key={i} style={{ padding: '16px', backgroundColor: surface, borderRadius: '12px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: `${stat.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <stat.icon size={20} style={{ color: stat.color }} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: '20px', fontWeight: 800, color: textPrimary, lineHeight: 1 }}>{stat.value}</div>
+                <div style={{ fontSize: '11px', color: textSecondary, marginTop: '3px' }}>{stat.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ========== CHARTS (2 columns) ========== */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+          {/* Ads Performance Chart */}
+          <div style={{ padding: '16px', backgroundColor: surface, borderRadius: '12px', border: `1px solid ${border}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BarChart3 size={16} color={primary} /> {l.adsPerformance}
+              </h3>
+              <span style={{ fontSize: '10px', color: textSecondary }}>Last 7 days</span>
+            </div>
+            {/* Simple bar chart */}
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '120px' }}>
+              {chartData.ads.map((d: any, i: number) => {
+                const maxCount = Math.max(...chartData.ads.map((x: any) => x.count), 1);
+                const height = (d.count / maxCount) * 100;
+                return (
+                  <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ fontSize: '9px', color: textSecondary, fontWeight: 600 }}>{d.count}</div>
+                    <div style={{ width: '100%', height: `${Math.max(height, 5)}%`, background: `linear-gradient(to top, ${primary}, ${primary}80)`, borderRadius: '4px 4px 0 0', transition: 'height 0.3s ease', minHeight: '4px' }} />
+                    <div style={{ fontSize: '8px', color: textSecondary }}>
+                      {new Date(d.date).toLocaleDateString('en-US', { weekday: 'short' }).charAt(0)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div style={{ padding: '16px', backgroundColor: surface, borderRadius: '12px', border: `1px solid ${border}` }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Activity size={16} color={primary} /> {l.recentActivity}
+            </h3>
+            {activities.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '20px', color: textSecondary, fontSize: '12px' }}>
+                {l.noActivity}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {activities.map((a: any) => (
+                  <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: `${a.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <a.icon size={13} style={{ color: a.color }} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: '12px', color: textPrimary, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.text}</div>
+                      <div style={{ fontSize: '10px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                        <Clock size={9} /> {timeAgo(a.time)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ========== QUICK ACTIONS ========== */}
+        <div style={{ marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '15px', fontWeight: 700, color: textPrimary, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Zap size={16} color={primary} /> {l.quickActions}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '8px' }}>
+            <Link href={`/${lang}/dashboard/editor`} style={{ padding: '14px 12px', background: primary, color: '#fff', borderRadius: '10px', textDecoration: 'none', fontWeight: 600, fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <Plus size={14} /> {l.newDoc}
+            </Link>
+            {!isAdmin && (
+              <Link href={`/${lang}/dashboard/plan`} style={{ padding: '14px 12px', background: surface, color: textPrimary, borderRadius: '10px', textDecoration: 'none', fontWeight: 600, fontSize: '12px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                <ShoppingBag size={14} /> {l.buyPlan}
+              </Link>
+            )}
+            <Link href={`/${lang}/dashboard/ads`} style={{ padding: '14px 12px', background: surface, color: textPrimary, borderRadius: '10px', textDecoration: 'none', fontWeight: 600, fontSize: '12px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <Megaphone size={14} /> {l.submitAd}
+            </Link>
+            <Link href={`/${lang}/dashboard/affiliate`} style={{ padding: '14px 12px', background: surface, color: textPrimary, borderRadius: '10px', textDecoration: 'none', fontWeight: 600, fontSize: '12px', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              <Link2 size={14} /> {l.affLink}
+            </Link>
+          </div>
+        </div>
+
+        {/* ========== RECENT DOCUMENTS ========== */}
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <h2 style={{ fontSize: '15px', fontWeight: 700, color: textPrimary, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <FileText size={16} color={primary} /> {l.recent}
+            </h2>
+            {recentDocs.length > 0 && (
+              <Link href={`/${lang}/dashboard/editor`} style={{ fontSize: '11px', color: primary, textDecoration: 'none', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px' }}>
+                {l.viewAll} <ArrowRight size={11} />
+              </Link>
+            )}
+          </div>
+          
+          {recentDocs.length === 0 ? (
+            <div style={{ padding: '40px 16px', backgroundColor: surface, borderRadius: '12px', border: `1px solid ${border}`, textAlign: 'center', color: textSecondary }}>
+              <FileText size={32} style={{ marginBottom: '8px', opacity: 0.3 }} />
+              <p style={{ margin: '0 0 8px', fontSize: '13px' }}>{l.noDocs}</p>
+              <Link href={`/${lang}/dashboard/editor`} style={{ color: primary, fontWeight: 600, fontSize: '12px', textDecoration: 'none' }}>
+                {l.createFirst} →
+              </Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {recentDocs.map((doc: any) => (
+                <Link key={doc.id} href={`/${lang}/dashboard/editor/${doc.id}`} style={{ 
+                  padding: '14px 16px', backgroundColor: surface, borderRadius: '10px', 
+                  border: `1px solid ${border}`, textDecoration: 'none',
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  transition: 'all 0.2s ease',
+                }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${primary}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <FileText size={16} color={primary} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: textPrimary, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {doc.title || 'Untitled'}
+                    </div>
+                    <div style={{ fontSize: '10px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                      <Clock size={9} /> {timeAgo(doc.updated_at || doc.created_at)}
+                      {doc.word_count && <span>• {doc.word_count} words</span>}
+                    </div>
+                  </div>
+                  <ArrowRight size={14} color={textSecondary} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/ads/ClientAds.tsx ===
+'use client';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { 
+  Plus, Edit3, Trash2, CheckCircle, XCircle, Clock, 
+  Image, Layout, Eye as EyeIcon, MousePointer
+} from 'lucide-react';
+
+export default function ClientAds() {
+  const { lang } = useParams() as { lang: string };
+  const { themeColors, isDarkMode } = useTheme();
+  const [ads, setAds] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+      } catch {}
+    }
+  }, []);
+
+  const fetchMyAds = () => {
+    if (!user?.id) {
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        try {
+          const u = JSON.parse(userData);
+          setUser(u);
+          setLoading(true);
+          fetch(`/api/admin/ads?user_id=${u.id}`)
+            .then(r => r.json())
+            .then(d => { setAds(d.ads || []); setLoading(false); })
+            .catch(() => setLoading(false));
+          return;
+        } catch {}
+      }
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetch(`/api/admin/ads?user_id=${user.id}`)
+      .then(r => r.json())
+      .then(d => { setAds(d.ads || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  };
+
+  useEffect(() => { fetchMyAds(); }, [user]);
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Delete this ad?')) return;
+    try {
+      const res = await fetch('/api/admin/ads?id=' + id, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitMessage({ type: 'success', text: '✅ Ad deleted!' });
+        fetchMyAds();
+        setTimeout(() => setSubmitMessage(null), 3000);
+      } else {
+        setSubmitMessage({ type: 'error', text: '❌ ' + (data.error || 'Delete failed') });
+        setTimeout(() => setSubmitMessage(null), 3000);
+      }
+    } catch (err) {
+      setSubmitMessage({ type: 'error', text: '❌ Failed to delete' });
+      setTimeout(() => setSubmitMessage(null), 3000);
+    }
+  };
+
+  const statusConfig: Record<string, any> = {
+    pending: { bg: '#f59e0b15', color: '#f59e0b', icon: Clock, label: 'Pending Review' },
+    active: { bg: '#3b82f615', color: '#3b82f6', icon: CheckCircle, label: 'Active' },
+    approved: { bg: '#10b98115', color: '#10b981', icon: CheckCircle, label: 'Approved' },
+    rejected: { bg: '#ef444415', color: '#ef4444', icon: XCircle, label: 'Rejected' },
+    expired: { bg: '#64748b15', color: '#64748b', icon: XCircle, label: 'Expired' },
+  };
+
+  if (!user) {
+    return <div style={{ padding: '40px', textAlign: 'center', color: textSecondary }}>Loading...</div>;
+  }
+
+  return (
+    <div style={{ padding: '20px', minHeight: '80vh', backgroundColor: themeColors.background }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        
+        {submitMessage && (
+          <div style={{
+            position: 'fixed', top: '80px', right: '20px', zIndex: 9999,
+            padding: '12px 24px', borderRadius: '12px',
+            backgroundColor: submitMessage.type === 'success' ? '#10b981' : '#ef4444',
+            color: '#fff', fontWeight: 600, fontSize: '14px',
+            boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+          }}>
+            {submitMessage.text}
+          </div>
+        )}
+
+        {/* HEADER */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h1 style={{ fontSize: '26px', fontWeight: 800, color: textPrimary, margin: '0 0 4px' }}>
+              📢 My Advertisements
+            </h1>
+            <p style={{ fontSize: '13px', color: textSecondary, margin: 0 }}>
+              {ads.filter(a => a.status === 'active' || a.status === 'approved').length} active • 
+              {ads.filter(a => a.status === 'pending').length} pending • 
+              {ads.reduce((s: number, a: any) => s + (a.impressions || 0), 0).toLocaleString()} total views
+            </p>
+          </div>
+          
+          {/* ✅ CREATE NEW AD BUTTON — Redirect to full page */}
+          <Link
+            href={`/${lang}/dashboard/ads/new`}
+            style={{
+              padding: '12px 24px',
+              background: primary,
+              color: '#fff',
+              border: 'none',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '14px',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 4px 16px ' + primary + '30',
+            }}
+          >
+            <Plus size={18} /> Create New Ad
+          </Link>
+        </div>
+
+        {/* Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px', marginBottom: '20px' }}>
+          {[
+            { label: 'Total Ads', value: ads.length, color: primary, icon: Layout },
+            { label: 'Active', value: ads.filter(a => a.status === 'active' || a.status === 'approved').length, color: '#10b981', icon: CheckCircle },
+            { label: 'Pending', value: ads.filter(a => a.status === 'pending').length, color: '#f59e0b', icon: Clock },
+            { label: 'Views', value: ads.reduce((s: number, a: any) => s + (a.impressions || 0), 0).toLocaleString(), color: '#8b5cf6', icon: EyeIcon },
+            { label: 'Clicks', value: ads.reduce((s: number, a: any) => s + (a.clicks || 0), 0).toLocaleString(), color: '#ec4899', icon: MousePointer },
+          ].map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <div key={i} style={{ padding: '14px', background: surface, borderRadius: '10px', border: '1px solid ' + border, textAlign: 'center' }}>
+                <Icon size={18} color={s.color} style={{ marginBottom: '4px' }} />
+                <div style={{ fontSize: '20px', fontWeight: 700, color: s.color }}>{s.value}</div>
+                <div style={{ fontSize: '10px', color: textSecondary, marginTop: '2px' }}>{s.label}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Ads List */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '60px', color: textSecondary }}>Loading your ads...</div>
+        ) : ads.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px', color: textSecondary }}>
+            <Image size={56} style={{ marginBottom: '16px', opacity: 0.3 }} />
+            <p style={{ fontSize: '18px', fontWeight: 600, color: textPrimary, marginBottom: '8px' }}>📭 No Advertisements Yet</p>
+            <p style={{ fontSize: '14px', marginBottom: '20px' }}>Create your first ad to reach thousands of visitors!</p>
+            <Link
+              href={`/${lang}/dashboard/ads/new`}
+              style={{
+                padding: '14px 28px',
+                background: primary,
+                color: '#fff',
+                border: 'none',
+                borderRadius: '10px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                fontSize: '14px',
+                textDecoration: 'none',
+                display: 'inline-block',
+              }}
+            >
+              🚀 Create Your First Ad
+            </Link>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {ads.map((ad: any) => {
+              const sc = statusConfig[ad.status] || statusConfig.pending;
+              const StatusIcon = sc.icon;
+              const geoLabel = ad.geo_type === 'all' ? '🌍 Everywhere' : 
+                               ad.geo_type === 'country' ? `🏛️ ${ad.target_country}` : 
+                               ad.geo_type === 'city' ? `🏙️ ${ad.target_city}` : 
+                               ad.geo_type === 'radius' ? `📡 ${ad.target_radius}km` : 
+                               ad.geo_type === 'street' ? `🏠 ${ad.target_street}` : '📍 Targeted';
+              return (
+                <div key={ad.id} style={{ padding: '16px', background: surface, borderRadius: '12px', border: '1px solid ' + border }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+                      <div style={{ 
+                        width: '60px', height: '45px', borderRadius: '8px', 
+                        background: ad.image_url ? `url(${ad.image_url}) center/cover` : ad.bg_color || primary + '15',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                        fontSize: '18px', flexShrink: 0, overflow: 'hidden' 
+                      }}>
+                        {!ad.image_url && (ad.title?.charAt(0) || '📢')}
+                        {ad.image_url && <img src={ad.image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px' }}>{ad.title}</div>
+                        <div style={{ fontSize: '11px', color: textSecondary, display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+                          <span>{ad.placement?.replace(/-/g, ' ')} • {ad.size}</span>
+                          <span>{geoLabel}</span>
+                          <span>👁️ {ad.impressions?.toLocaleString()||0} 🖱️ {ad.clicks?.toLocaleString()||0}</span>
+                          {ad.budget > 0 && <span>💰 ${ad.budget}</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '10px', fontWeight: 600, background: sc.bg, color: sc.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <StatusIcon size={12} /> {sc.label}
+                      </span>
+                      <button 
+                        onClick={() => handleDelete(ad.id)} 
+                        style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', cursor: 'pointer', color: '#ef4444' }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/ads/new/CreateAdClient.tsx ===
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { 
+  ArrowLeft, Upload, X, Target, Check, AlertCircle, Eye,
+  Smartphone, Monitor, Tablet, ChevronDown, ChevronUp, Palette
+} from 'lucide-react';
+import LocationPicker from '@/components/location/LocationPicker';
+
+const TEMPLATES = [
+  { id: 'sale', icon: '🔥', title: 'Sale Offer', desc: '50% OFF — Limited Time!', bg: '#ef4444', text: '#ffffff' },
+  { id: 'launch', icon: '🚀', title: 'New Launch', desc: 'Introducing Our New Tool', bg: '#8b5cf6', text: '#ffffff' },
+  { id: 'free', icon: '🎁', title: 'Free Trial', desc: 'Try Free for 7 Days', bg: '#10b981', text: '#ffffff' },
+  { id: 'discount', icon: '💰', title: 'Discount Code', desc: 'Use Code SAVE20', bg: '#f59e0b', text: '#000000' },
+  { id: 'newsletter', icon: '📧', title: 'Newsletter', desc: 'Subscribe for Updates', bg: '#3b82f6', text: '#ffffff' },
+  { id: 'webinar', icon: '🎥', title: 'Webinar', desc: 'Join Our Free Webinar', bg: '#6366f1', text: '#ffffff' },
+  { id: 'sponsored', icon: '⭐', title: 'Sponsored', desc: 'Sponsored Content', bg: '#0ea5e9', text: '#ffffff' },
+  { id: 'announcement', icon: '📢', title: 'Announcement', desc: 'Special Announcement', bg: '#f43f5e', text: '#ffffff' },
+];
+
+const PLACEMENTS = [
+  { value: 'header', label: '🖥️ Header (728x90)', w: 728, h: 90 },
+  { value: 'sidebar', label: '📌 Sidebar (300x600)', w: 300, h: 600 },
+  { value: 'in-tool', label: '🔧 In-Tool (728x90)', w: 728, h: 90 },
+  { value: 'footer', label: '📄 Footer (728x90)', w: 728, h: 90 },
+  { value: 'blog-post', label: '📝 Blog Post (728x90)', w: 728, h: 90 },
+  { value: 'blog-sidebar', label: '📰 Blog Sidebar (300x600)', w: 300, h: 600 },
+  { value: 'home-banner', label: '🏠 Home (970x250)', w: 970, h: 250 },
+];
+
+const DEVICE_PREVIEWS = [
+  { id: 'desktop', icon: Monitor, label: 'Desktop', width: 100 },
+  { id: 'tablet', icon: Tablet, label: 'Tablet', width: 70 },
+  { id: 'mobile', icon: Smartphone, label: 'Mobile', width: 45 },
+];
+
+export default function CreateAdClient({ lang }: { lang: string }) {
+  const router = useRouter();
+  const { themeColors, isDarkMode } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [deviceView, setDeviceView] = useState('desktop');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const isRTL = lang === 'ur' || lang === 'ar';
+
+  const [form, setForm] = useState({
+    title: '', description: '', target_url: '', placement: 'header',
+    size: '728x90', ad_type: 'client', image_url: '', custom_html: '',
+    price: 0, budget: 0, client_name: '', client_company: '', client_email: '',
+    start_date: '', end_date: '', max_impressions: 10000, max_clicks: 1000,
+    target_device: '', bg_color: '#3b82f6', text_color: '#ffffff',
+    font_size: 18, animation: 'none',
+  });
+
+  const [location, setLocation] = useState({
+    type: 'all' as 'all' | 'specific' | 'radius',
+    locations: [] as Array<{ id: string; lat: number; lng: number; address: string; radius: number; }>,
+  });
+
+  useEffect(() => { setMounted(true); }, []);
+
+  const textPrimary = themeColors?.text?.primary || '#0f172a';
+  const textSecondary = themeColors?.text?.secondary || '#64748b';
+  const border = themeColors?.border || '#e2e8f0';
+  const surface = themeColors?.surface || '#ffffff';
+  const primary = themeColors?.primary || '#3b82f6';
+
+  useEffect(() => {
+    if (!mounted) return;
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        setForm(prev => ({ ...prev, client_name: u.name || '', client_email: u.email || '' }));
+      } catch {}
+    }
+  }, [mounted]);
+
+  useEffect(() => {
+    const placement = PLACEMENTS.find(p => p.value === form.placement);
+    if (placement) setForm(prev => ({ ...prev, size: `${placement.w}x${placement.h}` }));
+  }, [form.placement]);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const fd = new FormData(); fd.append('file', file);
+    const res = await fetch('/api/ads/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.success) {
+      setForm({ ...form, image_url: data.url });
+      setPreviewUrl(data.url);
+      setMessage({ type: 'success', text: '✅ Image uploaded!' });
+      setTimeout(() => setMessage(null), 3000);
+    }
+    setUploading(false);
+  };
+
+  const applyTemplate = (template: typeof TEMPLATES[0]) => {
+    setForm({ ...form, title: template.title, description: template.desc, bg_color: template.bg, text_color: template.text });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(null);
+    setLoading(true);
+    if (!form.title.trim()) {
+      setMessage({ type: 'error', text: '❌ Title is required!' });
+      setLoading(false);
+      return;
+    }
+    try {
+      const submitData = {
+        ...form,
+        user_id: user?.id,
+        client_email: user?.email || form.client_email,
+        target_lat: location.locations[0]?.lat || 0,
+        target_lng: location.locations[0]?.lng || 0,
+        target_radius: location.locations[0]?.radius || 0,
+        target_address: location.locations[0]?.address || '',
+        geo_type: location.type === 'all' ? 'all' : location.type === 'radius' ? 'radius' : 'specific',
+        target_locations: location.locations.map(l => ({ lat: l.lat, lng: l.lng, address: l.address, radius: l.radius || 0 })),
+      };
+      const res = await fetch('/api/admin/ads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submitData) });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ type: 'success', text: '✅ Ad submitted for approval!' });
+        setTimeout(() => router.push(`/${lang}/dashboard/ads`), 1500);
+      } else {
+        setMessage({ type: 'error', text: '❌ ' + (data.error || 'Submission failed') });
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: '❌ ' + err.message });
+    }
+    setLoading(false);
+  };
+
+  const currentPlacement = PLACEMENTS.find(p => p.value === form.placement) || PLACEMENTS[0];
+  const currentDevice = DEVICE_PREVIEWS.find(d => d.id === deviceView) || DEVICE_PREVIEWS[0];
+
+  const getPreviewDimensions = () => {
+    const baseW = currentPlacement.w;
+    const baseH = currentPlacement.h;
+    const aspectRatio = baseW / baseH;
+    let maxWidth = 100; // Default small
+    if (deviceView === 'mobile') maxWidth = 280;
+    else if (deviceView === 'tablet') maxWidth = 400;
+    else maxWidth = 500; // Desktop — chhota karo taake overflow na ho
+    if (currentPlacement.value === 'sidebar' || currentPlacement.value === 'blog-sidebar') {
+      maxWidth = deviceView === 'mobile' ? 150 : 220;
+    }
+    const width = Math.min(maxWidth, baseW);
+    const height = width / aspectRatio;
+    return { width, height, maxWidth };
+  };
+
+  const previewDim = getPreviewDimensions();
+
+  const inputStyle = {
+    padding: '12px 14px', borderRadius: '10px', border: '1px solid ' + border,
+    backgroundColor: isDarkMode ? '#1e293b' : '#ffffff', color: textPrimary,
+    fontSize: '13px', outline: 'none', width: '100%',
+    boxSizing: 'border-box' as const, minHeight: '44px',
+  };
+
+  const labelStyle = {
+    display: 'block', fontSize: '12px', fontWeight: 600,
+    color: textSecondary, marginBottom: '6px',
+  };
+
+  if (!mounted) {
+    return (
+      <div className="create-ad-container">
+        <div className="create-ad-wrapper" style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ color: textSecondary }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="create-ad-container">
+        <div className="create-ad-wrapper" style={{ textAlign: 'center', padding: '40px' }}>
+          <div style={{ color: textSecondary }}>Loading user...</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="create-ad-container" style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+      <div className="create-ad-wrapper">
+        
+        {/* HEADER */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          <Link href={`/${lang}/dashboard/ads`} style={{
+            padding: '8px 12px', borderRadius: '10px', border: '1px solid ' + border,
+            color: textSecondary, textDecoration: 'none', display: 'flex',
+            alignItems: 'center', gap: '6px', fontSize: '13px', minHeight: '40px',
+          }}>
+            <ArrowLeft size={16} /> Back
+          </Link>
+          <div style={{ flex: 1, minWidth: '180px' }}>
+            <h1 style={{ fontSize: 'clamp(18px, 4vw, 28px)', fontWeight: 800, color: textPrimary, margin: 0 }}>
+              Create New Advertisement
+            </h1>
+            <p style={{ fontSize: '13px', color: textSecondary, margin: '4px 0 0' }}>
+              Target your audience with precision
+            </p>
+          </div>
+        </div>
+
+        {/* MESSAGE */}
+        {message && (
+          <div style={{
+            padding: '12px 16px', borderRadius: '12px',
+            backgroundColor: message.type === 'success' ? '#10b981' : '#ef4444',
+            color: '#fff', marginBottom: '16px', display: 'flex',
+            alignItems: 'center', gap: '10px', fontSize: '13px',
+          }}>
+            {message.type === 'success' ? <Check size={18} /> : <AlertCircle size={18} />}
+            {message.text}
+          </div>
+        )}
+
+        {/* MAIN GRID */}
+        <div className="create-ad-grid">
+          
+          {/* ========== FORM SECTION ========== */}
+          <div className="form-section" style={{ background: surface, borderRadius: '16px', border: '1px solid ' + border, padding: '16px' }}>
+            
+            {/* Templates */}
+            <div style={{ marginBottom: '20px' }}>
+              <label style={labelStyle}>✨ Quick Templates</label>
+              <div className="templates-scroll">
+                {TEMPLATES.map((t) => (
+                  <button key={t.id} onClick={() => applyTemplate(t)} style={{
+                    padding: '10px 14px', borderRadius: '8px', border: '1px solid ' + border,
+                    background: 'transparent', cursor: 'pointer', fontSize: '11px',
+                    display: 'flex', alignItems: 'center', gap: '4px', color: textPrimary,
+                    whiteSpace: 'nowrap', flexShrink: 0, minHeight: '40px',
+                  }}>
+                    <span>{t.icon}</span> {t.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Basic Form */}
+            <div className="form-grid">
+              <div>
+                <label style={labelStyle}>📝 Ad Title *</label>
+                <input placeholder="e.g. Summer Sale 2026" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>🔗 Target URL *</label>
+                <input placeholder="https://www.centre.com.pk/..." value={form.target_url} onChange={(e) => setForm({ ...form, target_url: e.target.value })} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>📄 Description</label>
+                <input placeholder="Brief description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>📍 Placement</label>
+                <select value={form.placement} onChange={(e) => setForm({ ...form, placement: e.target.value })} style={inputStyle}>
+                  {PLACEMENTS.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                </select>
+              </div>
+              <div>
+                <label style={labelStyle}>🖼️ Image URL</label>
+                <input placeholder="Paste image URL or upload" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} style={inputStyle} />
+              </div>
+              <div>
+                <label style={labelStyle}>📸 Ad Type</label>
+                <select value={form.ad_type} onChange={(e) => setForm({ ...form, ad_type: e.target.value })} style={inputStyle}>
+                  <option value="client">📸 Banner</option>
+                  <option value="sponsor">🤝 Sponsored</option>
+                  <option value="google_adsense">🔷 AdSense</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Advanced Options — Toggle Button (mobile + desktop) */}
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              style={{
+                width: '100%', padding: '12px', borderRadius: '10px',
+                border: '1px dashed ' + border, background: 'transparent',
+                color: textSecondary, fontSize: '12px', fontWeight: 600,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                marginTop: '16px', cursor: 'pointer', minHeight: '44px',
+              }}
+            >
+              <Palette size={16} />
+              {showAdvanced ? 'Hide Advanced Options' : 'Show Advanced Options'}
+              {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </button>
+
+            {/* Advanced Options — Collapsible */}
+            {showAdvanced && (
+              <div style={{ marginTop: '16px' }}>
+                <div className="color-grid">
+                  <div>
+                    <label style={labelStyle}>🎨 BG Color</label>
+                    <input type="color" value={form.bg_color} onChange={(e) => setForm({ ...form, bg_color: e.target.value })} style={{ width: '100%', height: '44px', borderRadius: '8px', border: '1px solid ' + border, cursor: 'pointer' }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>✏️ Text Color</label>
+                    <input type="color" value={form.text_color} onChange={(e) => setForm({ ...form, text_color: e.target.value })} style={{ width: '100%', height: '44px', borderRadius: '8px', border: '1px solid ' + border, cursor: 'pointer' }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>📏 Font Size</label>
+                    <input type="number" value={form.font_size} onChange={(e) => setForm({ ...form, font_size: Number(e.target.value) })} min={12} max={48} style={inputStyle} />
+                  </div>
+                </div>
+
+                <div className="form-grid" style={{ marginTop: '16px' }}>
+                  <div>
+                    <label style={labelStyle}>💰 Budget ($)</label>
+                    <input type="number" placeholder="0" value={form.budget} onChange={(e) => setForm({ ...form, budget: Number(e.target.value) })} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>👁️ Max Impressions</label>
+                    <input type="number" placeholder="10000" value={form.max_impressions} onChange={(e) => setForm({ ...form, max_impressions: Number(e.target.value) })} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>📅 Start Date</label>
+                    <input type="date" value={form.start_date} onChange={(e) => setForm({ ...form, start_date: e.target.value })} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>📅 End Date</label>
+                    <input type="date" value={form.end_date} onChange={(e) => setForm({ ...form, end_date: e.target.value })} style={inputStyle} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>📱 Target Device</label>
+                    <select value={form.target_device} onChange={(e) => setForm({ ...form, target_device: e.target.value })} style={inputStyle}>
+                      <option value="">All Devices</option>
+                      <option value="desktop">Desktop</option>
+                      <option value="mobile">Mobile</option>
+                      <option value="tablet">Tablet</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={labelStyle}>👤 Client Name</label>
+                    <input placeholder="Your name" value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} style={inputStyle} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Image Upload */}
+            <div style={{ marginTop: '20px' }}>
+              <label style={labelStyle}>📤 Upload Image</label>
+              <input type="file" ref={fileRef} accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+              <div onClick={() => fileRef.current?.click()} style={{
+                padding: '20px', border: '2px dashed ' + border, borderRadius: '12px',
+                textAlign: 'center', cursor: 'pointer', background: isDarkMode ? '#0f172a' : '#f8fafc',
+                minHeight: '120px', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+              }}>
+                {uploading ? (
+                  <div style={{ fontSize: '13px', color: textSecondary }}>⏳ Uploading...</div>
+                ) : previewUrl ? (
+                  <div>
+                    <img src={previewUrl} alt="Preview" style={{ maxHeight: '80px', borderRadius: '8px', maxWidth: '100%' }} />
+                    <button type="button" onClick={(e) => { e.stopPropagation(); setPreviewUrl(''); setForm({ ...form, image_url: '' }); }}
+                      style={{ marginTop: '8px', padding: '6px 12px', borderRadius: '6px', border: '1px solid #ef4444', background: '#ef444410', color: '#ef4444', cursor: 'pointer', fontSize: '11px', minHeight: '36px' }}>
+                      ✕ Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <Upload size={32} style={{ color: textSecondary, marginBottom: '8px', opacity: 0.5 }} />
+                    <p style={{ fontSize: '13px', color: textSecondary, margin: 0 }}>Click to upload banner image</p>
+                    <p style={{ fontSize: '11px', color: textSecondary, margin: '4px 0 0' }}>JPG, PNG, GIF</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Location Picker */}
+            <div style={{ marginTop: '20px' }}>
+              <LocationPicker value={location} onChange={setLocation} label="📍 Target Locations" />
+            </div>
+
+            {/* Submit Buttons */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '24px', flexWrap: 'wrap' }}>
+              <button onClick={handleSubmit} disabled={loading} style={{
+                flex: 1, minWidth: '200px', padding: '14px', borderRadius: '12px', border: 'none',
+                background: '#10b981', color: '#fff', fontWeight: 700, fontSize: '14px',
+                cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.7 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', minHeight: '48px',
+              }}>
+                {loading ? '⏳ Submitting...' : '📢 Submit for Approval'}
+              </button>
+              <Link href={`/${lang}/dashboard/ads`} style={{
+                padding: '14px 24px', borderRadius: '12px', border: '1px solid ' + border,
+                background: 'transparent', color: textSecondary, textDecoration: 'none',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                fontSize: '14px', minHeight: '48px',
+              }}>
+                Cancel
+              </Link>
+            </div>
+          </div>
+
+          {/* ========== LIVE PREVIEW (Desktop — Right Side, Sticky, Overflow Fix) ========== */}
+          <div className="preview-desktop" style={{
+            background: surface, borderRadius: '16px', border: '1px solid ' + border,
+            padding: '20px', overflow: 'hidden',
+          }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: textPrimary, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Eye size={18} color={primary} /> Live Preview
+            </h3>
+            
+            {/* Device Toggle */}
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {DEVICE_PREVIEWS.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <button key={d.id} onClick={() => setDeviceView(d.id)} style={{
+                    padding: '8px 14px', borderRadius: '8px', border: '1px solid ' + border,
+                    background: deviceView === d.id ? primary + '20' : 'transparent',
+                    color: deviceView === d.id ? primary : textSecondary,
+                    cursor: 'pointer', fontSize: '12px', fontWeight: deviceView === d.id ? 600 : 400,
+                    display: 'flex', alignItems: 'center', gap: '4px', minHeight: '40px',
+                  }}>
+                    <Icon size={14} /> {d.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Placement Info */}
+            <div style={{
+              fontSize: '12px', color: textSecondary, marginBottom: '12px',
+              padding: '10px 12px', background: isDarkMode ? '#0f172a' : '#f8fafc',
+              borderRadius: '8px', display: 'flex', justifyContent: 'space-between',
+            }}>
+              <span>📐 {currentPlacement.label}</span>
+              <span>{currentPlacement.w}×{currentPlacement.h}</span>
+            </div>
+
+            {/* Ad Preview Box — Overflow Fixed */}
+            <div style={{
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              background: isDarkMode ? '#0f172a' : '#f1f5f9',
+              borderRadius: '12px', padding: '16px', minHeight: '200px',
+              maxHeight: '400px', overflow: 'auto',
+            }}>
+              <div style={{
+                width: previewDim.width + 'px',
+                height: previewDim.height + 'px',
+                maxWidth: '100%',
+                background: form.image_url ? `url(${form.image_url}) center/cover` : form.bg_color,
+                borderRadius: '8px', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                color: form.text_color, textAlign: 'center', padding: '12px',
+                position: 'relative', overflow: 'hidden',
+                border: '2px solid ' + border,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                flexShrink: 0,
+              }}>
+                {form.image_url && (<div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }} />)}
+                <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
+                  <div style={{
+                    fontSize: Math.min(form.font_size, previewDim.height / 3.5) + 'px',
+                    fontWeight: 700, marginBottom: '2px', wordBreak: 'break-word', lineHeight: 1.2,
+                  }}>
+                    {form.title || 'Ad Title'}
+                  </div>
+                  <div style={{
+                    fontSize: Math.max(9, Math.min(form.font_size * 0.45, previewDim.height / 6)) + 'px',
+                    opacity: 0.9, wordBreak: 'break-word',
+                  }}>
+                    {form.description || 'Description'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: '12px', fontSize: '11px', color: textSecondary,
+              textAlign: 'center', padding: '8px',
+              background: isDarkMode ? '#0f172a' : '#f8fafc', borderRadius: '6px',
+            }}>
+              📱 {currentDevice.label} • {Math.round(previewDim.width)}×{Math.round(previewDim.height)}
+            </div>
+          </div>
+
+          {/* ========== LIVE PREVIEW (Mobile — Top or Bottom, All Features) ========== */}
+          <div className="preview-mobile" style={{
+            background: surface, borderRadius: '16px', border: '1px solid ' + border,
+            padding: '16px', overflow: 'hidden',
+          }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Eye size={16} color={primary} /> Live Preview
+            </h3>
+            
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              {DEVICE_PREVIEWS.map((d) => {
+                const Icon = d.icon;
+                return (
+                  <button key={d.id} onClick={() => setDeviceView(d.id)} style={{
+                    padding: '8px 12px', borderRadius: '8px', border: '1px solid ' + border,
+                    background: deviceView === d.id ? primary + '20' : 'transparent',
+                    color: deviceView === d.id ? primary : textSecondary,
+                    cursor: 'pointer', fontSize: '11px', fontWeight: deviceView === d.id ? 600 : 400,
+                    display: 'flex', alignItems: 'center', gap: '4px', minHeight: '36px',
+                  }}>
+                    <Icon size={12} /> {d.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={{
+              fontSize: '11px', color: textSecondary, marginBottom: '12px',
+              padding: '8px 12px', background: isDarkMode ? '#0f172a' : '#f8fafc',
+              borderRadius: '8px', display: 'flex', justifyContent: 'space-between',
+            }}>
+              <span>📐 {currentPlacement.label}</span>
+              <span>{currentPlacement.w}×{currentPlacement.h}</span>
+            </div>
+
+            <div style={{
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              background: isDarkMode ? '#0f172a' : '#f1f5f9',
+              borderRadius: '12px', padding: '16px', minHeight: '180px',
+            }}>
+              <div style={{
+                width: previewDim.width + 'px', height: previewDim.height + 'px',
+                maxWidth: '100%',
+                background: form.image_url ? `url(${form.image_url}) center/cover` : form.bg_color,
+                borderRadius: '8px', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                color: form.text_color, textAlign: 'center', padding: '12px',
+                position: 'relative', overflow: 'hidden',
+                border: '2px solid ' + border,
+                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              }}>
+                {form.image_url && (<div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)' }} />)}
+                <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
+                  <div style={{
+                    fontSize: Math.min(form.font_size, previewDim.height / 3.5) + 'px',
+                    fontWeight: 700, marginBottom: '2px', wordBreak: 'break-word', lineHeight: 1.2,
+                  }}>
+                    {form.title || 'Ad Title'}
+                  </div>
+                  <div style={{
+                    fontSize: Math.max(9, Math.min(form.font_size * 0.45, previewDim.height / 6)) + 'px',
+                    opacity: 0.9, wordBreak: 'break-word',
+                  }}>
+                    {form.description || 'Description'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: '12px', fontSize: '11px', color: textSecondary,
+              textAlign: 'center', padding: '8px',
+              background: isDarkMode ? '#0f172a' : '#f8fafc', borderRadius: '6px',
+            }}>
+              📱 {currentDevice.label} • {Math.round(previewDim.width)}×{Math.round(previewDim.height)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/ads/new/page.tsx ===
+import { Metadata } from "next";
+import CreateAdClient from "./CreateAdClient";
+
+export const metadata: Metadata = {
+  title: "Create New Ad - Centre.com.pk",
+  description: "Create targeted advertisements with geo-location"
+};
+
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  return <CreateAdClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/ads/page.tsx ===
+import { Metadata } from "next";
+import Link from "next/link";
+import ClientAds from "./ClientAds";
+
+export const metadata: Metadata = {
+  title: "My Ads - Centre.com.pk",
+  description: "Manage your advertisements"
+};
+
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  return <ClientAds lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/affiliate/UserAffiliateClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import { 
+  Share2, Copy, DollarSign, Users, Wallet, Clock, TrendingUp,
+  MessageCircle, Facebook, Twitter, Mail, Link2, Check, ChevronRight,
+  Gift, Award, Target, Calendar, ArrowUpRight
+} from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+
+export default function UserAffiliateClient({ lang }: { lang: string }) {
+  const { themeColors } = useTheme();
+  const [copied, setCopied] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [affiliate, setAffiliate] = useState<any>(null);
+  const [referrals, setReferrals] = useState<any[]>([]);
+  const [earnings, setEarnings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+  const isRTL = lang === 'ur' || lang === 'ar';
+
+  const labels: Record<string, any> = {
+    en: {
+      title: 'Affiliate Program', subtitle: 'Earn 10% commission on every referral',
+      referralLink: 'Your Referral Link', copy: 'Copy', copied: 'Copied!',
+      totalEarnings: 'Total Earnings', referrals: 'Referrals',
+      availableBalance: 'Available Balance', pending: 'Pending',
+      requestPayout: 'Request Payout', minPayout: 'Min payout: $10',
+      referralList: 'Recent Referrals', noReferrals: 'No referrals yet',
+      noReferralsDesc: 'Share your link to start earning!',
+      shareVia: 'Share via', earningsChart: 'Earnings (Last 30 Days)',
+      joined: 'Joined', earned: 'Earned',
+      howItWorks: 'How It Works', step1: 'Share your unique link',
+      step2: 'Friends sign up & use tools', step3: 'Earn 10% commission',
+    },
+    ur: {
+      title: 'افیلیٹ پروگرام', subtitle: 'ہر ریفرل پر 10% کمیشن کمائیں',
+      referralLink: 'آپ کا ریفرل لنک', copy: 'کاپی', copied: 'کاپی ہو گیا!',
+      totalEarnings: 'کل کمائی', referrals: 'ریفرلز',
+      availableBalance: 'دستیاب بیلنس', pending: 'زیر التواء',
+      requestPayout: 'پیمنٹ کی درخواست', minPayout: 'کم از کم: $10',
+      referralList: 'حالیہ ریفرلز', noReferrals: 'ابھی کوئی ریفرل نہیں',
+      noReferralsDesc: 'کمانا شروع کرنے کے لیے اپنا لنک شیئر کریں!',
+      shareVia: 'شیئر کریں', earningsChart: 'کمائی (آخری 30 دن)',
+      joined: 'شامل ہوئے', earned: 'کمایا',
+      howItWorks: 'یہ کیسے کام کرتا ہے', step1: 'اپنا لنک شیئر کریں',
+      step2: 'دوست سائن اپ اور ٹولز استعمال کریں', step3: '10% کمیشن کمائیں',
+    },
+    hi: {
+      title: 'सहबद्ध कार्यक्रम', subtitle: 'हर रेफरल पर 10% कमीशन कमाएं',
+      referralLink: 'आपका रेफरल लिंक', copy: 'कॉपी', copied: 'कॉपी हो गया!',
+      totalEarnings: 'कुल कमाई', referrals: 'रेफरल',
+      availableBalance: 'उपलब्ध शेष', pending: 'लंबित',
+      requestPayout: 'भुगतान का अनुरोध', minPayout: 'न्यूनतम: $10',
+      referralList: 'हाल के रेफरल', noReferrals: 'अभी कोई रेफरल नहीं',
+      noReferralsDesc: 'कमाना शुरू करने के लिए अपना लिंक साझा करें!',
+      shareVia: 'साझा करें', earningsChart: 'कमाई (पिछले 30 दिन)',
+      joined: 'शामिल हुए', earned: 'कमाया',
+      howItWorks: 'यह कैसे काम करता है', step1: 'अपना लिंक साझा करें',
+      step2: 'दोस्त साइन अप और टूल्स उपयोग करें', step3: '10% कमीशन कमाएं',
+    },
+    ar: {
+      title: 'برنامج العمولة', subtitle: 'اكسب 10% عمولة على كل إحالة',
+      referralLink: 'رابط الإحالة الخاص بك', copy: 'نسخ', copied: 'تم النسخ!',
+      totalEarnings: 'إجمالي الأرباح', referrals: 'الإحالات',
+      availableBalance: 'الرصيد المتاح', pending: 'قيد الانتظار',
+      requestPayout: 'طلب الدفع', minPayout: 'الحد الأدنى: $10',
+      referralList: 'الإحالات الأخيرة', noReferrals: 'لا توجد إحالات بعد',
+      noReferralsDesc: 'شارك رابطك لبدء الربح!',
+      shareVia: 'شارك عبر', earningsChart: 'الأرباح (آخر 30 يوم)',
+      joined: 'انضم', earned: 'كسب',
+      howItWorks: 'كيف يعمل', step1: 'شارك رابطك',
+      step2: 'الأصدقاء يسجلون ويستخدمون', step3: 'اكسب 10% عمولة',
+    },
+  };
+  const l = labels[lang] || labels.en;
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        fetchAffiliateData(u.id);
+      } catch {}
+    }
+  }, []);
+
+  const fetchAffiliateData = async (userId: number) => {
+    setLoading(true);
+    try {
+      // Fetch affiliate info
+      const affRes = await fetch(`/api/affiliate?user_id=${userId}`);
+      const affData = await affRes.json();
+      
+      if (affData.success && affData.data && affData.data.length > 0) {
+        setAffiliate(affData.data[0]);
+      } else {
+        // Generate referral code if not exists
+        const newCode = `user${userId}${Math.random().toString(36).substring(2, 6)}`;
+        setAffiliate({
+          id: 0,
+          user_id: userId,
+          referral_code: newCode,
+          total_referrals: 0,
+          total_earnings: 0,
+          available_balance: 0,
+          pending_balance: 0,
+        });
+      }
+      
+      // Fetch referrals (mock — replace with real API)
+      setReferrals([]);
+      
+      // Fetch earnings (mock — replace with real API)
+      setEarnings([]);
+      
+    } catch {
+      // Fallback
+      setAffiliate({
+        referral_code: `user${userId}`,
+        total_referrals: 0,
+        total_earnings: 0,
+        available_balance: 0,
+        pending_balance: 0,
+      });
+    }
+    setLoading(false);
+  };
+
+  const refLink = affiliate?.referral_code 
+    ? `https://www.centre.com.pk?ref=${affiliate.referral_code}`
+    : `https://www.centre.com.pk?ref=user${user?.id || 'guest'}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(refLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleShare = (platform: string) => {
+    const text = `Join Centre.com.pk — Free online tools! Use my link:`;
+    const urls: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + ' ' + refLink)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(refLink)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(refLink)}`,
+      email: `mailto:?subject=Join Centre.com.pk&body=${encodeURIComponent(text + ' ' + refLink)}`,
+    };
+    window.open(urls[platform], '_blank');
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+        <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+          <div className="max-w-5xl mx-auto text-center py-20" style={{ color: textSecondary }}>
+            Loading affiliate data...
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)", direction: isRTL ? 'rtl' : 'ltr' }}>
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-5xl mx-auto">
+          
+          {/* HEADER */}
+          <div style={{ marginBottom: '24px' }}>
+            <h1 style={{ fontSize: 'clamp(22px, 4vw, 30px)', fontWeight: 800, color: textPrimary, margin: '0 0 4px' }}>
+              🤝 {l.title}
+            </h1>
+            <p style={{ fontSize: '14px', color: textSecondary, margin: 0 }}>{l.subtitle}</p>
+          </div>
+
+          {/* REFERRAL LINK CARD */}
+          <div style={{ 
+  padding: '20px', borderRadius: '16px', 
+  border: '1px solid ' + border, marginBottom: '20px',
+  background: `linear-gradient(135deg, ${primary}08, ${primary}15)`,
+}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+              <Link2 size={18} color={primary} />
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: textPrimary, margin: 0 }}>{l.referralLink}</h3>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <code style={{ 
+                flex: 1, minWidth: '200px', padding: '12px 14px', borderRadius: '10px', 
+                fontSize: '12px', fontFamily: 'monospace',
+                background: 'var(--background)', color: primary, 
+                wordBreak: 'break-all', border: '1px solid ' + border,
+                minHeight: '44px', display: 'flex', alignItems: 'center',
+              }}>
+                {refLink}
+              </code>
+              <button 
+                onClick={handleCopy}
+                style={{
+                  padding: '12px 18px', borderRadius: '10px', border: 'none',
+                  background: copied ? '#10b981' : primary, color: '#fff',
+                  fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  minHeight: '44px', whiteSpace: 'nowrap',
+                }}
+              >
+                {copied ? <Check size={16} /> : <Copy size={16} />}
+                {copied ? l.copied : l.copy}
+              </button>
+            </div>
+          </div>
+
+          {/* STATS CARDS */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
+            gap: '12px', marginBottom: '20px' 
+          }}>
+            {[
+              { icon: DollarSign, label: l.totalEarnings, value: `$${(affiliate?.total_earnings || 0).toFixed(2)}`, color: '#10b981' },
+              { icon: Users, label: l.referrals, value: affiliate?.total_referrals || 0, color: '#3b82f6' },
+              { icon: Wallet, label: l.availableBalance, value: `$${(affiliate?.available_balance || 0).toFixed(2)}`, color: '#8b5cf6' },
+              { icon: Clock, label: l.pending, value: `$${(affiliate?.pending_balance || 0).toFixed(2)}`, color: '#f59e0b' },
+            ].map((stat, i) => (
+              <div key={i} style={{ 
+                padding: '16px', background: surface, borderRadius: '12px', 
+                border: '1px solid ' + border,
+              }}>
+                <div style={{ 
+                  width: '40px', height: '40px', borderRadius: '10px', 
+                  background: `${stat.color}15`, display: 'flex', 
+                  alignItems: 'center', justifyContent: 'center', marginBottom: '10px',
+                }}>
+                  <stat.icon size={20} color={stat.color} />
+                </div>
+                <div style={{ fontSize: '22px', fontWeight: 800, color: textPrimary, lineHeight: 1 }}>
+                  {stat.value}
+                </div>
+                <div style={{ fontSize: '11px', color: textSecondary, marginTop: '4px' }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* PAYOUT REQUEST */}
+          <div style={{ 
+            padding: '16px', background: surface, borderRadius: '12px', 
+            border: '1px solid ' + border, marginBottom: '20px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            flexWrap: 'wrap', gap: '12px',
+          }}>
+            <div>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, color: textPrimary, margin: '0 0 4px' }}>
+                💰 {l.requestPayout}
+              </h3>
+              <p style={{ fontSize: '12px', color: textSecondary, margin: 0 }}>{l.minPayout}</p>
+            </div>
+            <button
+              disabled={(affiliate?.available_balance || 0) < 10}
+              style={{
+                padding: '12px 24px', borderRadius: '10px', border: 'none',
+                background: (affiliate?.available_balance || 0) >= 10 ? '#10b981' : border,
+                color: (affiliate?.available_balance || 0) >= 10 ? '#fff' : textSecondary,
+                fontSize: '13px', fontWeight: 600, cursor: (affiliate?.available_balance || 0) >= 10 ? 'pointer' : 'not-allowed',
+                minHeight: '44px',
+              }}
+            >
+              {l.requestPayout}
+            </button>
+          </div>
+
+          {/* SHARE BUTTONS */}
+          <div style={{ padding: '16px', background: surface, borderRadius: '12px', border: '1px solid ' + border, marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Share2 size={16} color={primary} /> {l.shareVia}
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
+              {[
+                { id: 'whatsapp', label: 'WhatsApp', icon: MessageCircle, color: '#25D366' },
+                { id: 'facebook', label: 'Facebook', icon: Facebook, color: '#1877F2' },
+                { id: 'twitter', label: 'Twitter', icon: Twitter, color: '#1DA1F2' },
+                { id: 'email', label: 'Email', icon: Mail, color: '#6B7280' },
+              ].map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => handleShare(s.id)}
+                  style={{
+                    padding: '12px 16px', borderRadius: '10px', 
+                    border: '1px solid ' + border, background: 'transparent',
+                    color: textPrimary, fontSize: '12px', fontWeight: 600,
+                    cursor: 'pointer', display: 'flex', alignItems: 'center', 
+                    justifyContent: 'center', gap: '6px', minHeight: '44px',
+                  }}
+                >
+                  <s.icon size={16} color={s.color} /> {s.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* EARNINGS CHART (Last 30 Days) */}
+          <div style={{ padding: '16px', background: surface, borderRadius: '12px', border: '1px solid ' + border, marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <TrendingUp size={16} color={primary} /> {l.earningsChart}
+            </h3>
+            {/* Simple bar chart placeholder */}
+            <div style={{ 
+              display: 'flex', alignItems: 'flex-end', gap: '4px', 
+              height: '100px', padding: '8px', 
+              background: 'var(--background)', borderRadius: '8px',
+            }}>
+              {Array.from({ length: 30 }).map((_, i) => {
+                const height = Math.random() * 80 + 5; // Mock data
+                return (
+                  <div 
+                    key={i} 
+                    style={{ 
+                      flex: 1, 
+                      height: `${height}%`,
+                      background: `linear-gradient(to top, ${primary}, ${primary}80)`,
+                      borderRadius: '2px',
+                      minWidth: '4px',
+                    }} 
+                  />
+                );
+              })}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+              <span style={{ fontSize: '10px', color: textSecondary }}>30 days ago</span>
+              <span style={{ fontSize: '10px', color: textSecondary }}>Today</span>
+            </div>
+          </div>
+
+          {/* REFERRAL LIST */}
+          <div style={{ padding: '16px', background: surface, borderRadius: '12px', border: '1px solid ' + border, marginBottom: '20px' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Users size={16} color={primary} /> {l.referralList}
+            </h3>
+            {referrals.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '30px 16px', color: textSecondary }}>
+                <Users size={32} style={{ marginBottom: '8px', opacity: 0.3 }} />
+                <p style={{ fontSize: '13px', margin: '0 0 4px' }}>{l.noReferrals}</p>
+                <p style={{ fontSize: '11px', margin: 0 }}>{l.noReferralsDesc}</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {referrals.map((ref, i) => (
+                  <div key={i} style={{ 
+                    padding: '12px', borderRadius: '8px', 
+                    background: 'var(--background)',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  }}>
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: textPrimary }}>{ref.name}</div>
+                      <div style={{ fontSize: '11px', color: textSecondary }}>{ref.joined}</div>
+                    </div>
+                    <div style={{ color: '#10b981', fontWeight: 700, fontSize: '13px' }}>+${ref.earned}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* HOW IT WORKS */}
+          <div style={{ padding: '16px', background: surface, borderRadius: '12px', border: '1px solid ' + border }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: textPrimary, margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Award size={16} color={primary} /> {l.howItWorks}
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+              {[
+                { step: 1, text: l.step1, icon: Share2, color: '#3b82f6' },
+                { step: 2, text: l.step2, icon: Users, color: '#8b5cf6' },
+                { step: 3, text: l.step3, icon: DollarSign, color: '#10b981' },
+              ].map((item) => (
+                <div key={item.step} style={{ textAlign: 'center', padding: '12px' }}>
+                  <div style={{ 
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    background: `${item.color}15`, display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px',
+                  }}>
+                    <item.icon size={22} color={item.color} />
+                  </div>
+                  <div style={{ 
+                    width: '20px', height: '20px', borderRadius: '50%',
+                    background: item.color, color: '#fff', fontSize: '11px',
+                    fontWeight: 700, display: 'flex', alignItems: 'center',
+                    justifyContent: 'center', margin: '0 auto 8px',
+                  }}>
+                    {item.step}
+                  </div>
+                  <p style={{ fontSize: '12px', color: textPrimary, margin: 0, lineHeight: 1.4 }}>
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/affiliate/page.tsx ===
+import { Metadata } from "next";
+import UserAffiliateClient from "./UserAffiliateClient";
+export const metadata: Metadata = { title: "Affiliate - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <UserAffiliateClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/bookmarks/BookmarksClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Bookmark, Trash2, FileText, Globe, Calendar } from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+
+export default function BookmarksClient({ lang }: { lang: string }) {
+  const { themeColors } = useTheme();
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        fetchBookmarks(u.id || u.email);
+      } catch {}
+    }
+  }, []);
+
+  const fetchBookmarks = async (userId: string) => {
+    setLoading(true);
+    try {
+      // API se bookmarks fetch karo
+      const res = await fetch(`/api/user/bookmarks?user_id=${userId}`);
+      const data = await res.json();
+      
+      if (data.bookmarks && data.bookmarks.length > 0) {
+        // Har bookmark ke liye post details fetch karo
+        const enrichedBookmarks = await Promise.all(
+          data.bookmarks.map(async (b: any) => {
+            try {
+              const postRes = await fetch(`/api/blog/${b.post_slug}?lang=${lang}`);
+              const postData = await postRes.json();
+              return { ...b, post: postData.post || null };
+            } catch {
+              return { ...b, post: null };
+            }
+          })
+        );
+        setBookmarks(enrichedBookmarks.filter(b => b.post !== null));
+      } else {
+        setBookmarks([]);
+      }
+    } catch {
+      setBookmarks([]);
+    }
+    setLoading(false);
+  };
+
+  const removeBookmark = async (postSlug: string) => {
+    if (!user) return;
+    try {
+      await fetch('/api/blog/bookmarks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ postSlug, userId: user.id || user.email }),
+      });
+      setBookmarks(prev => prev.filter(b => b.post_slug !== postSlug));
+    } catch {}
+  };
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-2 text-sm mb-6" style={{ color: textSecondary }}>
+            <ArrowLeft size={16} /> Back to Dashboard
+          </Link>
+
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <div>
+              <h1 className="text-2xl font-bold mb-1" style={{ color: textPrimary }}>🔖 Bookmarks</h1>
+              <p style={{ color: textSecondary, fontSize: '14px' }}>
+                {bookmarks.length} saved posts
+              </p>
+            </div>
+          </div>
+
+          {/* Loading */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>
+              Loading bookmarks...
+            </div>
+          ) : bookmarks.length === 0 ? (
+            /* Empty State */
+            <div className="text-center py-16">
+              <Bookmark className="w-16 h-16 mx-auto mb-4 opacity-30" style={{ color: textSecondary }} />
+              <p style={{ color: textSecondary, fontSize: '16px', marginBottom: '8px' }}>No bookmarks yet</p>
+              <p style={{ color: textSecondary, fontSize: '13px' }}>Save your favorite blog posts for quick access!</p>
+              <Link href={`/${lang}/blog`} style={{ 
+                display: 'inline-block', marginTop: '16px', padding: '10px 20px',
+                background: primary, color: '#fff', borderRadius: '8px',
+                textDecoration: 'none', fontSize: '14px', fontWeight: 600
+              }}>
+                Browse Blog Posts
+              </Link>
+            </div>
+          ) : (
+            /* Bookmarks List */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {bookmarks.map((bookmark: any) => {
+                const post = bookmark.post;
+                return (
+                  <div key={bookmark.id} style={{ 
+                    padding: '16px', background: surface, borderRadius: '12px', 
+                    border: `1px solid ${border}`,
+                    display: 'flex', alignItems: 'flex-start', gap: '12px',
+                    transition: 'all 0.2s ease',
+                  }}>
+                    {/* Thumbnail */}
+                    {post.featured_image && (
+                      <img src={post.featured_image} alt={post.title} style={{ 
+                        width: '80px', height: '60px', borderRadius: '8px', 
+                        objectFit: 'cover', flexShrink: 0 
+                      }} />
+                    )}
+
+                    {/* Post Info */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <Link href={`/${lang}/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
+                        <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px', marginBottom: '4px' }}>
+                          {post.title}
+                        </div>
+                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '11px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={11} /> {post.created_at ? new Date(post.created_at).toLocaleDateString() : '-'}
+                        </span>
+                        <span style={{ fontSize: '11px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Globe size={11} /> {(post.lang || 'en').toUpperCase()}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                      <Link href={`/${lang}/blog/${post.slug}`} style={{ 
+                        padding: '6px 10px', borderRadius: '6px', 
+                        border: `1px solid ${border}`, background: 'transparent', 
+                        color: textSecondary, textDecoration: 'none',
+                        display: 'flex', alignItems: 'center'
+                      }}>
+                        <FileText size={14} />
+                      </Link>
+                      <button onClick={() => removeBookmark(bookmark.post_slug)} style={{ 
+                        padding: '6px 10px', borderRadius: '6px', 
+                        border: '1px solid #ef4444', background: '#ef444410', 
+                        color: '#ef4444', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center'
+                      }}>
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/bookmarks/page.tsx ===
+import { Metadata } from "next";
+import BookmarksClient from "./BookmarksClient";
+export const metadata: Metadata = { title: "Bookmarks - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <BookmarksClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/comments/UserCommentsClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft, MessageSquare, Trash2, FileText, Calendar, CheckCircle, Clock, XCircle } from "lucide-react";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+
+export default function UserCommentsClient({ lang }: { lang: string }) {
+  const { themeColors } = useTheme();
+  const [comments, setComments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        fetchUserComments(u.id || u.email);
+      } catch {}
+    }
+  }, []);
+
+  const fetchUserComments = async (userId: string) => {
+    setLoading(true);
+    try {
+      // API se comments fetch karo
+      const res = await fetch('/api/admin/comments');
+      const data = await res.json();
+      
+      if (data.comments && data.comments.length > 0) {
+        // Sirf current user ke comments filter karo
+        const userComments = data.comments.filter((c: any) => 
+          c.user_id == userId || c.guest_email === userId
+        );
+        setComments(userComments);
+      } else {
+        setComments([]);
+      }
+    } catch {
+      setComments([]);
+    }
+    setLoading(false);
+  };
+
+  const deleteComment = async (commentId: number) => {
+    if (!confirm('Delete this comment?')) return;
+    try {
+      await fetch(`/api/comments?id=${commentId}&user_id=${user.id || user.email}`, { 
+        method: 'DELETE' 
+      });
+      setComments(prev => prev.filter(c => c.id !== commentId));
+    } catch {}
+  };
+
+  const getStatusBadge = (status: string) => {
+    const configs: Record<string, any> = {
+      approved: { bg: '#10b98120', color: '#10b981', icon: CheckCircle, label: 'Approved' },
+      pending: { bg: '#f59e0b20', color: '#f59e0b', icon: Clock, label: 'Pending' },
+      spam: { bg: '#ef444420', color: '#ef4444', icon: XCircle, label: 'Spam' },
+      trash: { bg: '#64748b20', color: '#64748b', icon: XCircle, label: 'Trash' },
+    };
+    const config = configs[status] || configs.pending;
+    const Icon = config.icon;
+    return (
+      <span style={{ 
+        padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 600,
+        background: config.bg, color: config.color,
+        display: 'inline-flex', alignItems: 'center', gap: '4px'
+      }}>
+        <Icon size={12} /> {config.label}
+      </span>
+    );
+  };
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
+          <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-2 text-sm mb-6" style={{ color: textSecondary }}>
+            <ArrowLeft size={16} /> Back to Dashboard
+          </Link>
+
+          {/* Header */}
+          <div style={{ marginBottom: '24px' }}>
+            <h1 className="text-2xl font-bold mb-1" style={{ color: textPrimary }}>💬 My Comments</h1>
+            <p style={{ color: textSecondary, fontSize: '14px' }}>
+              {comments.length} total comments
+            </p>
+          </div>
+
+          {/* Loading */}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>
+              Loading comments...
+            </div>
+          ) : comments.length === 0 ? (
+            /* Empty State */
+            <div className="text-center py-16">
+              <MessageSquare className="w-16 h-16 mx-auto mb-4 opacity-30" style={{ color: textSecondary }} />
+              <p style={{ color: textSecondary, fontSize: '16px', marginBottom: '8px' }}>No comments yet</p>
+              <p style={{ color: textSecondary, fontSize: '13px' }}>Your comments on blog posts will appear here!</p>
+              <Link href={`/${lang}/blog`} style={{ 
+                display: 'inline-block', marginTop: '16px', padding: '10px 20px',
+                background: primary, color: '#fff', borderRadius: '8px',
+                textDecoration: 'none', fontSize: '14px', fontWeight: 600
+              }}>
+                Browse Blog Posts
+              </Link>
+            </div>
+          ) : (
+            /* Comments List */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {comments.map((comment: any) => (
+                <div key={comment.id} style={{ 
+                  padding: '16px', background: surface, borderRadius: '12px', 
+                  border: `1px solid ${border}`,
+                }}>
+                  {/* Comment Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px', marginBottom: '2px' }}>
+                        {comment.guest_name || comment.user?.name || 'Anonymous'}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '11px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={11} /> {comment.created_at ? new Date(comment.created_at).toLocaleDateString() : '-'}
+                        </span>
+                        {getStatusBadge(comment.status || 'pending')}
+                      </div>
+                    </div>
+                    {/* Delete Button */}
+                    <button onClick={() => deleteComment(comment.id)} style={{ 
+                      padding: '6px 10px', borderRadius: '6px', 
+                      border: '1px solid #ef4444', background: '#ef444410', 
+                      color: '#ef4444', cursor: 'pointer', flexShrink: 0,
+                      display: 'flex', alignItems: 'center'
+                    }}>
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+
+                  {/* Comment Content */}
+                  <div style={{ 
+                    padding: '12px', background: 'var(--background)', 
+                    borderRadius: '8px', marginBottom: '10px'
+                  }}>
+                    <p style={{ color: textPrimary, fontSize: '14px', margin: 0, lineHeight: 1.6 }}>
+                      {comment.content}
+                    </p>
+                  </div>
+
+                  {/* Post Link (agar available) */}
+                  {comment.post_slug && (
+                    <Link href={`/${lang}/blog/${comment.post_slug}`} style={{ 
+                      display: 'inline-flex', alignItems: 'center', gap: '6px',
+                      fontSize: '12px', color: primary, textDecoration: 'none',
+                      fontWeight: 500
+                    }}>
+                      <FileText size={12} /> View Post
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/comments/page.tsx ===
+import { Metadata } from "next";
+import UserCommentsClient from "./UserCommentsClient";
+export const metadata: Metadata = { title: "My Comments - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <UserCommentsClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/editor/EditorClient.tsx ===
+"use client";
+import { useRouter } from "next/navigation";
+import DashboardEditor from "@/components/dashboard/DashboardEditor";
+
+export default function EditorClient({ lang }: { lang: string }) {
+  const router = useRouter();
+
+  const handleSave = async (data: { title: string; content: string; plainText: string }) => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    const res = await fetch("/api/dashboard", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "save", ...data }),
+    });
+    const result = await res.json();
+    if (result.success) router.push("/" + lang + "/dashboard/editor/" + result.id);
+  };
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-5xl mx-auto">
+          <DashboardEditor onSave={handleSave} />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/editor/[id]/EditClient.tsx ===
+"use client";
+import { useEffect, useState } from "react";
+import DashboardEditor from "@/components/dashboard/DashboardEditor";
+
+export default function EditClient({ lang, id }: { lang: string; id: string }) {
+  const [doc, setDoc] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) { setLoading(false); return; }
+    fetch("/api/dashboard?action=load&id=" + id, { headers: { "Authorization": "Bearer " + token } })
+      .then(r => r.json()).then(d => { setDoc(d.document); setLoading(false); }).catch(() => setLoading(false));
+  }, [id]);
+
+  const handleSave = async (data: { title: string; content: string; plainText: string }) => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) return;
+    await fetch("/api/dashboard", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "save", id: parseInt(id), ...data }),
+    });
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--background)" }}><div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: "var(--primary)" }} /></div>;
+  if (!doc) return <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--background)" }}><p style={{ color: "var(--text-secondary)" }}>Document not found</p></div>;
+
+  return (
+    <div className="min-h-screen p-4 lg:p-8" style={{ backgroundColor: "var(--background)" }}>
+      <div className="max-w-5xl mx-auto"><DashboardEditor documentId={id} initialTitle={doc.title} initialContent={doc.content || ""} onSave={handleSave} /></div>
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/editor/[id]/page.tsx ===
+import { Metadata } from "next";
+import EditClient from "./EditClient";
+
+export const metadata: Metadata = {
+  title: "Edit Document - Centre.com.pk",
+  description: "Edit your document",
+};
+
+export default async function EditPage(props: { params: Promise<{ lang: string; id: string }> }) {
+  const { lang, id } = await props.params;
+  return <EditClient lang={lang} id={id} />;
+}
+
+
+=== app/[lang]/dashboard/editor/page.tsx ===
+import { Metadata } from "next";
+import EditorClient from "./EditorClient";
+
+export const metadata: Metadata = {
+  title: "Document Editor - Centre.com.pk",
+  description: "Create and edit documents with rich text editor",
+};
+
+export default async function EditorPage(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <EditorClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/kyc/KYCClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+import { 
+  User, Phone, MapPin, Globe, CreditCard, FileText, Send, 
+  CheckCircle, Clock, XCircle, AlertTriangle, ArrowLeft, Shield 
+} from "lucide-react";
+import Link from "next/link";
+
+export default function KYCClient({ lang }: { lang: string }) {
+  const { themeColors, isDarkMode } = useTheme();
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [kyc, setKyc] = useState<any>(null);
+  const [verification, setVerification] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
+  const [form, setForm] = useState({
+    full_name: "", phone: "", address: "", city: "", country: "Pakistan",
+    id_type: "cnic", id_number: ""
+  });
+
+  useEffect(() => {
+    const d = localStorage.getItem("user_data");
+    if (!d) { router.push("/" + lang + "/auth/signin"); return; }
+    const u = JSON.parse(d);
+    setUser(u);
+    setForm(prev => ({ ...prev, full_name: u.name || "" }));
+    fetchKYC();
+  }, []);
+
+  const fetchKYC = async () => {
+    const token = localStorage.getItem("auth_token");
+    const res = await fetch("/api/user/kyc", { headers: { "Authorization": "Bearer " + token } });
+    const data = await res.json();
+    setKyc(data.kyc);
+    setVerification(data.verification);
+    if (data.kyc) {
+      setForm({
+        full_name: data.kyc.full_name || "",
+        phone: data.kyc.phone || "",
+        address: data.kyc.address || "",
+        city: data.kyc.city || "",
+        country: data.kyc.country || "Pakistan",
+        id_type: data.kyc.id_type || "cnic",
+        id_number: data.kyc.id_number || ""
+      });
+    }
+    setLoading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.full_name || !form.phone || !form.address || !form.id_number) {
+      setMessage("❌ Please fill all required fields!");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
+    setSubmitting(true);
+    const token = localStorage.getItem("auth_token");
+    const res = await fetch("/api/user/kyc", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    const data = await res.json();
+    setMessage(data.success ? "✅ KYC submitted! Awaiting admin approval." : "❌ " + (data.error || "Failed"));
+    setSubmitting(false);
+    fetchKYC();
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+        
+        <main className="flex-1 p-6 pt-16 lg:pt-6 flex items-center justify-center">
+          <div className="animate-spin w-8 h-8 border-4 border-t-transparent rounded-full" style={{ borderColor: "var(--primary) var(--primary) var(--primary) transparent" }} />
+        </main>
+      </div>
+    );
+  }
+
+  const isPending = kyc?.status === "pending";
+  const isApproved = kyc?.status === "approved";
+  const isRejected = kyc?.status === "rejected";
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-2xl mx-auto">
+          <Link href={"/" + lang + "/dashboard"} className="inline-flex items-center gap-2 text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+            <ArrowLeft size={16} /> Back to Dashboard
+          </Link>
+
+          {/* Status Banner */}
+          {isPending && (
+            <div className="mb-6 p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)" }}>
+              <Clock size={24} style={{ color: "#f59e0b" }} />
+              <div>
+                <h3 className="font-bold" style={{ color: "#f59e0b" }}>Verification Pending</h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Your KYC is under review. You'll be notified once approved.</p>
+              </div>
+            </div>
+          )}
+          {isApproved && (
+            <div className="mb-6 p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: "rgba(16,185,129,0.1)", border: "1px solid rgba(16,185,129,0.3)" }}>
+              <CheckCircle size={24} style={{ color: "#10b981" }} />
+              <div>
+                <h3 className="font-bold" style={{ color: "#10b981" }}>Verified ✅</h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>You have full access — documents, posts, and ads unlocked!</p>
+              </div>
+            </div>
+          )}
+          {isRejected && (
+            <div className="mb-6 p-4 rounded-xl flex items-center gap-3" style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)" }}>
+              <XCircle size={24} style={{ color: "#ef4444" }} />
+              <div>
+                <h3 className="font-bold" style={{ color: "#ef4444" }}>Rejected</h3>
+                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>Reason: {kyc?.notes || "Please resubmit with correct information."}</p>
+              </div>
+            </div>
+          )}
+
+          {!isApproved && (
+            <>
+              <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--text-primary)" }}>
+                <Shield size={24} className="inline mr-2" style={{ color: "var(--primary)" }} />
+                KYC Verification
+              </h1>
+              <p className="text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+                Complete verification to unlock documents, posts, and advertising features.
+              </p>
+
+              {message && (
+                <div className="mb-4 p-3 rounded-xl text-white text-sm" style={{ backgroundColor: message.includes("✅") ? "var(--success)" : "var(--error)" }}>
+                  {message}
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="rounded-xl border p-6 space-y-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><User size={14} /> Full Name *</label>
+                    <input value={form.full_name} onChange={e => setForm({...form, full_name: e.target.value})} placeholder="As per ID document" required
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                  </div>
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><Phone size={14} /> Phone *</label>
+                    <input value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="+92 300 1234567" required
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><MapPin size={14} /> Address *</label>
+                  <input value={form.address} onChange={e => setForm({...form, address: e.target.value})} placeholder="Street address" required
+                    className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}>City</label>
+                    <input value={form.city} onChange={e => setForm({...form, city: e.target.value})} placeholder="City"
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                  </div>
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><Globe size={14} /> Country</label>
+                    <input value={form.country} onChange={e => setForm({...form, country: e.target.value})} placeholder="Country"
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><CreditCard size={14} /> ID Type *</label>
+                    <select value={form.id_type} onChange={e => setForm({...form, id_type: e.target.value})}
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }}>
+                      <option value="cnic">CNIC (Pakistan)</option>
+                      <option value="passport">Passport</option>
+                      <option value="driving_license">Driving License</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm mb-1.5 flex items-center gap-2" style={{ color: "var(--text-secondary)" }}><FileText size={14} /> ID Number *</label>
+                    <input value={form.id_number} onChange={e => setForm({...form, id_number: e.target.value})} placeholder="12345-1234567-1" required
+                      className="w-full p-3 border rounded-lg text-sm" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                  </div>
+                </div>
+                <button type="submit" disabled={submitting || isPending}
+                  className="w-full py-3 text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+                  style={{ backgroundColor: isPending ? "#f59e0b" : "var(--primary)" }}>
+                  {isPending ? <><Clock size={16} /> Awaiting Review</> : submitting ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Submitting...</> : <><Send size={16} /> Submit for Verification</>}
+                </button>
+              </form>
+            </>
+          )}
+
+          {/* Verified Features */}
+          {isApproved && (
+            <div className="rounded-xl border p-6 mt-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+              <h3 className="font-bold mb-3" style={{ color: "var(--text-primary)" }}>🎉 Unlocked Features</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Link href={"/" + lang + "/dashboard/editor"} className="p-4 rounded-lg border flex items-center gap-3 hover:shadow-md transition-all"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+                  <FileText size={20} style={{ color: "var(--primary)" }} />
+                  <div><p className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>Create Documents</p><p className="text-xs" style={{ color: "var(--text-secondary)" }}>Unlimited documents</p></div>
+                </Link>
+                <Link href={"/" + lang + "/dashboard/ads"} className="p-4 rounded-lg border flex items-center gap-3 hover:shadow-md transition-all"
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--background)" }}>
+                  <FileText size={20} style={{ color: "var(--success)" }} />
+                  <div><p className="font-medium text-sm" style={{ color: "var(--text-primary)" }}>Submit Ads</p><p className="text-xs" style={{ color: "var(--text-secondary)" }}>Advertise your business</p></div>
+                </Link>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/kyc/page.tsx ===
+import { Metadata } from "next";
+import KYCClient from "./KYCClient";
+export const metadata: Metadata = { title: "KYC Verification - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <KYCClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/layout.tsx ===
+'use client';
+import { ReactNode, useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import ProSidebar from '@/components/dashboard/pro/ProSidebar';
+import { Menu } from 'lucide-react';
+
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const { lang } = useParams() as { lang: string };
+  const { themeColors, isDarkMode } = useTheme();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // ✅ FIX: mounted=false pe hardcoded light colors (server = client, no mismatch)
+  if (!mounted) {
+    return (
+      <div
+        suppressHydrationWarning
+        style={{
+          display: 'flex',
+          minHeight: '100vh',
+          backgroundColor: '#f8fafc',
+        }}
+      />
+    );
+  }
+
+  // ✅ FIX: Ab colors calculate karo (mounted=true ke baad)
+  const bg = themeColors?.background || (isDarkMode ? '#0f172a' : '#f8fafc');
+  const surface = themeColors?.surface || (isDarkMode ? '#1e293b' : '#ffffff');
+  const textPrimary = themeColors?.text?.primary || (isDarkMode ? '#f1f5f9' : '#0f172a');
+  const border = themeColors?.border || (isDarkMode ? '#334155' : '#e2e8f0');
+
+  return (
+    <div
+      suppressHydrationWarning
+      style={{ display: 'flex', minHeight: '100vh', backgroundColor: bg }}
+    >
+      {/* SIDEBAR */}
+      <ProSidebar
+        lang={lang}
+        role="user"
+        isMobileOpen={isMobileOpen}
+        onMobileClose={() => setIsMobileOpen(false)}
+      />
+
+      {/* MAIN CONTENT */}
+      <main
+        style={{
+          flex: 1,
+          minWidth: 0,
+          marginLeft: isMobile ? '0px' : '250px',
+          padding: isMobile ? '64px 12px 80px 12px' : '20px 24px',
+          maxWidth: isMobile ? '100%' : 'calc(100% - 250px)',
+          overflowX: 'hidden',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* MOBILE HAMBURGER — Fixed top-left, below header */}
+        {isMobile && (
+          <button
+            onClick={() => setIsMobileOpen(true)}
+            style={{
+              position: 'fixed',
+              top: '66px',
+              left: '12px',
+              zIndex: 100,
+              width: '38px',
+              height: '38px',
+              borderRadius: '8px',
+              backgroundColor: surface,
+              color: textPrimary,
+              border: `1px solid ${border}`,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+            }}
+            aria-label="Open sidebar"
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
+        {children}
+      </main>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/page.tsx ===
+import { Metadata } from "next";
+import DashboardClient from "./DashboardClient";
+
+export const metadata: Metadata = { title: "Dashboard - Centre.com.pk" };
+
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <DashboardClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/plan/PlanClient.tsx ===
+'use client';
+import { useState, useEffect } from 'react';
+import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { useParams } from 'next/navigation';
+import { Crown, Check, Zap, Building, Shield, CreditCard, Smartphone, Building2, ArrowRight, Clock, CheckCircle, XCircle, Upload } from 'lucide-react';
+
+export default function PlanClient() {
+  const { lang } = useParams() as { lang: string };
+  const { themeColors, isDarkMode } = useTheme();
+  const [packages, setPackages] = useState<any[]>([]);
+  const [methods, setMethods] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPlan, setCurrentPlan] = useState('free');
+  const [user, setUser] = useState<any>(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [transactionId, setTransactionId] = useState('');
+  const [proofUrl, setProofUrl] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [activeTab, setActiveTab] = useState<'plans' | 'history'>('plans');
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        setCurrentPlan(u.plan || 'free');
+      } catch {}
+    }
+    
+    Promise.all([
+      fetch('/api/payments?action=packages').then(r => r.json()),
+      fetch('/api/payments?action=methods').then(r => r.json()),
+    ]).then(([pkgData, methodData]) => {
+      setPackages(pkgData.packages || []);
+      setMethods(methodData.methods || []);
+      if (methodData.methods?.length > 0) setPaymentMethod(methodData.methods[0].type);
+      setLoading(false);
+    });
+
+    // Load payment history if user
+    if (user?.id) {
+      fetch('/api/payments?action=history&user_id=' + user.id)
+        .then(r => r.json())
+        .then(d => setPayments(d.payments || []));
+    }
+  }, []);
+
+  const handleUpgrade = (pkg: any) => {
+    if (pkg.price === 0) return;
+    setSelectedPackage(pkg);
+    setShowPayment(true);
+    setTransactionId('');
+    setProofUrl('');
+    setSuccess(false);
+  };
+
+  const handlePayment = async () => {
+    if (!selectedPackage || !user || !paymentMethod) return;
+    setSubmitting(true);
+    
+    const res = await fetch('/api/payments', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'submit_payment',
+        user_id: user.id,
+        user_email: user.email,
+        user_name: user.name,
+        package_id: selectedPackage.id,
+        package_name: selectedPackage.name,
+        amount: selectedPackage.price,
+        payment_method: paymentMethod,
+        transaction_id: transactionId,
+        proof_url: proofUrl,
+      }),
+    });
+    
+    const data = await res.json();
+    setSubmitting(false);
+    
+    if (data.success) {
+      setSuccess(true);
+      setTimeout(() => {
+        setShowPayment(false);
+        setSuccess(false);
+      }, 3000);
+    }
+  };
+
+  const getMethodIcon = (type: string) => {
+    if (type === 'jazzcash' || type === 'easypaisa') return Smartphone;
+    if (type === 'bank_transfer') return Building2;
+    return CreditCard;
+  };
+
+  const statusConfig: Record<string, any> = {
+    pending: { bg: '#f59e0b15', color: '#f59e0b', icon: Clock, label: 'Pending' },
+    completed: { bg: '#10b98115', color: '#10b981', icon: CheckCircle, label: 'Approved' },
+    failed: { bg: '#ef444415', color: '#ef4444', icon: XCircle, label: 'Failed' },
+  };
+
+  const iconMap: Record<number, any> = { 0: Zap, 1: Crown, 2: Building };
+
+  return (
+    <div style={{ fontFamily: themeColors.fontFamily }}>
+      {/* Header */}
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontSize: '26px', fontWeight: 800, color: textPrimary, margin: '0 0 4px' }}>
+          💎 My Plan
+        </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', color: textSecondary }}>
+            Current: <span style={{ color: primary, fontWeight: 700, textTransform: 'uppercase', background: primary + '15', padding: '3px 12px', borderRadius: '12px' }}>{currentPlan}</span>
+          </span>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid ' + border, paddingBottom: '12px' }}>
+        {[
+          { id: 'plans', label: '📦 Plans' },
+          { id: 'history', label: '📋 Payment History' },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => setActiveTab(tab.id as any)}
+            style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: activeTab === tab.id ? primary : 'transparent', color: activeTab === tab.id ? '#fff' : textSecondary, fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* PLANS TAB */}
+      {activeTab === 'plans' && (
+        <>
+          {loading ? (
+            <p style={{ color: textSecondary }}>Loading plans...</p>
+          ) : packages.length === 0 ? (
+            <p style={{ color: textSecondary }}>No plans available.</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+              {packages.map((pkg: any) => {
+                const Icon = iconMap[pkg.id] || Zap;
+                const isCurrent = pkg.name?.toLowerCase() === currentPlan?.toLowerCase();
+                const isPopular = pkg.is_popular === 1;
+                const features = JSON.parse(pkg.features || '[]');
+                
+                return (
+                  <div key={pkg.id} style={{
+                    padding: '30px 24px', background: surface, borderRadius: '16px',
+                    border: isCurrent ? '2px solid ' + primary : isPopular ? '2px solid ' + primary + '50' : '1px solid ' + border,
+                    position: 'relative',
+                    boxShadow: isCurrent ? '0 8px 30px ' + primary + '15' : isPopular ? '0 4px 20px rgba(0,0,0,0.06)' : '0 2px 8px rgba(0,0,0,0.04)',
+                    transform: isPopular ? 'scale(1.02)' : 'none'
+                  }}>
+                    {isCurrent && (
+                      <div style={{ position: 'absolute', top: '-12px', right: '20px', padding: '4px 14px', background: '#10b981', color: '#fff', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                        ✅ Current Plan
+                      </div>
+                    )}
+                    {isPopular && !isCurrent && (
+                      <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', padding: '4px 14px', background: primary, color: '#fff', borderRadius: '12px', fontSize: '11px', fontWeight: 700 }}>
+                        ⭐ Most Popular
+                      </div>
+                    )}
+                    
+                    <Icon size={30} color={primary} style={{ marginBottom: '14px' }} />
+                    <h3 style={{ fontSize: '20px', fontWeight: 700, color: textPrimary, marginBottom: '4px' }}>{pkg.name}</h3>
+                    <p style={{ fontSize: '13px', color: textSecondary, marginBottom: '18px' }}>{pkg.description}</p>
+                    
+                    <div style={{ marginBottom: '20px' }}>
+                      {pkg.original_price > pkg.price && (
+                        <span style={{ fontSize: '15px', color: textSecondary, textDecoration: 'line-through', marginRight: '8px' }}>
+                          {pkg.currency} {pkg.original_price}
+                        </span>
+                      )}
+                      <span style={{ fontSize: '36px', fontWeight: 800, color: textPrimary }}>
+                        {pkg.price === 0 ? 'FREE' : pkg.currency + ' ' + pkg.price}
+                      </span>
+                      {pkg.price > 0 && <span style={{ fontSize: '13px', color: textSecondary }}>/{pkg.duration_days}d</span>}
+                    </div>
+
+                    <div style={{ marginBottom: '24px' }}>
+                      {features.map((f: string, i: number) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 0', fontSize: '13px', color: textPrimary }}>
+                          <Check size={15} color="#10b981" /> {f}
+                        </div>
+                      ))}
+                    </div>
+
+                    <button 
+                      onClick={() => handleUpgrade(pkg)}
+                      disabled={isCurrent || pkg.price === 0}
+                      style={{
+                        width: '100%', padding: '14px', borderRadius: '10px',
+                        border: isCurrent ? '1px solid ' + border : 'none',
+                        background: isCurrent ? surface : isPopular ? primary : primary + '90',
+                        color: isCurrent ? textSecondary : '#fff',
+                        fontWeight: 700, cursor: isCurrent ? 'default' : 'pointer',
+                        fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                      }}>
+                      {isCurrent ? 'Current Plan' : pkg.price === 0 ? 'Free Forever' : <>{'Upgrade to ' + pkg.name} <ArrowRight size={16} /></>}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* HISTORY TAB */}
+      {activeTab === 'history' && (
+        <>
+          {payments.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>
+              <CreditCard size={40} style={{ marginBottom: '12px', opacity: 0.3 }} />
+              <p>No payment history yet.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {payments.map((p: any) => {
+                const sc = statusConfig[p.status] || statusConfig.pending;
+                const StatusIcon = sc.icon;
+                return (
+                  <div key={p.id} style={{ padding: '16px', background: surface, borderRadius: '10px', border: '1px solid ' + border, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                    <div>
+                      <div style={{ fontWeight: 600, color: textPrimary, fontSize: '14px' }}>{p.package_name} Plan</div>
+                      <div style={{ fontSize: '12px', color: textSecondary }}>
+                        {p.currency} {p.amount} • {p.payment_method} • {new Date(p.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <span style={{ padding: '4px 12px', borderRadius: '14px', fontSize: '11px', fontWeight: 600, background: sc.bg, color: sc.color, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <StatusIcon size={12} /> {sc.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* PAYMENT MODAL */}
+      {showPayment && selectedPackage && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }} onClick={() => setShowPayment(false)}>
+          <div style={{ background: surface, borderRadius: '16px', padding: '30px', maxWidth: '480px', width: '90%', border: '1px solid ' + border, maxHeight: '80vh', overflow: 'auto' }} onClick={e => e.stopPropagation()}>
+            
+            {success ? (
+              <div style={{ textAlign: 'center', padding: '30px' }}>
+                <CheckCircle size={56} color="#10b981" style={{ marginBottom: '16px' }} />
+                <h2 style={{ fontSize: '20px', fontWeight: 700, color: textPrimary, marginBottom: '8px' }}>✅ Payment Submitted!</h2>
+                <p style={{ fontSize: '14px', color: textSecondary }}>Admin will verify and activate your plan within 24 hours.</p>
+              </div>
+            ) : (
+              <>
+                <h2 style={{ fontSize: '20px', fontWeight: 700, color: textPrimary, marginBottom: '6px' }}>💳 Complete Payment</h2>
+                <p style={{ fontSize: '14px', color: textSecondary, marginBottom: '20px' }}>
+                  <strong>{selectedPackage.name}</strong> Plan — <strong style={{ color: primary, fontSize: '18px' }}>{selectedPackage.currency} {selectedPackage.price}</strong>
+                </p>
+
+                {/* Payment Methods */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+                  {methods.map((m: any) => {
+                    const MIcon = getMethodIcon(m.type);
+                    return (
+                      <button key={m.id} onClick={() => setPaymentMethod(m.type)}
+                        style={{
+                          padding: '14px', borderRadius: '10px',
+                          border: '2px solid ' + (paymentMethod === m.type ? primary : border),
+                          background: paymentMethod === m.type ? primary + '08' : 'transparent',
+                          cursor: 'pointer', textAlign: 'left',
+                          display: 'flex', alignItems: 'center', gap: '12px'
+                        }}>
+                        <MIcon size={20} color={paymentMethod === m.type ? primary : textSecondary} />
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 600, color: textPrimary, fontSize: '14px' }}>{m.name}</div>
+                          <div style={{ fontSize: '11px', color: textSecondary }}>{m.account_number} — {m.account_title}</div>
+                        </div>
+                        {paymentMethod === m.type && <CheckCircle size={18} color={primary} />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Transaction ID */}
+                <input type="text" placeholder="Transaction ID (optional)" value={transactionId} onChange={e => setTransactionId(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid ' + border, marginBottom: '10px', fontSize: '13px', background: 'transparent', color: textPrimary, boxSizing: 'border-box' }} />
+
+                {/* Proof URL */}
+                <input type="text" placeholder="Screenshot/Proof URL (optional)" value={proofUrl} onChange={e => setProofUrl(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid ' + border, marginBottom: '20px', fontSize: '13px', background: 'transparent', color: textPrimary, boxSizing: 'border-box' }} />
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button onClick={handlePayment} disabled={submitting || !paymentMethod}
+                    style={{ flex: 1, padding: '14px', borderRadius: '10px', border: 'none', background: '#10b981', color: '#fff', fontWeight: 700, cursor: 'pointer', fontSize: '15px', opacity: submitting ? 0.7 : 1 }}>
+                    {submitting ? '⏳ Submitting...' : '✅ Confirm Payment'}
+                  </button>
+                  <button onClick={() => setShowPayment(false)}
+                    style={{ padding: '14px 20px', borderRadius: '10px', border: '1px solid ' + border, background: 'transparent', color: textSecondary, fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/plan/page.tsx ===
+import { Metadata } from "next";
+import PlanClient from "./PlanClient";
+export const metadata: Metadata = { title: "My Plan - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <PlanClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/posts/MyPostsClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { FileText, Plus, Eye, ArrowLeft, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+
+export default function MyPostsClient({ lang }: { lang: string }) {
+  const { themeColors } = useTheme();
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  const textPrimary = themeColors.text?.primary || '#0f172a';
+  const textSecondary = themeColors.text?.secondary || '#64748b';
+  const border = themeColors.border || '#e2e8f0';
+  const surface = themeColors.surface || '#ffffff';
+  const primary = themeColors.primary || '#3b82f6';
+
+  useEffect(() => {
+    const d = localStorage.getItem("user_data");
+    if (d) {
+      const u = JSON.parse(d);
+      setUser(u);
+      fetchPosts(u.email);
+    }
+  }, []);
+
+  const fetchPosts = async (email: string) => {
+    const res = await fetch(`/api/blog/posts?author=${email}`);
+    const data = await res.json();
+    setPosts(data.posts || []);
+    setLoading(false);
+  };
+
+  const getStatusBadge = (status: string) => {
+    const configs: Record<string, any> = {
+      published: { bg: '#10b98120', color: '#10b981', icon: CheckCircle, label: 'Published' },
+      pending: { bg: '#f59e0b20', color: '#f59e0b', icon: Clock, label: 'Pending Approval' },
+      draft: { bg: '#64748b20', color: '#64748b', icon: AlertCircle, label: 'Draft' },
+      rejected: { bg: '#ef444420', color: '#ef4444', icon: XCircle, label: 'Rejected' },
+    };
+    return configs[status] || configs.draft;
+  };
+
+  return (
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '16px 0' }}>
+      
+      {/* HEADER */}
+      <div style={{ marginBottom: '20px' }}>
+        <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-1.5 text-sm mb-1" style={{ color: textSecondary, textDecoration: 'none' }}>
+          <ArrowLeft size={14} /> Back to Dashboard
+        </Link>
+        <h1 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, color: textPrimary, margin: '0' }}>
+          📝 My Posts
+        </h1>
+        <p style={{ fontSize: '13px', color: textSecondary, marginTop: '2px' }}>
+          {posts.length} total posts
+        </p>
+      </div>
+
+      {/* POSTS LIST */}
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: textSecondary }}>Loading your posts...</div>
+      ) : posts.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '50px 16px', background: surface, borderRadius: '14px', border: `1px solid ${border}` }}>
+          <FileText size={48} style={{ marginBottom: '12px', opacity: 0.2, color: textSecondary }} />
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: textPrimary, marginBottom: '6px' }}>No Posts Yet</h2>
+          <p style={{ color: textSecondary, marginBottom: '16px', fontSize: '13px' }}>Your published posts will appear here</p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {posts.map((post: any) => {
+            const statusConfig = getStatusBadge(post.status);
+            const StatusIcon = statusConfig.icon;
+            
+            return (
+              <div key={post.id} style={{ padding: '14px', background: surface, borderRadius: '12px', border: `1px solid ${border}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div style={{ fontWeight: 600, color: textPrimary, fontSize: '15px', marginBottom: '4px' }}>
+                      {post.title}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      <span style={{ padding: '3px 10px', borderRadius: '12px', fontSize: '10px', fontWeight: 600, 
+                        background: statusConfig.bg, color: statusConfig.color, 
+                        display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <StatusIcon size={11} /> {statusConfig.label}
+                      </span>
+                      <span style={{ fontSize: '11px', color: textSecondary, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={11} /> {post.created_at ? new Date(post.created_at).toLocaleDateString() : '-'}
+                      </span>
+                      <span style={{ fontSize: '11px', color: textSecondary }}>👁 {post.views || post.view_count || 0} views</span>
+                    </div>
+                  </div>
+                  
+                  {/* VIEW ONLY — NO DELETE */}
+                  <Link href={`/${lang}/blog/${post.slug}`} target="_blank"
+                    style={{ padding: '7px 14px', borderRadius: '6px', border: `1px solid ${border}`, background: 'transparent', color: primary, fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', flexShrink: 0 }}>
+                    <Eye size={13} /> View
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/posts/[id]/edit/page.tsx ===
+import { Metadata } from 'next'; export const metadata: Metadata = { title: 'edit - Centre.com.pk' }; export default function Page() { return <div style={{padding:40,textAlign:'center'}}><h1>edit</h1><p>Coming soon</p></div>; }
+
+
+=== app/[lang]/dashboard/posts/new/page.tsx ===
+import { Metadata } from 'next'; export const metadata: Metadata = { title: 'new - Centre.com.pk' }; export default function Page() { return <div style={{padding:40,textAlign:'center'}}><h1>new</h1><p>Coming soon</p></div>; }
+
+
+=== app/[lang]/dashboard/posts/page.tsx ===
+import { Metadata } from "next";
+import MyPostsClient from "./MyPostsClient";
+
+export const metadata: Metadata = {
+  title: "My Posts - Centre.com.pk",
+  description: "View and manage your blog posts",
+};
+
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <MyPostsClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/profile/ProfileClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { User, Mail, Shield, Save, ArrowLeft } from "lucide-react";
+
+export default function ProfileClient({ lang }: { lang: string }) {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const d = localStorage.getItem("user_data");
+    if (!d) { router.push("/" + lang + "/auth/signin"); return; }
+    const u = JSON.parse(d);
+    setUser(u); setName(u.name || ""); setBio(u.bio || "");
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    const token = localStorage.getItem("auth_token");
+    await fetch("/api/user/profile", { method: "POST", headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" }, body: JSON.stringify({ name, bio }) });
+    const updated = { ...user, name, bio };
+    localStorage.setItem("user_data", JSON.stringify(updated));
+    setUser(updated);
+    setMessage("✅ Profile updated!");
+    setSaving(false);
+    setTimeout(() => setMessage(""), 2000);
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      
+      <main className="flex-1 p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-xl mx-auto">
+          <Link href={"/" + lang + "/dashboard"} className="inline-flex items-center gap-2 text-sm mb-6" style={{ color: "var(--text-secondary)" }}><ArrowLeft size={16} /> Back</Link>
+          <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>Profile Settings</h1>
+          {message && <div className="mb-4 p-3 rounded-xl text-white text-sm" style={{ backgroundColor: "var(--success)" }}>{message}</div>}
+          <div className="rounded-xl border p-6 space-y-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+            <div>
+              <label className="text-sm mb-1.5 block" style={{ color: "var(--text-secondary)" }}>Name</label>
+              <input value={name} onChange={e => setName(e.target.value)} className="w-full p-3 border rounded-xl" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+            </div>
+            <div>
+              <label className="text-sm mb-1.5 block" style={{ color: "var(--text-secondary)" }}>Email</label>
+              <input value={user.email} disabled className="w-full p-3 border rounded-xl opacity-60" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+            </div>
+            <div>
+              <label className="text-sm mb-1.5 block" style={{ color: "var(--text-secondary)" }}>Plan</label>
+              <input value={(user.plan || "free").toUpperCase()} disabled className="w-full p-3 border rounded-xl font-semibold" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--primary)" }} />
+            </div>
+            <div>
+              <label className="text-sm mb-1.5 block" style={{ color: "var(--text-secondary)" }}>Bio</label>
+              <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} className="w-full p-3 border rounded-xl resize-none" style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+            </div>
+            <button onClick={handleSave} disabled={saving} className="flex items-center gap-2 px-6 py-3 text-white rounded-xl font-medium" style={{ backgroundColor: "var(--primary)" }}><Save size={16} /> {saving ? "Saving..." : "Save Profile"}</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+=== app/[lang]/dashboard/profile/page.tsx ===
+import { Metadata } from "next";
+import ProfileClient from "./ProfileClient";
+export const metadata: Metadata = { title: "Profile - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <ProfileClient lang={lang} />;
+}
+
+
+=== app/[lang]/dashboard/settings/SettingsClient.tsx ===
+"use client";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useTheme } from "@/components/theme/contexts/ThemeContext";
+import { ArrowLeft, Lock, Moon, Sun, Save, Key, CheckCircle } from "lucide-react";
+
+export default function SettingsClient({ lang }: { lang: string }) {
+  const { isDarkMode, toggleDarkMode, theme, setTheme, availableThemes, fontFamily, setFontFamily, availableFonts } = useTheme();
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem('user_data');
+    if (userData) {
+      try {
+        const u = JSON.parse(userData);
+        setUser(u);
+        fetchSettings(u.id || u.email);
+      } catch {}
+    }
+  }, []);
+
+  const fetchSettings = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/user/settings?user_id=${userId}`);
+      const data = await res.json();
+      if (data.success && data.settings) {
+        if (data.settings.theme) setTheme(data.settings.theme as any);
+        if (data.settings.font_family) setFontFamily(data.settings.font_family);
+        if (data.settings.dark_mode) {
+          // Dark mode apply karo agar saved hai
+          if (data.settings.dark_mode === 1 && !isDarkMode) toggleDarkMode();
+          if (data.settings.dark_mode === 0 && isDarkMode) toggleDarkMode();
+        }
+      }
+    } catch {}
+  };
+
+  const saveSettings = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const res = await fetch('/api/user/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.id || user.email,
+          theme,
+          font_family: fontFamily,
+          dark_mode: isDarkMode ? 1 : 0,
+          language: lang,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage("✅ Settings saved to database!");
+      } else {
+        setMessage("❌ " + (data.error || 'Failed to save'));
+      }
+    } catch {
+      setMessage("❌ Failed to save settings");
+    }
+    setSaving(false);
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setMessage("❌ Passwords don't match!");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
+    if (newPassword.length < 6) {
+      setMessage("❌ Password must be at least 6 characters!");
+      setTimeout(() => setMessage(""), 3000);
+      return;
+    }
+    setChangingPassword(true);
+    const token = localStorage.getItem("auth_token");
+    const res = await fetch("/api/user/change-password", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json();
+    setMessage(data.success ? "✅ Password changed!" : "❌ " + (data.error || "Failed"));
+    setChangingPassword(false);
+    if (data.success) { setCurrentPassword(""); setNewPassword(""); setConfirmPassword(""); }
+    setTimeout(() => setMessage(""), 3000);
+  };
+
+  return (
+    <div className="flex min-h-screen" style={{ backgroundColor: "var(--background)" }}>
+      <main className="flex-1 p-4 lg:p-6 pt-16 lg:pt-6 w-full">
+        <div className="max-w-xl mx-auto">
+          <Link href={`/${lang}/dashboard`} className="inline-flex items-center gap-2 text-sm mb-6" style={{ color: "var(--text-secondary)" }}>
+            <ArrowLeft size={16} /> Back
+          </Link>
+          <h1 className="text-2xl font-bold mb-6" style={{ color: "var(--text-primary)" }}>⚙️ Settings</h1>
+          
+          {message && (
+            <div className="mb-4 p-3 rounded-xl text-white text-sm flex items-center gap-2" style={{ 
+              backgroundColor: message.includes("✅") ? "var(--success)" : "var(--error)" 
+            }}>
+              {message.includes("✅") ? <CheckCircle size={16} /> : null}
+              {message}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {/* Theme Selector */}
+            <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+              <label className="text-sm font-medium mb-2 block" style={{ color: "var(--text-secondary)" }}>🎨 Theme</label>
+              <select value={theme} onChange={e => setTheme(e.target.value as any)} 
+                className="w-full p-2.5 border rounded-lg text-sm" 
+                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }}>
+                {availableThemes.map((t: any) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Font Selector */}
+            <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+              <label className="text-sm font-medium mb-2 block" style={{ color: "var(--text-secondary)" }}>✏️ Font Family</label>
+              <select value={fontFamily} onChange={e => setFontFamily(e.target.value)} 
+                className="w-full p-2.5 border rounded-lg text-sm" 
+                style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }}>
+                {(availableFonts || [{value:"system-ui",label:"System"}]).map((f: any) => (
+                  <option key={f.value} value={f.value}>{f.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Dark Mode Toggle */}
+            <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  {isDarkMode ? <Moon size={20} /> : <Sun size={20} />}
+                  <div>
+                    <p className="font-medium" style={{ color: "var(--text-primary)" }}>Dark Mode</p>
+                    <p className="text-xs" style={{ color: "var(--text-secondary)" }}>
+                      {isDarkMode ? 'Currently enabled' : 'Currently disabled'}
+                    </p>
+                  </div>
+                </div>
+                <button onClick={toggleDarkMode} className="px-4 py-2 rounded-lg border text-sm" 
+                  style={{ borderColor: "var(--border)", color: "var(--text-primary)" }}>
+                  {isDarkMode ? "Light" : "Dark"}
+                </button>
+              </div>
+            </div>
+
+            {/* Save Settings Button */}
+            <button onClick={saveSettings} disabled={saving}
+              className="w-full flex items-center justify-center gap-2 px-6 py-3 text-white rounded-xl font-medium"
+              style={{ backgroundColor: "var(--primary)", opacity: saving ? 0.7 : 1 }}>
+              <Save size={16} /> {saving ? "Saving..." : "Save Settings to Database"}
+            </button>
+
+            {/* Change Password */}
+            <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--surface)", borderColor: "var(--border)" }}>
+              <h3 className="font-semibold mb-3 flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
+                <Key size={18} /> Change Password
+              </h3>
+              <div className="space-y-3">
+                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} 
+                  placeholder="Current password" className="w-full p-2.5 border rounded-lg text-sm" 
+                  style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} 
+                  placeholder="New password (min 6 chars)" className="w-full p-2.5 border rounded-lg text-sm" 
+                  style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} 
+                  placeholder="Confirm new password" className="w-full p-2.5 border rounded-lg text-sm" 
+                  style={{ backgroundColor: "var(--background)", borderColor: "var(--border)", color: "var(--text-primary)" }} />
+                <button onClick={handleChangePassword} disabled={changingPassword}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 text-white rounded-lg text-sm font-medium w-full"
+                  style={{ backgroundColor: "var(--primary)", opacity: changingPassword ? 0.7 : 1 }}>
+                  <Lock size={16} /> {changingPassword ? "Changing..." : "Change Password"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+=== app/[lang]/dashboard/settings/page.tsx ===
+import { Metadata } from "next";
+import SettingsClient from "./SettingsClient";
+export const metadata: Metadata = { title: "Settings - Centre.com.pk" };
+export default async function Page(props: { params: Promise<{ lang: string }> }) {
+  const { lang } = await props.params;
+  return <SettingsClient lang={lang} />;
+}
+

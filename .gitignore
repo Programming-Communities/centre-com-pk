@@ -47,8 +47,14 @@ frontend/out/
 # NestJS
 backend/dist/
 
+
+project-file/
+
 # Capacitor
 mobile/android/capacitor-cordova-android-plugins/
 
 
 Project Guardian.md
+
+# AI agent memory pack — do not commit (contains security findings)
+.agent/

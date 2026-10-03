@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import { Target, MapPin, Navigation, Zap } from 'lucide-react';
 
@@ -41,12 +41,28 @@ export default function RadiusSelector({ value = 10, onChange, lang = 'en' }: Ra
   const [customRadius, setCustomRadius] = useState('');
   const [showCustom, setShowCustom] = useState(false);
   const [businessType, setBusinessType] = useState('');
+  const [mounted, setMounted] = useState(false);
 
-  const surface = themeColors.surface || '#ffffff';
-  const border = themeColors.border || '#e2e8f0';
-  const textPrimary = themeColors.text?.primary || '#0f172a';
-  const textSecondary = themeColors.text?.secondary || '#64748b';
-  const primary = themeColors.primary || '#3b82f6';
+  useEffect(() => { setMounted(true); }, []);
+
+  const staticColors = {
+    surface: '#ffffff',
+    border: '#e2e8f0',
+    textPrimary: '#0f172a',
+    textSecondary: '#64748b',
+    primary: '#3b82f6',
+    darkSurface: '#1e293b',
+    lightGreen: '#f0fdf4',
+  };
+
+  const colors = mounted ? {
+    surface: themeColors?.surface || staticColors.surface,
+    border: themeColors?.border || staticColors.border,
+    textPrimary: themeColors?.text?.primary || staticColors.textPrimary,
+    textSecondary: themeColors?.text?.secondary || staticColors.textSecondary,
+    primary: themeColors?.primary || staticColors.primary,
+    darkSurface: isDarkMode ? '#1e293b' : staticColors.lightGreen,
+  } : staticColors;
 
   const handlePreset = (preset: typeof RADIUS_PRESETS[0]) => {
     setSelectedRadius(preset.value);
@@ -61,7 +77,7 @@ export default function RadiusSelector({ value = 10, onChange, lang = 'en' }: Ra
       setSelectedRadius(bt.defaultRadius);
       onChange(bt.defaultRadius, type);
     } else {
-      onChange(0, type); // ecommerce = no radius = country-wide
+      onChange(0, type);
     }
   };
 
@@ -93,15 +109,14 @@ export default function RadiusSelector({ value = 10, onChange, lang = 'en' }: Ra
   };
 
   return (
-    <div style={{ fontFamily: themeColors.fontFamily }}>
-      
-      {/* Business Type Selector */}
+    <div suppressHydrationWarning style={{ fontFamily: themeColors?.fontFamily }}>
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ fontSize: '12px', fontWeight: 600, color: textSecondary, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <label suppressHydrationWarning style={{ fontSize: '12px', fontWeight: 600, color: colors.textSecondary, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <Target size={14} /> Business Type (Auto-Suggest Radius)
         </label>
         <select value={businessType} onChange={e => handleBusinessType(e.target.value)}
-          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid ' + border, background: surface, color: textPrimary, fontSize: '13px' }}>
+          suppressHydrationWarning
+          style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid ' + colors.border, background: colors.surface, color: colors.textPrimary, fontSize: '13px' }}>
           <option value="">Select business type...</option>
           {BUSINESS_TYPES.map(bt => (
             <option key={bt.type} value={bt.type}>{bt.label} {bt.defaultRadius > 0 ? `(${bt.defaultRadius}km default)` : '(No radius — country-wide)'}</option>
@@ -109,52 +124,53 @@ export default function RadiusSelector({ value = 10, onChange, lang = 'en' }: Ra
         </select>
       </div>
 
-      {/* Radius Presets */}
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ fontSize: '12px', fontWeight: 600, color: textSecondary, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <Navigation size={14} /> Target Radius: <span style={{ color: primary, fontWeight: 700 }}>{selectedRadius}km</span>
-          <span style={{ fontSize: '10px', color: textSecondary }}>({getCoverageDescription(selectedRadius)})</span>
+        <label suppressHydrationWarning style={{ fontSize: '12px', fontWeight: 600, color: colors.textSecondary, marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Navigation size={14} /> Target Radius: <span style={{ color: colors.primary, fontWeight: 700 }}>{selectedRadius}km</span>
+          <span style={{ fontSize: '10px', color: colors.textSecondary }}>({getCoverageDescription(selectedRadius)})</span>
           <span style={{ fontSize: '12px' }}>{getSpeedIcon(selectedRadius)}</span>
         </label>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '6px', marginBottom: '8px' }}>
           {RADIUS_PRESETS.map(preset => (
             <button key={preset.value} onClick={() => handlePreset(preset)}
+              suppressHydrationWarning
               style={{
-                padding: '8px 10px', borderRadius: '8px', border: '1.5px solid ' + (selectedRadius === preset.value ? primary : border),
-                background: selectedRadius === preset.value ? primary + '10' : surface,
-                color: selectedRadius === preset.value ? primary : textPrimary,
+                padding: '8px 10px', borderRadius: '8px', border: '1.5px solid ' + (selectedRadius === preset.value ? colors.primary : colors.border),
+                background: selectedRadius === preset.value ? colors.primary + '10' : colors.surface,
+                color: selectedRadius === preset.value ? colors.primary : colors.textPrimary,
                 cursor: 'pointer', fontSize: '11px', fontWeight: selectedRadius === preset.value ? 600 : 400,
                 textAlign: 'left', transition: 'all 0.15s'
               }}>
               <div>{preset.label}</div>
-              <div style={{ fontSize: '9px', color: textSecondary }}>{preset.desc}</div>
+              <div style={{ fontSize: '9px', color: colors.textSecondary }}>{preset.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Custom Radius */}
       <div style={{ marginBottom: '12px' }}>
         <button onClick={() => setShowCustom(!showCustom)}
-          style={{ fontSize: '12px', color: primary, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+          suppressHydrationWarning
+          style={{ fontSize: '12px', color: colors.primary, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
           {showCustom ? 'Hide Custom' : '+ Custom Radius (0.1 - 500 km)'}
         </button>
         {showCustom && (
           <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
             <input type="number" min="0.1" max="500" step="0.1" value={customRadius}
               onChange={e => setCustomRadius(e.target.value)} placeholder="Enter km..."
-              style={{ flex: 1, padding: '8px 10px', borderRadius: '6px', border: '1px solid ' + border, background: surface, color: textPrimary, fontSize: '13px' }} />
+              suppressHydrationWarning
+              style={{ flex: 1, padding: '8px 10px', borderRadius: '6px', border: '1px solid ' + colors.border, background: colors.surface, color: colors.textPrimary, fontSize: '13px' }} />
             <button onClick={handleCustom}
-              style={{ padding: '8px 14px', borderRadius: '6px', border: 'none', background: primary, color: '#fff', fontWeight: 600, cursor: 'pointer', fontSize: '12px' }}>
+              suppressHydrationWarning
+              style={{ padding: '8px 14px', borderRadius: '6px', border: 'none', background: colors.primary, color: '#fff', fontWeight: 600, cursor: 'pointer', fontSize: '12px' }}>
               Apply
             </button>
           </div>
         )}
       </div>
 
-      {/* Performance Info */}
-      <div style={{ padding: '10px 14px', background: isDarkMode ? '#1e293b' : '#f0fdf4', borderRadius: '8px', fontSize: '11px', color: textSecondary }}>
+      <div suppressHydrationWarning style={{ padding: '10px 14px', background: colors.darkSurface, borderRadius: '8px', fontSize: '11px', color: colors.textSecondary }}>
         <Zap size={12} style={{ display: 'inline', marginRight: '4px', color: '#10b981' }} />
         <strong>Performance:</strong> {selectedRadius <= 1 ? 'Super Fast (Micro-targeting)' : selectedRadius <= 10 ? 'Very Fast (Local business)' : selectedRadius <= 50 ? 'Fast (City level)' : selectedRadius <= 100 ? 'OK (District level)' : 'Slower (Regional — use country targeting for 500km+)'}
       </div>

@@ -180,13 +180,25 @@ export async function generateMetadata({ params }: ToolPageProps): Promise<Metad
     title: `${translatedTitle} | Centre.com.pk`,
     description: translatedDescription,
     keywords: keywords.join(', '),
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'en': `https://www.centre.com.pk/tools/${toolData.category}/${toolData.slug}`,
+        'en': `https://www.centre.com.pk/en/tools/${toolData.category}/${toolData.slug}`,
         'ur': `https://www.centre.com.pk/ur/tools/${toolData.category}/${toolData.slug}`,
         'hi': `https://www.centre.com.pk/hi/tools/${toolData.category}/${toolData.slug}`,
         'ar': `https://www.centre.com.pk/ar/tools/${toolData.category}/${toolData.slug}`,
+        'x-default': `https://www.centre.com.pk/en/tools/${toolData.category}/${toolData.slug}`,
       }
     },
     openGraph: {
