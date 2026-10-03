@@ -25,22 +25,10 @@ export async function POST(req: NextRequest) {
   const db = new Database(DB_PATH);
 
   if (status === 'success') {
-    const purchase = db.prepare("SELECT * FROM user_packages WHERE payment_id=? AND user_id=? ORDER BY created_at DESC LIMIT 1").get(transactionId, userId) as any;
-    if (!purchase) return NextResponse.json({ error: "Transaction not found" }, { status: 404 });
-
-    const pkg = getPackageById(purchase.package_id);
-    const expiry = calculateExpiry(pkg?.durationDays || 30);
-
-    // Deactivate old plans
-    db.prepare("UPDATE user_packages SET status='expired', end_date=datetime('now') WHERE user_id=? AND status='active'").run(userId);
-
-    // Activate new plan
-    db.prepare("UPDATE user_packages SET status='active', start_date=datetime('now'), end_date=? WHERE id=?").run(expiry, purchase.id);
-
-    // Update user plan
-    db.prepare("UPDATE users SET plan=? WHERE id=?").run(purchase.package_id, userId);
-
-    return NextResponse.json({ success: true, message: "Payment verified! Plan activated!" });
+    // SECURITY: never activate a plan from the browser.
+    // Activation happens only via the Stripe webhook or an admin action.
+    db.prepare("UPDATE user_packages SET status='awaiting_verification' WHERE payment_id=? AND user_id=?").run(transactionId, userId);
+    return NextResponse.json({ success: true, message: "Payment received. Awaiting provider confirmation." });
   }
 
   db.prepare("UPDATE user_packages SET status='failed' WHERE payment_id=? AND user_id=?").run(transactionId, userId);
