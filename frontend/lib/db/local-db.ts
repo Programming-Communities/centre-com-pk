@@ -1,5 +1,7 @@
 import Database from "better-sqlite3";
 import path from "path";
+import { verifyToken } from "@/lib/auth/secure";
+import crypto from "crypto";
 
 // Singleton pattern — reuse connection
 let dbInstance: Database.Database | null = null;
@@ -45,16 +47,30 @@ export function createToken(userId: number, email: string, role: string): string
 export function getUserIdFromRequest(request: Request): number | null {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
-  
+
   try {
     const token = authHeader.slice(7);
+
+    // 1. Try HMAC verification (new tokens)
+    const payload = verifyToken(token);
+    if (payload && payload.sub) {
+      return parseInt(payload.sub);
+    }
+
+    // 2. Fallback: legacy salt verification (old tokens during migration)
     const parts = token.split(".");
     if (parts.length !== 3) return null;
-    
-    const payload = JSON.parse(Buffer.from(parts[1], "base64").toString());
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
-    
-    return parseInt(payload.sub);
+
+    const expected = crypto.createHash("sha256")
+      .update(parts[0] + "." + parts[1] + "centers-secret-salt")
+      .digest("hex");
+
+    if (expected !== parts[2]) return null;
+
+    const legacyPayload = JSON.parse(Buffer.from(parts[1], "base64").toString());
+    if (legacyPayload.exp && legacyPayload.exp < Math.floor(Date.now() / 1000)) return null;
+
+    return parseInt(legacyPayload.sub);
   } catch {
     return null;
   }
