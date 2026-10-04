@@ -2,7 +2,10 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
 const SALT_ROUNDS = 12;
-const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(64).toString('hex');
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET env var is missing or too short (minimum 32 chars).');
+}
 
 // Password hashing with bcrypt
 export async function hashPassword(password: string): Promise<string> {
