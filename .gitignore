@@ -62,3 +62,6 @@ agentrouter_proxy.py
 *.db
 zoo-key.txt
 .roomodes
+
+# AgentRouter proxy backups
+agentrouter_proxy.py.backup*
