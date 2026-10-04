@@ -58,3 +58,7 @@ Project Guardian.md
 
 # AI agent memory pack — do not commit (contains security findings)
 .agent/
+agentrouter_proxy.py
+*.db
+zoo-key.txt
+.roomodes
