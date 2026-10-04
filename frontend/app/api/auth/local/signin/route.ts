@@ -3,26 +3,9 @@ import Database from "better-sqlite3";
 import path from "path";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { createToken, verifyPassword, hashPassword as bcryptHash } from "@/lib/auth/secure";
 
 const DB_PATH = path.join(process.cwd(), "data", "centers-local.db");
-const SALT = "centers-secret-salt";
-
-function hashPassword(p: string): string {
-  return crypto.createHash("sha256").update(p + SALT).digest("hex");
-}
-
-function createToken(userId: number, email: string, role: string): string {
-  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64');
-  const payload = Buffer.from(JSON.stringify({
-    sub: userId.toString(),
-    email,
-    role,
-    iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)
-  })).toString('base64');
-  const signature = hashPassword(`${header}.${payload}`);
-  return `${header}.${payload}.${signature}`;
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -45,15 +28,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Your account is pending approval.' }, { status: 403 });
     }
 
-    // ✅ FIXED: Check both bcrypt AND SHA-256 password
+    // ✅ FIXED: Check both bcrypt AND legacy SHA-256 password
     let isValidPassword = false;
-    
+    let needsRehash = false;
+
     if (user.password && user.password.startsWith('$2')) {
       // bcrypt hash (signup se)
-      isValidPassword = bcrypt.compareSync(password, user.password);
+      isValidPassword = await verifyPassword(password, user.password);
     } else {
-      // Old SHA-256 hash
-      isValidPassword = hashPassword(password) === user.password;
+      // Old SHA-256 hash — verify then transparently upgrade to bcrypt
+      const crypto = require('crypto');
+      const legacyHash = crypto.createHash('sha256').update(password + 'centers-secret-salt').digest('hex');
+      if (legacyHash === user.password) {
+        isValidPassword = true;
+        needsRehash = true;
+      }
     }
 
     if (!isValidPassword) {
@@ -61,7 +50,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const token = createToken(user.id, user.email, user.role || 'user');
+    if (needsRehash) {
+      const newHash = await bcryptHash(password);
+      db.prepare('UPDATE users SET password = ? WHERE id = ?').run(newHash, user.id);
+    }
+
+    const token = createToken({ sub: String(user.id), email: user.email, role: user.role || 'user' });
 
     const response = NextResponse.json({
       success: true,
