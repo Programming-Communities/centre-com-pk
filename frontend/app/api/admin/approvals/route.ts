@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 import Database from "better-sqlite3";
 import path from "path";
 
@@ -9,6 +10,8 @@ function getDB() {
 
 // GET — List all pending/approved ads
 export async function GET(request: NextRequest) {
+  const admin = requireAdmin(request);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getDB();
     const { searchParams } = new URL(request.url);
@@ -39,6 +42,8 @@ export async function GET(request: NextRequest) {
 
 // PUT — Approve/Reject ad
 export async function PUT(request: NextRequest) {
+  const admin = requireAdmin(request);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getDB();
     const body = await request.json();
