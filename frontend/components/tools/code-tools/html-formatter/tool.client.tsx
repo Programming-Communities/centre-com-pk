@@ -11,6 +11,7 @@ import { useTheme } from '@/components/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useParams } from 'next/navigation';
 import CentralAd from '@/components/ads/CentralAd';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface HistoryEntry {
   id: number;
@@ -519,7 +520,7 @@ export default function HtmlFormatterClient() {
                         backgroundColor: themeColors.background,
                         color: themeColors.text.primary
                       }}
-                      dangerouslySetInnerHTML={{ __html: formattedHtml }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(formattedHtml) }}
                     />
                   ) : (
                     <pre 

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
 import { X, Code, Eye, Copy, Check } from 'lucide-react';
 import { renderContent } from '@/lib/content-renderer';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -63,7 +64,7 @@ export default function PreviewModal({ isOpen, onClose, content, title, lang = '
         {/* Content */}
         <div style={{ padding: '20px', overflowY: 'auto', maxHeight: 'calc(90vh - 80px)' }}>
           {viewMode === 'preview' ? (
-            <div className="prose prose-lg dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: htmlContent }} />
+            <div className="prose prose-lg dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(htmlContent) }} />
           ) : (
             <pre style={{ backgroundColor: isDarkMode ? '#1e293b' : '#f1f5f9', padding: '16px', borderRadius: '8px', overflow: 'auto', fontSize: '13px', fontFamily: 'monospace', color: textPrimary, maxHeight: '500px' }}>
               <code>{htmlContent}</code>

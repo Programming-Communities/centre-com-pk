@@ -15,6 +15,7 @@ import {
 import { useTheme } from '@/components/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import CentralAd from '@/components/ads/CentralAd';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 // Types
 interface MarkdownHistory {
@@ -688,7 +689,7 @@ function hello() {
                     borderColor: themeColors.border,
                     color: themeColors.text.primary
                   }}
-                  dangerouslySetInnerHTML={{ __html: html }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(html) }}
                 />
               </div>
             )}

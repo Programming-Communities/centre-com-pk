@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, ArrowRight } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface BlogPost {
   id: number;
@@ -105,7 +106,7 @@ export default function ToolBlogGuide({ toolSlug, lang }: { toolSlug: string; la
             <div
               className="text-sm leading-relaxed"
               style={{ color: 'var(--text-secondary, #64748b)' }}
-              dangerouslySetInnerHTML={{ __html: section.body }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(section.body) }}
             />
           </div>
         ))}
