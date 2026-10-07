@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 export async function GET(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = (await import('@/lib/db/local-db')).getLocalDB();
     const roles = db.prepare('SELECT * FROM roles ORDER BY id').all();
@@ -12,6 +15,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const { userId, role } = await req.json();
     const db = (await import('@/lib/db/local-db')).getLocalDB();

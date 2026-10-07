@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import path from 'path';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'centers-local.db');
 
 export async function GET(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const db = new Database(DB_PATH);
   try {
     const { searchParams } = new URL(req.url);
@@ -63,6 +66,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const db = new Database(DB_PATH);
   try {
     const body = await req.json();
@@ -82,6 +87,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const db = new Database(DB_PATH);
   try {
     const body = await req.json();
@@ -98,6 +105,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const db = new Database(DB_PATH);
   try {
     const { searchParams } = new URL(req.url);

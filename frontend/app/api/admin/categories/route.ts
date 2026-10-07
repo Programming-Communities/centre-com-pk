@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getLocalDB } from '@/lib/db/local-db';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 export async function GET(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getLocalDB();
     const categories = db.prepare('SELECT * FROM categories ORDER BY type, name').all();
@@ -12,6 +15,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getLocalDB();
     const body = await req.json();
@@ -27,6 +32,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getLocalDB();
     const body = await req.json();
@@ -42,6 +49,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = getLocalDB();
     const { searchParams } = new URL(req.url);
