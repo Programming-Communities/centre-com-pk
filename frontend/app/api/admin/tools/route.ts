@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
 import { submitToIndexNow } from '@/lib/seo/indexnow';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 const DB_PATH = path.join(process.cwd(), "data", "centers-local.db");
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const admin = requireAdmin(request);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const db = new Database(DB_PATH);
     const tools = db.prepare("SELECT * FROM tools ORDER BY category, name").all();
@@ -16,6 +20,9 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const body = await req.json();
     const { action } = body;
