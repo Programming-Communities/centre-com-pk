@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface AdData {
   id: number; title: string; description: string; image_url: string;
@@ -79,7 +80,7 @@ export default function DynamicAd({ placement, blogPostId, toolSlug, limit = 3 }
         border: `1px solid ${themeColors.border || '#e2e8f0'}`,
         minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <div dangerouslySetInnerHTML={{ __html: ad.custom_html || '<!-- Google AdSense -->' }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(ad.custom_html || '<!-- Google AdSense -->') }} />
       </div>
     );
   }
@@ -88,7 +89,7 @@ export default function DynamicAd({ placement, blogPostId, toolSlug, limit = 3 }
   if (ad.ad_type === 'custom_html') {
     return (
       <div style={{ borderRadius: '12px', overflow: 'hidden' }}
-        dangerouslySetInnerHTML={{ __html: ad.custom_html || '' }} />
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(ad.custom_html || '') }} />
     );
   }
 

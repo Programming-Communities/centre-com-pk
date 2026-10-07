@@ -8,6 +8,7 @@ import {
   Facebook, Twitter, Linkedin, Globe
 } from 'lucide-react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 export default function BlogPostClient(props: any) {
   const {
@@ -258,7 +259,7 @@ export default function BlogPostClient(props: any) {
         )}
         
         {/* Article Content */}
-        <article style={{ fontSize: `${fontSize}px`, lineHeight: 1.9, color: textPrimary }} dangerouslySetInnerHTML={{ __html: htmlContent }} />
+        <article style={{ fontSize: `${fontSize}px`, lineHeight: 1.9, color: textPrimary }} dangerouslySetInnerHTML={{ __html: sanitizeHtml(htmlContent) }} />
         
         {/* Tool CTA */}
         {post.tool_slug && (

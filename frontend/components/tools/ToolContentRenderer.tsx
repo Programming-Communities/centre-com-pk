@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/hooks/useTranslation';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface ToolContentRendererProps {
   toolSlug: string;
@@ -32,7 +33,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.introduction && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">Introduction</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.introduction }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.introduction) }} />
         </div>
       )}
       
@@ -40,7 +41,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.howToUse && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">How to Use</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.howToUse }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.howToUse) }} />
         </div>
       )}
       
@@ -48,7 +49,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.features && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">Features</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.features }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.features) }} />
         </div>
       )}
       
@@ -56,7 +57,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.useCases && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">Use Cases</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.useCases }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.useCases) }} />
         </div>
       )}
       
@@ -64,7 +65,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.faqs && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">FAQs</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.faqs }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.faqs) }} />
         </div>
       )}
       
@@ -72,7 +73,7 @@ export default function ToolContentRenderer({ toolSlug, lang, category }: ToolCo
       {content.comparisonText && (
         <div className="prose prose-lg dark:prose-invert mb-8">
           <h2 className="text-2xl font-semibold mb-3">Comparison</h2>
-          <div dangerouslySetInnerHTML={{ __html: content.comparisonText }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(content.comparisonText) }} />
         </div>
       )}
     </div>

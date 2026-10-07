@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/components/theme/contexts/ThemeContext';
+import { sanitizeHtml } from '@/lib/sanitize';
 
 interface AdData {
   id: number; title: string; description: string; image_url: string;
@@ -84,7 +85,7 @@ export default function AdDisplay({ placement = 'header', blogPostId, toolSlug, 
   if (ad.ad_type === 'custom_html' && ad.custom_html) {
     return (
       <div style={{ borderRadius: '12px', overflow: 'hidden', margin: '16px 0' }}>
-        <div dangerouslySetInnerHTML={{ __html: ad.custom_html }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(ad.custom_html) }} />
       </div>
     );
   }
