@@ -1,5 +1,6 @@
 // app/api/admin/tools/generate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 import { generateToolComponent, ToolInput } from '@/lib/tools/toolGenerator';
 import { generateSEO } from '@/lib/tools/seoAutoGenerator';
 import { generateTranslations } from '@/lib/tools/templateEngine';
@@ -7,6 +8,9 @@ import fs from 'fs';
 import path from 'path';
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const body: ToolInput = await req.json();
 

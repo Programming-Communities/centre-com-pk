@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 import fs from "fs";
 import path from "path";
 
 const TOOLS_DIR = path.join(/* turbopackIgnore: true */ process.cwd(), "components", "tools");
 
 export async function GET(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const { searchParams } = new URL(req.url);
     const action = searchParams.get("action") || "list";
@@ -38,6 +42,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const body = await req.json();
     const { action, tool, file, content, filename, newTool } = body;
