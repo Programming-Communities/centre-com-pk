@@ -26,9 +26,11 @@ export async function GET(req: NextRequest) {
     }
 
     if (action === "read" && file) {
-      const filePath = path.join(/* turbopackIgnore: true */ toolDir, file);
+      const filePath = path.resolve(/* turbopackIgnore: true */ toolDir, file);
+      if (!filePath.startsWith(toolDir + path.sep)) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
       if (!fs.existsSync(/* turbopackIgnore: true */ filePath)) return NextResponse.json({ error: "File not found" }, { status: 404 });
-      if (filePath.includes("..")) return NextResponse.json({ error: "Invalid path" }, { status: 400 });
       
       const content = fs.readFileSync(/* turbopackIgnore: true */ filePath, "utf-8");
       const ext = path.extname(file).replace(".", "");
@@ -53,8 +55,10 @@ export async function POST(req: NextRequest) {
       const toolDir = findToolDir(tool);
       if (!toolDir) return NextResponse.json({ error: "Tool not found" }, { status: 404 });
       
-      const filePath = path.join(/* turbopackIgnore: true */ toolDir, file);
-      if (filePath.includes("..")) return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      const filePath = path.resolve(/* turbopackIgnore: true */ toolDir, file);
+      if (!filePath.startsWith(toolDir + path.sep)) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
       
       const backupPath = filePath + ".bak";
       if (fs.existsSync(/* turbopackIgnore: true */ filePath)) {
@@ -69,8 +73,10 @@ export async function POST(req: NextRequest) {
       const toolDir = findToolDir(tool);
       if (!toolDir) return NextResponse.json({ error: "Tool not found" }, { status: 404 });
       
-      const filePath = path.join(/* turbopackIgnore: true */ toolDir, filename);
-      if (filePath.includes("..")) return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      const filePath = path.resolve(/* turbopackIgnore: true */ toolDir, filename);
+      if (!filePath.startsWith(toolDir + path.sep)) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
       if (fs.existsSync(/* turbopackIgnore: true */ filePath)) return NextResponse.json({ error: "File already exists" }, { status: 409 });
       
       fs.writeFileSync(/* turbopackIgnore: true */ filePath, content || "// New file", "utf-8");
@@ -81,8 +87,10 @@ export async function POST(req: NextRequest) {
       const toolDir = findToolDir(tool);
       if (!toolDir) return NextResponse.json({ error: "Tool not found" }, { status: 404 });
       
-      const filePath = path.join(/* turbopackIgnore: true */ toolDir, file);
-      if (filePath.includes("..")) return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      const filePath = path.resolve(/* turbopackIgnore: true */ toolDir, file);
+      if (!filePath.startsWith(toolDir + path.sep)) {
+        return NextResponse.json({ error: "Invalid path" }, { status: 400 });
+      }
       if (!fs.existsSync(/* turbopackIgnore: true */ filePath)) return NextResponse.json({ error: "File not found" }, { status: 404 });
       
       const backupPath = filePath + ".deleted." + Date.now();
@@ -93,6 +101,9 @@ export async function POST(req: NextRequest) {
     if (action === "create-tool" && newTool) {
       const { slug, category, name } = newTool;
       if (!slug || !category || !name) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+      if (!/^[a-z0-9-]+$/.test(slug) || !/^[a-z0-9-]+$/.test(category)) {
+        return NextResponse.json({ error: 'Invalid slug or category' }, { status: 400 });
+      }
       
       const toolDir = path.join(/* turbopackIgnore: true */ TOOLS_DIR, category, slug);
       if (fs.existsSync(/* turbopackIgnore: true */ toolDir)) return NextResponse.json({ error: "Tool already exists" }, { status: 409 });
