@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 export async function GET(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = (await import('@/lib/db/local-db')).getLocalDB();
     const packages = db.prepare('SELECT * FROM packages ORDER BY price').all();
@@ -11,6 +14,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = (await import('@/lib/db/local-db')).getLocalDB();
     const body = await req.json();
@@ -24,6 +29,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const db = (await import('@/lib/db/local-db')).getLocalDB();
     const { id, name, description, price, original_price, currency, duration_days, features, is_popular } = await req.json();
@@ -36,6 +43,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
