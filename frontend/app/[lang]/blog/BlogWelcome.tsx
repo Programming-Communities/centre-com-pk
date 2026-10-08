@@ -73,7 +73,7 @@ export default function BlogWelcome() {
     heroSubtitle: 'Complete AI education resources, tutorials, and tools. Start your AI journey today with our free learning platform.',
     stats: [
       { value: '100+', label: 'Free Lessons', icon: BookOpen },
-      { value: '50K+', label: 'Students', icon: Users },
+      { value: 'Thousands', label: 'Students', icon: Users },
       { value: '25+', label: 'AI Tools', icon: Zap },
       { value: '24/7', label: 'Access', icon: Clock }
     ],
@@ -131,7 +131,7 @@ export default function BlogWelcome() {
     heroSubtitle: 'مکمل AI تعلیمی وسائل، سبق اور ٹولز۔ آج ہی ہمارے مفت لرننگ پلیٹ فارم کے ساتھ اپنے AI سفر کا آغاز کریں۔',
     stats: [
       { value: '100+', label: 'مفت اسباق', icon: BookOpen },
-      { value: '50K+', label: 'طلباء', icon: Users },
+      { value: 'ہزاروں', label: 'طلباء', icon: Users },
       { value: '25+', label: 'AI ٹولز', icon: Zap },
       { value: '24/7', label: 'رسائی', icon: Clock }
     ],
@@ -189,7 +189,7 @@ export default function BlogWelcome() {
     heroSubtitle: 'موارد تعليمية كاملة للذكاء الاصطناعي ودروس وأدوات. ابدأ رحلتك في الذكاء الاصطناعي اليوم مع منصة التعلم المجانية لدينا.',
     stats: [
       { value: '100+', label: 'دروس مجانية', icon: BookOpen },
-      { value: '50K+', label: 'طلاب', icon: Users },
+      { value: 'آلاف', label: 'طلاب', icon: Users },
       { value: '25+', label: 'أدوات ذكاء اصطناعي', icon: Zap },
       { value: '24/7', label: 'وصول', icon: Clock }
     ],
@@ -247,7 +247,7 @@ export default function BlogWelcome() {
     heroSubtitle: 'पूर्ण AI शिक्षा संसाधन, ट्यूटोरियल और उपकरण। आज ही हमारे मुफ्त लर्निंग प्लेटफॉर्म के साथ अपनी AI यात्रा शुरू करें।',
     stats: [
       { value: '100+', label: 'मुफ्त पाठ', icon: BookOpen },
-      { value: '50K+', label: 'छात्र', icon: Users },
+      { value: 'हज़ारों', label: 'छात्र', icon: Users },
       { value: '25+', label: 'AI उपकरण', icon: Zap },
       { value: '24/7', label: 'पहुंच', icon: Clock }
     ],
