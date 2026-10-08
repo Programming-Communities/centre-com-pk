@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
 import { submitToIndexNow } from '@/lib/seo/indexnow';
+import { requireAdmin } from '@/lib/admin/requireAdmin';
 
 const DB_PATH = path.join(process.cwd(), "data", "centers-local.db");
 const BASE_URL = 'https://www.centre.com.pk';
@@ -62,6 +63,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const admin = requireAdmin(req);
+  if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const db = new Database(DB_PATH);
     const body = await req.json();
@@ -69,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     if (action === "create") {
       const r = db.prepare("INSERT INTO blog_posts (title, slug, content, excerpt, lang, status, seo_title, seo_description, seo_keywords) VALUES (?,?,?,?,?,?,?,?,?)")
-        .run(title, slug, content, excerpt, lang || "en", status || "published", seo_title, seo_description, seo_keywords);
+        .run(title, slug, content, excerpt, lang || "en", status || "draft", seo_title, seo_description, seo_keywords);
       
       // ✅ INDEXNOW AUTO-SUBMIT
       const postUrl = `${BASE_URL}/blog/${slug}`;
