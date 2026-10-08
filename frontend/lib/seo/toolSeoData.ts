@@ -1115,7 +1115,37 @@ export const TOOL_SEO_DATA: Record<string, ToolSEOData> = {
     schemaType: 'WebApplication',
     priority: 0.8,
     changefreq: 'monthly'
-  }
+  },
+
+  'cv-builder': {
+    slug: 'cv-builder',
+    category: 'text-tools',
+    title: 'CV Builder - Create Professional Resumes Online Free',
+    description: 'Free online CV builder with 15+ professional templates, AI-powered suggestions, photo upload, and instant PDF export. Create ATS-friendly resumes with no watermarks or sign-up required.',
+    keywords: ['cv builder', 'resume builder', 'free cv maker', 'online resume builder', 'create cv online', 'professional resume maker', 'ats resume builder', 'cv template free', 'resume maker', 'cv maker pakistan'],
+    faqs: [
+      {
+        question: 'Is this CV builder really free?',
+        answer: 'Yes, completely free. No watermarks, no sign-up, no hidden charges. Export unlimited PDFs with all features unlocked.'
+      },
+      {
+        question: 'Will my resume pass ATS (Applicant Tracking Systems)?',
+        answer: 'Yes, all templates are ATS-optimized with clean formatting, standard fonts, and proper structure that hiring software can parse correctly.'
+      },
+      {
+        question: 'Can I upload my photo?',
+        answer: 'Yes, you can upload a professional photo. The tool also lets you add certificates, project screenshots, and manage multiple resume versions.'
+      },
+      {
+        question: 'Are my details safe?',
+        answer: 'Yes, all processing happens directly in your browser. Your data never leaves your device and is not stored on our servers.'
+      }
+    ],
+    relatedTools: ['word-counter', 'character-counter', 'text-extractor'],
+    schemaType: 'WebApplication',
+    priority: 0.9,
+    changefreq: 'weekly'
+  },
 };
 
 // Helper function to get SEO data for a tool
