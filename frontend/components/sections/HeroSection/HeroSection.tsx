@@ -23,11 +23,11 @@ interface HomePageHeroProps {
 }
 
 export default function HomePageHero({
-  badge = "500+ FREE ONLINE TOOLS",
+  badge = "55 FREE ONLINE TOOLS",
   title = "Professional\nTools Collection",
   highlightedTitle = "Professional",
-  description = "Access 500+ free online tools across 25+ categories. No registration required. Perfect for students, professionals, and everyday users.",
-  highlightedDescription = "500+ free online tools",
+  description = "Access 55 free online tools across 7 categories. No registration required. Perfect for students, professionals, and everyday users.",
+  highlightedDescription = "55 free online tools",
   primaryButton = {
     text: "Explore All Tools",
     href: "#categories"
@@ -187,8 +187,8 @@ export default function HomePageHero({
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-2xl mx-auto">
               {[
-                { value: "500+", label: "Free Tools" },
-                { value: "25+", label: "Categories" },
+                { value: "55", label: "Free Tools" },
+                { value: "7", label: "Categories" },
                 { value: "100%", label: "No Signup" },
                 { value: "0", label: "Ads" }
               ].map((stat, index) => (

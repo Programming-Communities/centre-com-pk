@@ -148,8 +148,8 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
   en: {
     heroTitle: 'Free Online Tools',
     heroHighlight: 'For Everyone',
-    heroSubtitle: '500+ professional calculators, converters, and utilities. No registration, no fees, no limits.',
-    searchPlaceholder: 'Search 500+ tools... (e.g., "age calculator", "pdf merger")',
+    heroSubtitle: '55 professional calculators, converters, and utilities. No registration, no fees, no limits.',
+    searchPlaceholder: 'Search 55 tools... (e.g., "age calculator", "pdf merger")',
     trustedBy: 'Trusted by millions worldwide',
     popularTools: 'Most Popular',
     trendingTools: 'Trending Now',
@@ -178,8 +178,8 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
   ur: {
     heroTitle: 'مفت آن لائن ٹولز',
     heroHighlight: 'سب کے لیے',
-    heroSubtitle: '500+ پروفیشنل کیلکولیٹرز، کنورٹرز اور یوٹیلٹیز۔ کوئی رجسٹریشن نہیں، کوئی فیس نہیں، کوئی حد نہیں۔',
-    searchPlaceholder: '500+ ٹولز تلاش کریں... (مثال: "ایج کیلکولیٹر"، "پی ڈی ایف مرجر")',
+    heroSubtitle: '55 پروفیشنل کیلکولیٹرز، کنورٹرز اور یوٹیلٹیز۔ کوئی رجسٹریشن نہیں، کوئی فیس نہیں، کوئی حد نہیں۔',
+    searchPlaceholder: '55 ٹولز تلاش کریں... (مثال: "ایج کیلکولیٹر"، "پی ڈی ایف مرجر")',
     trustedBy: 'دنیا بھر میں لاکھوں کا اعتماد',
     popularTools: 'سب سے زیادہ مقبول',
     trendingTools: 'ٹرینڈنگ',
@@ -208,8 +208,8 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
   hi: {
     heroTitle: 'मुफ्त ऑनलाइन टूल्स',
     heroHighlight: 'सबके लिए',
-    heroSubtitle: '500+ प्रोफेशनल कैलकुलेटर, कन्वर्टर्स और यूटिलिटीज। कोई रजिस्ट्रेशन नहीं, कोई फीस नहीं, कोई सीमा नहीं।',
-    searchPlaceholder: '500+ टूल्स खोजें... (उदा: "आयु कैलकुलेटर", "पीडीएफ मर्जर")',
+    heroSubtitle: '55 प्रोफेशनल कैलकुलेटर, कन्वर्टर्स और यूटिलिटीज। कोई रजिस्ट्रेशन नहीं, कोई फीस नहीं, कोई सीमा नहीं।',
+    searchPlaceholder: '55 टूल्स खोजें... (उदा: "आयु कैलकुलेटर", "पीडीएफ मर्जर")',
     trustedBy: 'दुनिया भर में लाखों का विश्वास',
     popularTools: 'सबसे लोकप्रिय',
     trendingTools: 'ट्रेंडिंग',
@@ -238,8 +238,8 @@ const TRANSLATIONS: Record<string, Record<string, string>> = {
   ar: {
     heroTitle: 'أدوات مجانية عبر الإنترنت',
     heroHighlight: 'للجميع',
-    heroSubtitle: '500+ آلة حاسبة ومحول وأداة احترافية. بدون تسجيل، بدون رسوم، بدون حدود.',
-    searchPlaceholder: 'ابحث في 500+ أداة... (مثال: "حاسبة العمر"، "دمج PDF")',
+    heroSubtitle: '55 آلة حاسبة ومحول وأداة احترافية. بدون تسجيل، بدون رسوم، بدون حدود.',
+    searchPlaceholder: 'ابحث في 55 أداة... (مثال: "حاسبة العمر"، "دمج PDF")',
     trustedBy: 'موثوق به من قبل الملايين حول العالم',
     popularTools: 'الأكثر شعبية',
     trendingTools: 'رائج',
@@ -275,10 +275,10 @@ export async function generateMetadata({ params }: ToolsPageProps): Promise<Meta
   const { lang } = await params;
   
   const titles: Record<string, string> = {
-    en: 'Free Online Tools - 500+ Calculators, Converters & Utilities | Centre.com.pk',
-    ur: 'مفت آن لائن ٹولز - 500+ کیلکولیٹرز، کنورٹرز اور یوٹیلٹیز | Centre.com.pk',
-    hi: 'मुफ्त ऑनलाइन टूल्स - 500+ कैलकुलेटर, कन्वर्टर और यूटिलिटीज | Centre.com.pk',
-    ar: 'أدوات مجانية عبر الإنترنت - 500+ آلة حاسبة ومحولات وأدوات | Centre.com.pk',
+    en: 'Free Online Tools - 55 Calculators, Converters & Utilities | Centre.com.pk',
+    ur: 'مفت آن لائن ٹولز - 55 کیلکولیٹرز، کنورٹرز اور یوٹیلٹیز | Centre.com.pk',
+    hi: 'मुफ्त ऑनलाइन टूल्स - 55 कैलकुलेटर, कन्वर्टर और यूटिलिटीज | Centre.com.pk',
+    ar: 'أدوات مجانية عبر الإنترنت - 55 آلة حاسبة ومحولات وأدوات | Centre.com.pk',
   };
   
   return {

@@ -143,10 +143,10 @@ export function generateOgImageUrl(
   if (options?.title) {
     params.set('title', options.title);
   } else if (pageType === 'home') {
-    const homeTitle = options?.lang === 'ur' ? 'Centre.com.pk - 500+ مفت آن لائن ٹولز' :
-                      options?.lang === 'hi' ? 'Centre.com.pk - 500+ मुफ्त ऑनलाइन टूल्स' :
-                      options?.lang === 'ar' ? 'Centre.com.pk - 500+ أدوات مجانية عبر الإنترنت' :
-                      'Centre.com.pk - 500+ Free Online Tools';
+    const homeTitle = options?.lang === 'ur' ? 'Centre.com.pk - 55 مفت آن لائن ٹولز' :
+                      options?.lang === 'hi' ? 'Centre.com.pk - 55 मुफ्त ऑनलाइन टूल्स' :
+                      options?.lang === 'ar' ? 'Centre.com.pk - 55 أدوات مجانية عبر الإنترنت' :
+                      'Centre.com.pk - 55 Free Online Tools';
     params.set('title', homeTitle);
   }
   
@@ -154,10 +154,10 @@ export function generateOgImageUrl(
   if (options?.description) {
     params.set('description', options.description);
   } else if (pageType === 'home') {
-    const homeDesc = options?.lang === 'ur' ? '500+ مفت آن لائن کیلکولیٹرز اور ٹولز تک رسائی حاصل کریں۔ 100% مفت، کوئی رجسٹریشن نہیں۔' :
-                     options?.lang === 'hi' ? '500+ मुफ्त ऑनलाइन कैलकुलेटर और टूल्स तक पहुंचें। 100% मुफ्त, कोई पंजीकरण नहीं।' :
-                     options?.lang === 'ar' ? 'الوصول إلى 500+ آلة حاسبة وأدوات مجانية عبر الإنترنت. 100% مجاني، بدون تسجيل.' :
-                     'Access 500+ free online calculators and tools. 100% free, no registration.';
+    const homeDesc = options?.lang === 'ur' ? '55 مفت آن لائن کیلکولیٹرز اور ٹولز تک رسائی حاصل کریں۔ 100% مفت، کوئی رجسٹریشن نہیں۔' :
+                     options?.lang === 'hi' ? '55 मुफ्त ऑनलाइन कैलकुलेटर और टूल्स तक पहुंचें। 100% मुफ्त, कोई पंजीकरण नहीं।' :
+                     options?.lang === 'ar' ? 'الوصول إلى 55 آلة حاسبة وأدوات مجانية عبر الإنترنت. 100% مجاني، بدون تسجيل.' :
+                     'Access 55 free online calculators and tools. 100% free, no registration.';
     params.set('description', homeDesc);
   }
   
