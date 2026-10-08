@@ -2,9 +2,7 @@
 import { Metadata } from 'next';
 import SearchClient from './SearchClient';
 
-// ✅ ADD THIS LINE
-
-export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata>{
   const { lang } = await params;
   
   const titles: Record<string, string> = {
@@ -15,23 +13,27 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   };
 
   const descriptions: Record<string, string> = {
-    en: 'Search from 55 free online tools across all categories. Find image editors, PDF tools, calculators, code formatters, and more.',
     ur: 'تمام زمروں میں 55 مفت آن لائن ٹولز تلاش کریں۔ امیج ایڈیٹرز، پی ڈی ایف ٹولز، کیلکولیٹرز، کوڈ فارمیٹرز اور مزید تلاش کریں۔',
     hi: 'सभी श्रेणियों में 55 मुफ्त ऑनलाइन टूल्स खोजें। छवि संपादक, पीडीएफ टूल्स, कैलकुलेटर, कोड फॉर्मेटर और बहुत कुछ खोजें।',
     ar: 'ابحث من بين 55 أداة مجانية عبر الإنترنت عبر جميع الفئات. ابحث عن محرري الصور وأدوات PDF والآلات الحاسبة ومنسقي الأكواد والمزيد.'
   };
 
+  const canonicalUrl = lang === 'en'
+    ? 'https://www.centre.com.pk/search'
+    : `https://www.centre.com.pk/${lang}/search`;
+
   return {
     title: titles[lang as keyof typeof titles] || titles.en,
     description: descriptions[lang as keyof typeof descriptions] || descriptions.en,
+    robots: { index: false, follow: true },
     openGraph: {
       title: titles[lang as keyof typeof titles] || titles.en,
       description: descriptions[lang as keyof typeof descriptions] || descriptions.en,
       type: 'website',
-      url: `https://www.centre.com.pk/${lang}/search`,
+      url: canonicalUrl,
     },
     alternates: {
-      canonical: `https://www.centre.com.pk/${lang}/search`,
+      canonical: canonicalUrl,
       languages: {
         'en': 'https://www.centre.com.pk/search',
         'ur': 'https://www.centre.com.pk/ur/search',
