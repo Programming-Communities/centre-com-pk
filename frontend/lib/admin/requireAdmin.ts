@@ -19,7 +19,7 @@ export function requireAdmin(request: Request): { sub: string; email: string; ro
 
     const payload = verifyToken(token);
     if (!payload || !payload.sub) return null;
-    if (payload.role !== 'admin') return null;
+    if (payload.role !== 'admin' && payload.role !== 'super_admin') return null;
 
     return {
       sub: String(payload.sub),
