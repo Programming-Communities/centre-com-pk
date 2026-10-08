@@ -55,29 +55,37 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ lang: string; slug: string }> }) {
   const { lang, slug } = await params;
-  const db = (await import('@/lib/db/local-db')).getLocalDB();
-  
-  let post = db.prepare("SELECT * FROM blog_posts WHERE slug = ? AND lang = ? AND status = 'published'").get(slug, lang) as any;
-  
-  if (!post) {
-    post = db.prepare("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'").get(slug) as any;
-    if (post && post.translations) {
-      try {
-        const translations = JSON.parse(post.translations);
-        const t = translations[lang] || translations['en'] || {};
-        if (t.title) post.title = t.title;
-        if (t.slug) post.slug = t.slug;
-        if (t.content) post.content = t.content;
-        if (t.excerpt) post.excerpt = t.excerpt;
-        if (t.seo_title) post.seo_title = t.seo_title;
-        if (t.seo_description) post.seo_description = t.seo_description;
-      } catch {}
+  let db: any;
+  let post: any = null;
+  try {
+    db = (await import('@/lib/db/local-db')).getLocalDB();
+
+    post = db.prepare("SELECT * FROM blog_posts WHERE slug = ? AND lang = ? AND status = 'published'").get(slug, lang) as any;
+
+    if (!post) {
+      post = db.prepare("SELECT * FROM blog_posts WHERE slug = ? AND status = 'published'").get(slug) as any;
+      if (post && post.translations) {
+        try {
+          const translations = JSON.parse(post.translations);
+          const t = translations[lang] || translations['en'] || {};
+          if (t.title) post.title = t.title;
+          if (t.slug) post.slug = t.slug;
+          if (t.content) post.content = t.content;
+          if (t.excerpt) post.excerpt = t.excerpt;
+          if (t.seo_title) post.seo_title = t.seo_title;
+          if (t.seo_description) post.seo_description = t.seo_description;
+        } catch {}
+      }
     }
+  } catch {
+    notFound();
   }
-  
+
   if (!post) notFound();
   
-  db.prepare("UPDATE blog_posts SET view_count = view_count + 1, views = views + 1 WHERE id = ?").run(post.id);
+  try {
+    db.prepare("UPDATE blog_posts SET view_count = view_count + 1, views = views + 1 WHERE id = ?").run(post.id);
+  } catch {}
   
   let htmlContent = post.content || '';
   try { const p = JSON.parse(post.content); if (Array.isArray(p) || typeof p === 'object') htmlContent = renderContent(post.content, 'auto'); }
@@ -85,14 +93,23 @@ export default async function BlogPostPage({ params }: { params: Promise<{ lang:
   
   let relatedPosts: any[] = [];
   if (post.tool_slug) {
-    relatedPosts = db.prepare("SELECT id, title, slug, lang, excerpt, category, created_at, views FROM blog_posts WHERE tool_slug = ? AND id != ? AND status = 'published' ORDER BY created_at DESC LIMIT 4").all(post.tool_slug, post.id) as any[];
+    try {
+      relatedPosts = db.prepare("SELECT id, title, slug, lang, excerpt, category, created_at, views FROM blog_posts WHERE tool_slug = ? AND id != ? AND status = 'published' ORDER BY created_at DESC LIMIT 4").all(post.tool_slug, post.id) as any[];
+    } catch {}
   }
   
-  const allLangRows = db.prepare("SELECT lang FROM blog_posts WHERE slug = ? AND status = 'published'").all(slug) as any[];
-  const availableLangs = allLangRows.length > 0 ? allLangRows.map((r: any) => r.lang) : [post.lang || 'en'];
+  let availableLangs: string[] = [post.lang || 'en'];
+  try {
+    const allLangRows = db.prepare("SELECT lang FROM blog_posts WHERE slug = ? AND status = 'published'").all(slug) as any[];
+    availableLangs = allLangRows.length > 0 ? allLangRows.map((r: any) => r.lang) : [post.lang || 'en'];
+  } catch {}
   
-  const likeCount = (db.prepare("SELECT COUNT(*) as count FROM blog_likes WHERE post_slug = ?").get(post.slug) as any)?.count || 0;
-  const reactionCounts = db.prepare("SELECT reaction_type, COUNT(*) as count FROM post_reactions WHERE post_slug = ? GROUP BY reaction_type").all(post.slug) as any[];
+  let likeCount = 0;
+  let reactionCounts: any[] = [];
+  try {
+    likeCount = (db.prepare("SELECT COUNT(*) as count FROM blog_likes WHERE post_slug = ?").get(post.slug) as any)?.count || 0;
+    reactionCounts = db.prepare("SELECT reaction_type, COUNT(*) as count FROM post_reactions WHERE post_slug = ? GROUP BY reaction_type").all(post.slug) as any[];
+  } catch {}
   let commentCount = 0, comments: any[] = [];
   try {
     commentCount = (db.prepare("SELECT COUNT(*) as count FROM comments WHERE post_id = ? AND status = 'approved'").get(post.id) as any)?.count || 0;
