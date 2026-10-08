@@ -144,13 +144,6 @@ export function SoftwareApplicationSchema(slug: string, category: string, title:
       price: '0',
       priceCurrency: 'USD',
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '1000',
-      bestRating: '5',
-      worstRating: '1',
-    },
     author: {
       '@type': 'Organization',
       name: 'Centre.com.pk',

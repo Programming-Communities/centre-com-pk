@@ -37,13 +37,6 @@ export function generateToolSchema(
       name: SITE_NAME,
       url: SITE_URL,
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      ratingCount: '1000',
-      bestRating: '5',
-      worstRating: '1',
-    },
   };
   
   const breadcrumbSchema = generateBreadcrumbsJsonLd(breadcrumbs);
