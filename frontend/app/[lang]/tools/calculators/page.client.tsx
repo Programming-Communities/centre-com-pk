@@ -230,7 +230,7 @@ export default function CalculatorsPageClient() {
   // ✅ Get stats with translations
   const getStats = () => [
     { number: "99.9%", label: tTools('stats.accuracy', 'Calculation Accuracy') },
-    { number: "50K+", label: tTools('stats.monthly', 'Monthly Calculations') },
+    { number: "Thousands", label: tTools('stats.monthly', 'Monthly Calculations') },
     { number: "0ms", label: tTools('stats.delay', 'Server Delay') },
     { number: "100%", label: tTools('stats.client_side', 'Client-Side') }
   ];

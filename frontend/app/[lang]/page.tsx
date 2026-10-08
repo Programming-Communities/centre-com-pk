@@ -70,7 +70,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       needDesc: 'Can\'t find the tool? We\'ll build it!',
       suggestBtn: 'Suggest a Tool',
       contactBtn: 'Contact Support',
-      stats: [{ number: '55', label: 'Free Tools' }, { number: '50K+', label: 'Users' }, { number: '100%', label: 'Free' }, { number: '24/7', label: 'Available' }],
+      stats: [{ number: '55', label: 'Free Tools' }, { number: 'Thousands', label: 'Users' }, { number: '100%', label: 'Free' }, { number: '24/7', label: 'Available' }],
     },
     ur: {
       heroBadge: '55 مفت آن لائن ٹولز',
@@ -82,7 +82,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       needDesc: 'ٹول نہیں ملا؟ ہم بنائیں گے!',
       suggestBtn: 'ٹول تجویز کریں',
       contactBtn: 'سپورٹ',
-      stats: [{ number: '55', label: 'مفت ٹولز' }, { number: '50K+', label: 'صارفین' }, { number: '100%', label: 'مفت' }, { number: '24/7', label: 'دستیاب' }],
+      stats: [{ number: '55', label: 'مفت ٹولز' }, { number: 'ہزاروں', label: 'صارفین' }, { number: '100%', label: 'مفت' }, { number: '24/7', label: 'دستیاب' }],
     },
     ar: {
       heroBadge: '55 أداة مجانية',
@@ -94,7 +94,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       needDesc: 'لم تجد الأداة؟ سنبنيها لك!',
       suggestBtn: 'اقترح أداة',
       contactBtn: 'اتصل بالدعم',
-      stats: [{ number: '55', label: 'أداة' }, { number: '+50K', label: 'مستخدم' }, { number: '100%', label: 'مجاني' }, { number: '24/7', label: 'متاح' }],
+      stats: [{ number: '55', label: 'أداة' }, { number: 'آلاف', label: 'مستخدم' }, { number: '100%', label: 'مجاني' }, { number: '24/7', label: 'متاح' }],
     },
     hi: {
       heroBadge: '55 मुफ्त ऑनलाइन टूल्स',
@@ -106,7 +106,7 @@ export default async function HomePage({ params }: { params: Promise<{ lang: str
       needDesc: 'टूल नहीं मिला? हम बनाएंगे!',
       suggestBtn: 'टूल सुझाएं',
       contactBtn: 'सहायता',
-      stats: [{ number: '55', label: 'टूल्स' }, { number: '50K+', label: 'उपयोगकर्ता' }, { number: '100%', label: 'मुफ्त' }, { number: '24/7', label: 'उपलब्ध' }],
+      stats: [{ number: '55', label: 'टूल्स' }, { number: 'हज़ारों', label: 'उपयोगकर्ता' }, { number: '100%', label: 'मुफ्त' }, { number: '24/7', label: 'उपलब्ध' }],
     },
   }[lang] || {} as any;
 

@@ -57,7 +57,7 @@ export const PACKAGES = [
 
 // Ad spaces for direct sale
 export const AD_SPACES = [
-  { id: 'header', name: 'Header Banner (728x90)', price: 199, location: 'Top of all pages', views: '50k+/month' },
+  { id: 'header', name: 'Header Banner (728x90)', price: 199, location: 'Top of all pages', views: 'Thousands/month' },
   { id: 'sidebar', name: 'Sidebar (300x600)', price: 149, location: 'Right sidebar', views: '30k+/month' },
   { id: 'in-content', name: 'In-Content (728x90)', price: 99, location: 'Inside tool pages', views: '20k+/month' },
   { id: 'tool-sponsor', name: 'Tool Sponsor', price: 249, location: 'Specific tool page', views: '10k+/month' },
