@@ -13,6 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   };
 
   const descriptions: Record<string, string> = {
+    en: 'Search from 55 free online tools across all categories. Find image editors, PDF tools, calculators, code formatters, and more.',
     ur: 'تمام زمروں میں 55 مفت آن لائن ٹولز تلاش کریں۔ امیج ایڈیٹرز، پی ڈی ایف ٹولز، کیلکولیٹرز، کوڈ فارمیٹرز اور مزید تلاش کریں۔',
     hi: 'सभी श्रेणियों में 55 मुफ्त ऑनलाइन टूल्स खोजें। छवि संपादक, पीडीएफ टूल्स, कैलकुलेटर, कोड फॉर्मेटर और बहुत कुछ खोजें।',
     ar: 'ابحث من بين 55 أداة مجانية عبر الإنترنت عبر جميع الفئات. ابحث عن محرري الصور وأدوات PDF والآلات الحاسبة ومنسقي الأكواد والمزيد.'
