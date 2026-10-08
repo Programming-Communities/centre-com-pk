@@ -1,9 +1,9 @@
 {
   "hero": {
-    "badge": "500+ FREE ONLINE TOOLS",
+    "badge": "55 FREE ONLINE TOOLS",
     "title": "Professional",
     "title_highlight": "Tools Collection",
-    "description": "Access 500+ free online tools across 25+ categories. No registration required.",
+    "description": "Access 55 free online tools across 25+ categories. No registration required.",
     "cta": "Explore All Tools"
   },
   "popular_tools": {
@@ -40,12 +40,12 @@
   },
   "stats": {
     "tools": {
-      "value": "500+",
+      "value": "55",
       "label": "Free Tools",
       "sublabel": "Available now"
     },
     "users": {
-      "value": "50K+",
+      "value": "Thousands",
       "label": "Monthly Users",
       "sublabel": "Trusted by users"
     },
