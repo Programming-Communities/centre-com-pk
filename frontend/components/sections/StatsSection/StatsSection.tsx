@@ -22,7 +22,7 @@ export default async function StatsSection({
 }: StatsSectionProps) {
   const defaultStats = stats.length > 0 ? stats : [
     { number: '55+', label: 'Free Tools' },
-    { number: '50K+', label: 'Users' },
+    { number: 'Thousands', label: 'Users' },
     { number: '100%', label: 'Free' },
     { number: '24/7', label: 'Available' },
   ];

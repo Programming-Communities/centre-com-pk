@@ -135,7 +135,7 @@ export default function ToolsShowcase({
             </Link>
             <div className="text-center">
               <div className="text-sm" style={{ color: themeColors.text.secondary }}>
-                Join <span style={{ color: themeColors.primary }}>50K+</span> monthly users
+                Join <span style={{ color: themeColors.primary }}>Thousands</span> of monthly users
               </div>
               <div className="text-xs" style={{ color: themeColors.text.secondary }}>
                 Trusted by students, professionals, and businesses
