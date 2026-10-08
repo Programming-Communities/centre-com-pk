@@ -13,12 +13,13 @@ export async function GET() {
   const today = new Date().toISOString().split('T')[0];
   const db = getLocalDB();
 
-  const staticPages = ['', 'about', 'contact', 'blog', 'search', 'tutorial', 'privacy-policy', 'terms', 'pricing', 'advertise'];
+  // Removed: 'search', 'tutorial', 'advertise' (thin/duplicate/marketing pages)
+  const staticPages = ['', 'about', 'contact', 'blog', 'privacy-policy', 'terms', 'pricing'];
   const categories = ['calculators', 'code-tools', 'design-tools', 'image-tools', 'pdf-tools', 'security-tools', 'text-tools'];
 
   let blogPosts: any[] = [];
-  try { 
-    blogPosts = db.prepare("SELECT slug, lang FROM blog_posts WHERE status = 'published'").all() as any[]; 
+  try {
+    blogPosts = db.prepare("SELECT slug, lang FROM blog_posts WHERE status = 'published'").all() as any[];
   } catch {}
 
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n`;
@@ -26,32 +27,31 @@ export async function GET() {
   // Static pages
   for (const page of staticPages) {
     for (const lang of LANGUAGES) {
-      const path = page ? `/${lang}/${page}` : `/${lang}`;
-      xml += urlBlock(path, today, page === '' ? '1.0' : '0.6');
+      xml += urlBlock(lang, page ? `/${page}` : '', today, page === '' ? '1.0' : '0.6');
     }
   }
 
   // Categories
   for (const cat of categories) {
     for (const lang of LANGUAGES) {
-      xml += urlBlock(`/${lang}/tools/${cat}`, today, '0.9');
+      xml += urlBlock(lang, `/tools/${cat}`, today, '0.9');
     }
   }
 
   // Tools
   for (const tool of Object.values(TOOL_SEO_DATA) as any[]) {
     for (const lang of LANGUAGES) {
-      xml += urlBlock(`/${lang}/tools/${tool.category}/${tool.slug}`, today, '0.8');
+      xml += urlBlock(lang, `/tools/${tool.category}/${tool.slug}`, today, '0.8');
     }
   }
 
   // Blog posts
   for (const post of blogPosts) {
-    xml += urlBlock(`/${post.lang}/blog/${post.slug}`, today, '0.7');
+    xml += urlBlock(post.lang, `/blog/${post.slug}`, today, '0.7');
   }
 
   xml += '</urlset>';
-  
+
   return new NextResponse(xml, {
     headers: {
       'Content-Type': 'application/xml',
@@ -61,16 +61,25 @@ export async function GET() {
   });
 }
 
-function urlBlock(path: string, lastmod: string, priority: string): string {
+/**
+ * Build the public URL path for a given language + rest.
+ * English is UNPREFIXED; other languages keep /{lang}/ prefix.
+ */
+function pathFor(lang: string, rest: string): string {
+  if (lang === 'en') return rest || '/';
+  return `/${lang}${rest}`;
+}
+
+function urlBlock(lang: string, rest: string, lastmod: string, priority: string): string {
+  const path = pathFor(lang, rest);
   const fullUrl = `${BASE_URL}${path}`;
-  const lang = path.split('/')[1];
   let block = `  <url>\n    <loc>${escapeXml(fullUrl)}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <priority>${priority}</priority>\n`;
-  
+
   for (const l of LANGUAGES) {
-    const altPath = path.replace(`/${lang}/`, `/${l}/`);
+    const altPath = pathFor(l, rest);
     block += `    <xhtml:link rel="alternate" hreflang="${l}" href="${escapeXml(BASE_URL + altPath)}"/>\n`;
   }
-  block += `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(BASE_URL + path.replace(`/${lang}/`, '/'))}"/>\n`;
+  block += `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(BASE_URL + (rest || '/'))}"/>\n`;
   block += `  </url>\n`;
   return block;
 }
