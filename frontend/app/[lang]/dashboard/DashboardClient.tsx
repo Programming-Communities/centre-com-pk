@@ -43,8 +43,8 @@ export default function DashboardClient() {
       const [docsRes, bookmarksRes, commentsRes, adsRes] = await Promise.all([
         fetch(`/api/dashboard?user_id=${userId}`).then(r => r.json()).catch(() => ({ documents: [] })),
         fetch(`/api/user/bookmarks?user_id=${userId}`).then(r => r.json()).catch(() => ({ bookmarks: [] })),
-        fetch(`/api/admin/comments`).then(r => r.json()).catch(() => ({ comments: [] })),
-        fetch(`/api/admin/ads?user_id=${userId}`).then(r => r.json()).catch(() => ({ ads: [] })),
+        fetch(`/api/me/comments`).then(r => r.json()).catch(() => ({ comments: [] })),
+        fetch(`/api/me/ads`).then(r => r.json()).catch(() => ({ ads: [] })),
       ]);
 
       const docs = docsRes.documents || [];

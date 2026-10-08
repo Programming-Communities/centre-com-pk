@@ -131,7 +131,7 @@ export default function CreateAdClient({ lang }: { lang: string }) {
         geo_type: location.type === 'all' ? 'all' : location.type === 'radius' ? 'radius' : 'specific',
         target_locations: location.locations.map(l => ({ lat: l.lat, lng: l.lng, address: l.address, radius: l.radius || 0 })),
       };
-      const res = await fetch('/api/admin/ads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submitData) });
+      const res = await fetch('/api/me/ads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(submitData) });
       const data = await res.json();
       if (data.success) {
         setMessage({ type: 'success', text: '✅ Ad submitted for approval!' });

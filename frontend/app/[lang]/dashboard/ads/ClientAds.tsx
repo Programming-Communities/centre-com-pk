@@ -40,7 +40,7 @@ export default function ClientAds() {
           const u = JSON.parse(userData);
           setUser(u);
           setLoading(true);
-          fetch(`/api/admin/ads?user_id=${u.id}`)
+          fetch(`/api/me/ads`)
             .then(r => r.json())
             .then(d => { setAds(d.ads || []); setLoading(false); })
             .catch(() => setLoading(false));
@@ -51,7 +51,7 @@ export default function ClientAds() {
       return;
     }
     setLoading(true);
-    fetch(`/api/admin/ads?user_id=${user.id}`)
+    fetch(`/api/me/ads`)
       .then(r => r.json())
       .then(d => { setAds(d.ads || []); setLoading(false); })
       .catch(() => setLoading(false));
@@ -62,7 +62,7 @@ export default function ClientAds() {
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this ad?')) return;
     try {
-      const res = await fetch('/api/admin/ads?id=' + id, { method: 'DELETE' });
+      const res = await fetch('/api/me/ads?id=' + id, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         setSubmitMessage({ type: 'success', text: '✅ Ad deleted!' });

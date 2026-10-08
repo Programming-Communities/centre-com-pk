@@ -31,7 +31,7 @@ export default function UserCommentsClient({ lang }: { lang: string }) {
     setLoading(true);
     try {
       // API se comments fetch karo
-      const res = await fetch('/api/admin/comments');
+      const res = await fetch('/api/me/comments');
       const data = await res.json();
       
       if (data.comments && data.comments.length > 0) {
