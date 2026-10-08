@@ -296,7 +296,7 @@ export default async function AllToolsHeroSection({
               {hardcoded.allTools}
             </h2>
             <div className="text-sm text-text-secondary">
-              {hardcoded.showing} {allTools.length} of 500+ {hardcoded.tools}
+              {hardcoded.showing} {allTools.length} {hardcoded.tools}
             </div>
           </div>
           
@@ -333,7 +333,7 @@ export default async function AllToolsHeroSection({
         <div className="mt-16 pt-8 border-t border-border">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: '500+', label: t('stats.tools_label', 'Free Tools'), desc: t('stats.available_now', 'Available now') },
+              { value: '55', label: t('stats.tools_label', 'Free Tools'), desc: t('stats.available_now', 'Available now') },
               { value: '50K+', label: t('stats.users_label', 'Monthly Users'), desc: t('stats.trusted', 'Trusted by users') },
               { value: '100%', label: t('stats.registration_label', 'No Registration'), desc: t('stats.instant', 'Use instantly') },
               { value: '24/7', label: t('stats.uptime_label', 'Uptime'), desc: t('stats.always_available', 'Always available') }

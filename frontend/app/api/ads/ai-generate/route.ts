@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       variations: [
         { title: result.title, description: result.desc, bgColor: result.colors[0], accentColor: result.colors[1], textColor: result.colors[2] },
         { title: 'Try ' + product + ' Free', description: 'No credit card required. Start using ' + product + ' in seconds.', bgColor: '#7c3aed', accentColor: '#8b5cf6', textColor: '#ffffff' },
-        { title: product + ' — #1 Choice', description: 'Join 50,000+ happy users. ' + product + ' makes it easy.', bgColor: '#0f172a', accentColor: '#f59e0b', textColor: '#ffffff' },
+        { title: product + ' — #1 Choice', description: 'Trusted by thousands of happy users. ' + product + ' makes it easy.', bgColor: '#0f172a', accentColor: '#f59e0b', textColor: '#ffffff' },
       ]
     });
   } catch (e: any) {

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle, Mail, Phone, Globe } from "lucide-react";
 
 const AD_SPACES = [
-  { id: 'header', name: 'Header Banner', size: '728x90', price: 199, views: '50k+/month', location: 'Top of all pages' },
+  { id: 'header', name: 'Header Banner', size: '728x90', price: 199, views: 'Thousands/month', location: 'Top of all pages' },
   { id: 'sidebar', name: 'Sidebar Ad', size: '300x600', price: 149, views: '30k+/month', location: 'Right sidebar' },
   { id: 'in-content', name: 'In-Content', size: '728x90', price: 99, views: '20k+/month', location: 'Inside tool pages' },
   { id: 'tool-sponsor', name: 'Tool Sponsor', size: 'Custom', price: 249, views: '10k+/month', location: 'Specific tool page' },
@@ -60,7 +60,7 @@ export default function AdvertiseClient({ lang }: { lang: string }) {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-3xl lg:text-4xl font-bold mb-3" style={{ color: "var(--text-primary)" }}>📢 Advertise on Centre.com.pk</h1>
-          <p style={{ color: "var(--text-secondary)" }}>Reach 50,000+ monthly visitors — developers, designers, students</p>
+          <p style={{ color: "var(--text-secondary)" }}>Reach thousands of monthly visitors — developers, designers, students</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">

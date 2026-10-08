@@ -15,7 +15,7 @@ interface CTASectionProps {
 
 export default function CTASection({ 
   title = "Ready to get started?",
-  description = "Join 50,000+ users who trust Centre.com.pk for their daily tool needs. All tools are completely free, no registration required.",
+  description = "Trusted by thousands of users for their daily tool needs. All tools are completely free, no registration required.",
   primaryButtonText = "Explore All Tools",
   primaryButtonHref = "/tools",
   secondaryButtonText = "Browse Categories",
@@ -125,7 +125,7 @@ export default function CTASection({
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 mb-8">
                 {[
-                  { value: '500+', label: texts.freeTools },
+                  { value: '55', label: texts.freeTools },
                   { value: '100%', label: texts.noRegistration },
                   { value: '24/7', label: texts.uptime }
                 ].map((stat, index) => (
@@ -328,7 +328,7 @@ export default function CTASection({
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-surface border border-border">
               <div className="text-sm text-text-secondary">
                 <span className="font-semibold text-primary">
-                  50,000+
+                  Thousands
                 </span>{' '}
                 {texts.monthlyUsers}
               </div>

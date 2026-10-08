@@ -114,7 +114,7 @@ export default function BlogWelcome() {
     ],
     
     ctaTitle: 'Start Your AI Journey Today',
-    ctaSubtitle: 'Join 50,000+ students learning AI for free. No prior experience required.',
+    ctaSubtitle: 'Trusted by thousands of students learning AI for free. No prior experience required.',
     getStarted: 'Get Started Free',
     watchTutorials: 'Watch Tutorials',
     ctaNote: 'No credit card required • Free forever • Certificate included',
@@ -172,7 +172,7 @@ export default function BlogWelcome() {
     ],
     
     ctaTitle: 'آج ہی اپنا AI سفر شروع کریں',
-    ctaSubtitle: '50,000+ طلباء کے ساتھ مفت AI سیکھنے میں شامل ہوں۔ کسی پیشگی تجربے کی ضرورت نہیں۔',
+    ctaSubtitle: 'ہزاروں طلباء کے ساتھ مفت AI سیکھنے میں شامل ہوں۔ کسی پیشگی تجربے کی ضرورت نہیں۔',
     getStarted: 'مفت شروع کریں',
     watchTutorials: 'سبق دیکھیں',
     ctaNote: 'کریڈٹ کارڈ کی ضرورت نہیں • ہمیشہ مفت • سرٹیفکیٹ شامل ہے',
@@ -230,7 +230,7 @@ export default function BlogWelcome() {
     ],
     
     ctaTitle: 'ابدأ رحلتك في الذكاء الاصطناعي اليوم',
-    ctaSubtitle: 'انضم إلى 50,000+ طالب يتعلمون الذكاء الاصطناعي مجاناً. لا حاجة لخبرة سابقة.',
+    ctaSubtitle: 'انضم إلى الآلاف من الطلاب الذين يتعلمون الذكاء الاصطناعي مجاناً. لا حاجة لخبرة سابقة.',
     getStarted: 'ابدأ مجاناً',
     watchTutorials: 'شاهد الدروس',
     ctaNote: 'لا حاجة لبطاقة ائتمان • مجاني للأبد • شهادة مضمنة',
@@ -288,7 +288,7 @@ export default function BlogWelcome() {
     ],
     
     ctaTitle: 'आज ही अपनी AI यात्रा शुरू करें',
-    ctaSubtitle: '50,000+ छात्रों के साथ मुफ्त में AI सीखने में शामिल हों। किसी पूर्व अनुभव की आवश्यकता नहीं।',
+    ctaSubtitle: 'हजारों छात्रों के साथ मुफ्त में AI सीखने में शामिल हों। किसी पूर्व अनुभव की आवश्यकता नहीं।',
     getStarted: 'मुफ्त शुरू करें',
     watchTutorials: 'ट्यूटोरियल देखें',
     ctaNote: 'क्रेडिट कार्ड की आवश्यकता नहीं • हमेशा मुफ्त • प्रमाणपत्र शामिल',

@@ -80,7 +80,7 @@ export default function HeroSection() {
           {/* Description */}
           <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto"
              style={{ color: themeColors.text.secondary }}>
-            Comprehensive collection of <span style={{ color: themeColors.primary }}>500+ free tools</span> 
+            Comprehensive collection of <span style={{ color: themeColors.primary }}>55 free tools</span>
             for students, professionals, and everyday users
           </p>
 
@@ -141,9 +141,9 @@ export default function HeroSection() {
           {/* Stats Preview */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
             {[
-              { label: 'Tools Available', value: '500+' },
+              { label: 'Tools Available', value: '55' },
               { label: 'Categories', value: '25+' },
-              { label: 'Monthly Users', value: '50K+' },
+              { label: 'Monthly Users', value: 'Thousands' },
               { label: 'Free Forever', value: '100%' }
             ].map((stat, index) => (
               <div key={index} className="text-center p-4 rounded-xl"
